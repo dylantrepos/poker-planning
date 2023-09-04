@@ -7,14 +7,15 @@
 
 <script setup lang="ts">
 import { useRouter } from "vue-router";
-import { v4 as uuidv4 } from 'uuid';
+// import { v4 as uuidv4 } from 'uuid';
 
   const router = useRouter();
 
   // Methods
   const redirectToGame = (): void => {
-    const myuuid = uuidv4();
-    router.push(`/game/${myuuid}`);
+    // const myuuid = uuidv4();
+    // router.push(`/game/${myuuid}`);
+    router.push(`/game/e4b31a6f-3352-48b6-ac57-dba7135aba2c`);
   }
 
 </script>
