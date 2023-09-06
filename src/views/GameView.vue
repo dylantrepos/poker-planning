@@ -7,7 +7,14 @@
         <div v-else>
             <div v-if="isLoggedIn">
                 <h3>Name : {{ userInfo.username }}</h3>
-    
+
+                <h5>List users : </h5>
+                <ul>
+                    <li v-for="user in userInRoom" v-bind:key="user">
+                        {{ user.username ?? 'error' }} : <i>{{ user.userId ?? 'error' }}</i>
+                    </li>
+                </ul>
+                
                 <form @submit.prevent="handlePostMessage">
                     <input type="text" v-model.trim="messageInput" placeholder="Your message...">
                     <button>
@@ -35,7 +42,7 @@
                 <div v-else>
                     <h3>Sorry !</h3>
                     <p>This room doesn't exist...</p>
-                    <button @click="handleCreateRoom">Create a room</button>
+                    <button @click="router.push('/')">Create a room</button>
                 </div>
             </div>
         </div>
@@ -44,10 +51,11 @@
 </template>
 
 <script setup lang="ts">
-    import { onMounted, ref, watch } from "vue";
+    import { onBeforeMount, ref } from "vue";
     import { useRouter, useRoute } from "vue-router";
     import { emitSocket, socket, state } from "@/sockets/sockets";
-import { addCookie, getCookie } from "@/utils/utils";
+    import { addCookie, getCookie } from "@/utils/utils";
+    import { v4 as uuidv4 } from 'uuid';
 
     // Types
 
@@ -57,7 +65,8 @@ import { addCookie, getCookie } from "@/utils/utils";
     }
 
     type ConnectRoom = {
-        gameId: string;
+        roomId: string;
+        userId: string;
         username: string;
     }
 
@@ -71,6 +80,7 @@ import { addCookie, getCookie } from "@/utils/utils";
     const isLoggedIn = ref(false);
     const isLoaded = ref(false);
     const userInfo = ref();
+    const userInRoom = ref<any[]>([]);
 
     const route = useRoute();
     const router = useRouter();
@@ -78,17 +88,22 @@ import { addCookie, getCookie } from "@/utils/utils";
 
     // Life cycle
 
-    onMounted(async () => {
+    onBeforeMount(async () => {
         const roomExistsRequest = await fetch(`${import.meta.env.VITE_SERVER_ADDRESS}/check/${pageId}`);
         const roomExists = await (await roomExistsRequest.json()).exist;
+        
         const cookieData = JSON.parse(getCookie('poker-planning') || '{}');
 
-        if (roomExists) {
-            if (cookieData.gameId === pageId) {
-                if (! state.connected) connectToRoom(cookieData)
-                isLoggedIn.value = true; 
-                userInfo.value = cookieData;
-            } 
+        if (roomExists && cookieData.roomId === pageId) {
+            if (!state.connected) connectToRoom(cookieData)
+            else userInRoom.value.push({
+                    userId: cookieData.userId,
+                    username: cookieData.username
+                }
+            );
+
+            userInfo.value = cookieData;
+            isLoggedIn.value = true; 
         }
 
         doesRoomExists.value = roomExists;
@@ -99,50 +114,79 @@ import { addCookie, getCookie } from "@/utils/utils";
     // Methods
 
     const handleJoinRoom = () => {
-        userInfo.value = {
-            gameId: pageId,
+        const myuuid = uuidv4();
+
+        const user = {
+            roomId: pageId,
+            userId: myuuid,
             username: usernameInput.value,
         }
+
+        userInfo.value = user;
         
-        addCookie('poker-planning', JSON.stringify(userInfo.value))
-        connectToRoom(userInfo.value);
+        addCookie('poker-planning', JSON.stringify(user))
+        connectToRoom((user as ConnectRoom));
 
         isLoggedIn.value = true;
-
     };
 
-    const connectToRoom = (data: ConnectRoom) => {
+    const connectToRoom = async (data: ConnectRoom) => {
         socket.connect();
         socket.emit('join-room', data);
+
+        getUserList();
     }
 
-    const handleCreateRoom = () => router.push('/');
+    const getUserList = async () => {
+        const listUserRequest = await fetch(`${import.meta.env.VITE_SERVER_ADDRESS}/user-list/${pageId}`);
+        const listUser = (await listUserRequest.json()).list;
 
+        const data = [
+            {
+                userId: userInfo.value.userId,
+                username: userInfo.value.username
+            }, 
+            ...listUser
+        ];
 
+        userInRoom.value.push(...new Map(data.map((v: any) => [v.userId, v])).values());
+
+        console.log(...data);
+    }
 
     // Sockets Events
+    socket.on(`update-userList`, ( data ) => {
+        console.log('data : ', data);
+        userInRoom.value = [...new Map(data.map((v: any) => [v.userId, v])).values()]
+    })
+
+
+
+
+
+
 
     const handlePostMessage = (): void => {
         if (messageInput.value.length > 0) {
             const messageContent = {
-                gameId: pageId, 
+                roomId: pageId, 
                 userId: userInfo.value.userId as string, 
                 username: userInfo.value.username as string,
                 message: messageInput.value
             };
 
             emitSocket('chat-message', messageContent);
-
+            
+            messageElts.value.push(messageContent);
             messageInput.value = '';
         }
     }
 
-    socket.on((pageId as string), ( data: SocketDataReceived ) => {
-        messageElts.value.push({ username: data.username, message: data.message});
+    socket.on(`${(pageId as string)}-message`, ( data: SocketDataReceived ) => {
+        console.log('data received : ', data);
+        messageElts.value.push(data);
     })
 
-    socket.on(`${pageId}-userList`, ( data ) => {
-        console.log('data : ', data);
-    })
+   
 
 </script>

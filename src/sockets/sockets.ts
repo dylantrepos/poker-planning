@@ -33,7 +33,7 @@ type SocketType =
 
 type SocketData = {
     userId: string; 
-    gameId: string | string[];
+    roomId: string | string[];
     username: string;
     message?: string;
 };
