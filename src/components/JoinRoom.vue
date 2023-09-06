@@ -7,16 +7,15 @@
 
 <script setup lang="ts">
   import { onMounted, ref } from 'vue';
-  import { addCookie } from '../utils/utils'
   import { v4 as uuidv4 } from 'uuid';
-  import { io } from 'socket.io-client';
-  import { gameRoomList } from '../store/data';
   import { useRoute } from 'vue-router';
+
+  import { addCookie } from '@/utils/utils'
+  import { emitSocket } from '@/sockets/sockets';
+  import { gameRoomList } from '@/store/data';
 
   const router = useRoute();
   const pageId = router.params.id;
-
-  const socket = io(import.meta.env.VITE_SERVER_ADDRESS)
 
   let gameId = ref();
   let userId = ref(uuidv4());
@@ -39,22 +38,18 @@
 
 
   const handleJoinForm = () => {
-      socket.emit('join game', {
-        userId: userId.value,
-        gameId: gameId.value,
-        username: usernameInput.value
-      })
-    
-      const userInfo = {
-        userId: userId.value,
-        gameId: gameId.value,
-        username: usernameInput.value,
-      }
-    
-      console.log('userinfo : ', userInfo);
-      addCookie('poker-planning', JSON.stringify(userInfo));
+    const userInfo = {
+      userId: userId.value,
+      gameId: gameId.value,
+      username: usernameInput.value,
+    }
 
-      emit('join-room');
+    emitSocket('join-game', userInfo)
+    
+    console.log('userinfo : ', userInfo);
+    addCookie('poker-planning', JSON.stringify(userInfo));
+
+    emit('join-room');
   }
 
 
