@@ -27,7 +27,15 @@
                      v-for="msg in messageElts" 
                      v-bind:key="msg.username"
                 >
-                  <b style="color: blue;">{{ msg.username }} :</b> {{ msg.message }}
+                     <b 
+                        style="color: blue;"
+                        :style="{
+                            'color': msg.userId === userInfo.userId ? 'red' : 'blue'
+                        }"
+                    >
+                        {{ msg.username }}:
+                    </b> 
+                {{ msg.message }}
                 </div>
             </div>
             
@@ -53,27 +61,14 @@
 <script setup lang="ts">
     import { onBeforeMount, ref } from "vue";
     import { useRouter, useRoute } from "vue-router";
-    import { emitSocket, socket, state } from "@/sockets/sockets";
+    import { socket } from "@/sockets/sockets";
     import { addCookie, getCookie } from "@/utils/utils";
     import { v4 as uuidv4 } from 'uuid';
-
-    // Types
-
-    type SocketDataReceived = {
-        username: string;
-        message: string;
-    }
-
-    type ConnectRoom = {
-        roomId: string;
-        userId: string;
-        username: string;
-    }
-
+    import type { UserMessage } from '@/types/UserType';
 
     // Variables
 
-    const messageElts = ref<SocketDataReceived[]>([]);
+    const messageElts = ref<UserMessage[]>([]);
     const messageInput = ref('');
     const usernameInput = ref('');
     const doesRoomExists = ref(false);
@@ -86,6 +81,7 @@
     const router = useRouter();
     const pageId = route.params.id;
 
+
     // Life cycle
 
     onBeforeMount(async () => {
@@ -93,14 +89,9 @@
         const roomExists = await (await roomExistsRequest.json()).exist;
         
         const cookieData = JSON.parse(getCookie('poker-planning') || '{}');
-
+        
         if (roomExists && cookieData.roomId === pageId) {
-            if (!state.connected) connectToRoom(cookieData)
-            else userInRoom.value.push({
-                    userId: cookieData.userId,
-                    username: cookieData.username
-                }
-            );
+            connectToRoom()
 
             userInfo.value = cookieData;
             isLoggedIn.value = true; 
@@ -124,15 +115,27 @@
 
         userInfo.value = user;
         
-        addCookie('poker-planning', JSON.stringify(user))
-        connectToRoom((user as ConnectRoom));
+        addCookie('poker-planning', JSON.stringify(user));
+
+        connectToRoom();
 
         isLoggedIn.value = true;
     };
 
-    const connectToRoom = async (data: ConnectRoom) => {
+    const connectToRoom = async () => {
         socket.connect();
-        socket.emit('join-room', data);
+
+        socket.on('connect', async () => {
+            socket.emit('join-room', userInfo.value);
+    
+            console.log('socket : ', socket.connected);
+    
+            const getConvRequest = await fetch(`${import.meta.env.VITE_SERVER_ADDRESS}/conv/${pageId}`);
+            const getConv = (await getConvRequest.json()).conv.map((e: any) => JSON.parse(e)); 
+            const convOrdered = [...getConv].sort((a, b) => a.order > b.order ? 1 : -1);
+    
+            messageElts.value = convOrdered;
+        })
 
         getUserList();
     }
@@ -141,51 +144,44 @@
         const listUserRequest = await fetch(`${import.meta.env.VITE_SERVER_ADDRESS}/user-list/${pageId}`);
         const listUser = (await listUserRequest.json()).list;
 
-        const data = [
+        const data = new Map([
             {
                 userId: userInfo.value.userId,
                 username: userInfo.value.username
             }, 
             ...listUser
-        ];
+        ].map((v: any) => [v.userId, v])).values();
 
-        userInRoom.value.push(...new Map(data.map((v: any) => [v.userId, v])).values());
-
-        console.log(...data);
+        userInRoom.value.push(...data);
     }
 
+    const handlePostMessage = (): void => {
+        if (messageInput.value.length === 0) return;
+        
+        socket.emit('chat-message', {
+            roomId: pageId, 
+            userId: userInfo.value.userId as string, 
+            username: userInfo.value.username as string,
+            message: messageInput.value
+        });
+
+        messageInput.value = '';
+    }
+
+
     // Sockets Events
+
     socket.on(`update-userList`, ( data ) => {
-        console.log('data : ', data);
         userInRoom.value = [...new Map(data.map((v: any) => [v.userId, v])).values()]
     })
 
-
-
-
-
-
-
-    const handlePostMessage = (): void => {
-        if (messageInput.value.length > 0) {
-            const messageContent = {
-                roomId: pageId, 
-                userId: userInfo.value.userId as string, 
-                username: userInfo.value.username as string,
-                message: messageInput.value
-            };
-
-            emitSocket('chat-message', messageContent);
-            
-            messageElts.value.push(messageContent);
-            messageInput.value = '';
-        }
-    }
-
-    socket.on(`${(pageId as string)}-message`, ( data: SocketDataReceived ) => {
-        console.log('data received : ', data);
-        messageElts.value.push(data);
+    socket.on(`message`, ( message: UserMessage ) => {
+        messageElts.value.push(message);
     })
+
+    socket.on("connect_error", (err) => {
+        console.log(`connect_error due to ${err.message}`);
+    });
 
    
 
