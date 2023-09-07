@@ -2,6 +2,8 @@
  * COOKIE
  */
 
+import type { UserInfo } from "@/types/UserType";
+
 export const addCookie = (cname: string, cvalue: string, exdays: number = 7) => {
     const date = new Date();
     date.setTime(date.getTime() + (exdays*24*60*60*1000));
@@ -9,11 +11,15 @@ export const addCookie = (cname: string, cvalue: string, exdays: number = 7) => 
     document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
 }
   
-export const getCookie = (cname: string): string | null => {
+export const getCookieString = (cname: string): string | null => {
   return document.cookie
   .split("; ")
   .find((row) => row.startsWith(`${cname}=`))
   ?.split("=")[1] ?? null;
+}
+
+export const getCookie = (): UserInfo => {
+  return JSON.parse(getCookieString('poker-planning') || '{}')
 }
   
 export const removeCookie = (cname: string) => {
