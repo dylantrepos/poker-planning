@@ -8,12 +8,7 @@
             <div v-if="isLoggedIn">
                 <h3>Name : {{ userInfo?.username }}</h3>
 
-                <h5>List users : </h5>
-                <ul>
-                    <li v-for="user in userInRoom" v-bind:key="user.userId">
-                        {{ user.username ?? 'error' }} : <i>{{ user.userId ?? 'error' }}</i>
-                    </li>
-                </ul>
+                <UserListItem :room-id="roomId" />
                 
                 <form @submit.prevent="handlePostMessage">
                     <input type="text" v-model.trim="messageInput" placeholder="Your message...">
@@ -41,16 +36,10 @@
             
             <div v-else>
                 <div v-if="doesRoomExists">
-                    <h3>Join a room</h3>
-                    <form @submit.prevent="handleJoinRoom">
-                        <input type="text" placeholder="Your name" v-model="usernameInput"/>
-                        <button>Join the room</button>
-                    </form>
+                    <JoinRoomItem @submit-join-room="handleJoinRoom" :room-id="roomId"/>
                 </div>
                 <div v-else>
-                    <h3>Sorry !</h3>
-                    <p>This room doesn't exist...</p>
-                    <button @click="router.push('/')">Create a room</button>
+                    <RoomErrorItem />
                 </div>
             </div>
         </div>
@@ -59,110 +48,89 @@
 </template>
 
 <script setup lang="ts">
-  import { onBeforeMount, ref, watch } from "vue";
-  import { useRouter, useRoute } from "vue-router";
-  import { socket, state, emitMessage } from "@/sockets/sockets";
-  import { addCookie, getCookie } from "@/utils/utils";
-  import { v4 as uuidv4 } from 'uuid';
-  import type { UserMessage, UsersInRoom, UserInfo } from '@/types/UserType';
-  import { getUserList, getAllMessages } from '@/utils/room';
-  import { emitJoinRoom } from '../sockets/sockets';
-  import { checkRoomExists } from '../utils/room';
+  import { onBeforeMount, ref } from "vue";
+  import { useRoute } from "vue-router";
+  
+  import JoinRoomItem from "@/components/JoinRoomItem.vue";
+  import RoomErrorItem from "@/components/RoomErrorItem.vue"
+  import UserListItem from "@/components/UserListItem.vue";
+  
+  import { socket, emitMessage, emitJoinRoom } from "@/sockets/sockets";
+  import { getCookie } from "@/utils/utils";
+  import { getAllMessages, checkRoomExists } from '@/utils/room';
+  import type { UserMessage, UserInfo } from '@/types/UserType';
+  
+  
+  // Variables
 
-    // Variables
+  const messageElts = ref<UserMessage[]>([]);
+  const messageInput = ref('');
+  const doesRoomExists = ref(false);
+  const isLoggedIn = ref(false);
+  const isLoaded = ref(false);
+  const userInfo = ref<UserInfo>();
 
-    const messageElts = ref<UserMessage[]>([]);
-    const messageInput = ref('');
-    const usernameInput = ref('');
-    const doesRoomExists = ref(false);
-    const isLoggedIn = ref(false);
-    const isLoaded = ref(false);
-    const userInfo = ref<UserInfo>();
-    const userInRoom = ref<UsersInRoom>([]);
-
-    const route = useRoute();
-    const router = useRouter();
-    const roomId = route.params.id as string;
-
-    watch(
-      () => state.rooms,
-      () => userInRoom.value = state.rooms
-    )
+  const route = useRoute();
+  const roomId = route.params.id as string;
 
 
+  // Life cycle
 
-    // Life cycle
-
-    onBeforeMount(async () => {
-      const roomExists = await checkRoomExists(roomId);
-      const cookieData = getCookie();
-      
-      if (roomExists && cookieData.roomId === roomId) {
-          connectToRoom();
-
-          userInfo.value = cookieData;
-          isLoggedIn.value = true; 
-      }
-
-      doesRoomExists.value = roomExists;
-      isLoaded.value = true;
-    })
+  onBeforeMount( async () => {
+    const roomExists = await checkRoomExists(roomId);
+    const cookieData = getCookie();
     
-
-    // Methods
-
-    const handleJoinRoom = () => {
-        const userId = uuidv4();
-        
-        userInfo.value = {
-            roomId,
-            userId,
-            username: usernameInput.value,
-        };
-        
-        addCookie('poker-planning', JSON.stringify(userInfo.value));
-
-        connectToRoom();
-
-        isLoggedIn.value = true;
-    };
-
-    const connectToRoom = async () => {
+    if (roomExists && cookieData.roomId === roomId) {
         socket.connect();
+        
+        emitJoinRoom(cookieData);
+        getMessages();
 
-        socket.on('connect', async () => {
-            if (userInfo.value) {
-                emitJoinRoom(userInfo.value);
+        userInfo.value = cookieData;
+        isLoggedIn.value = true; 
+    }
 
-                const allMessages = await getAllMessages(roomId);
-                messageElts.value = allMessages;
-            }
+    doesRoomExists.value = roomExists;
+    isLoaded.value = true;
+  })
+  
+
+  // Methods
+
+  const getMessages = async (): Promise<void> => {
+    messageElts.value = await getAllMessages(roomId);
+  }
+
+  const handleJoinRoom = async (userInfoData: UserInfo) => {
+      socket.connect();
+
+      emitJoinRoom(userInfoData);
+      getMessages();
+
+      userInfo.value = userInfoData;
+      isLoggedIn.value = true;
+  };
+
+  const handlePostMessage = (): void => {
+    if (messageInput.value.length === 0) return;
+
+    if (userInfo.value) {
+        emitMessage({
+            roomId, 
+            userId: userInfo.value.userId as string, 
+            username: userInfo.value.username as string,
+            message: messageInput.value as string
         })
 
-        const userList: UsersInRoom = await getUserList(roomId as string);
-        userInRoom.value.push(...userList)
+        messageInput.value = '';
     }
 
-    const handlePostMessage = (): void => {
-        if (messageInput.value.length === 0) return;
-
-        if (userInfo.value) {
-            emitMessage({
-                roomId, 
-                userId: userInfo.value.userId as string, 
-                username: userInfo.value.username as string,
-                message: messageInput.value as string
-            })
-    
-            messageInput.value = '';
-        }
-
-    }
+  }
 
 
-    // Sockets Events
-    socket.on(`message`, ( message: UserMessage ) => {
-        messageElts.value.push(message);
-    })   
+  // Sockets Events
+  socket.on(`message`, ( message: UserMessage ) => {
+      messageElts.value.push(message);
+  })   
 
-</script>@/utils/room../utils/room
+</script>
