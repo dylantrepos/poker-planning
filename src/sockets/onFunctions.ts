@@ -7,12 +7,12 @@ export const setConnectionToSocket = (connected: boolean = true): void => {
 }
 
 export const updateUserList = (data: UserListSocket): void => {
-  console.log('coucou : ', data);
   const usersList = [...new Map((data.userList)
     .map((v: UserInfo) => [v.userId, v]))
     .values()];
-    
+
   state.rooms[data.roomId].userList = usersList;
+  state.role = state.rooms[data.roomId]?.userList.find(user => user.userId === state.userId)?.role ?? 'user';
 }
 
 export const getMessage = ( data: UserMessage ): void => {

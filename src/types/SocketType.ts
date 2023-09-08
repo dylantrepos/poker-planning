@@ -1,4 +1,4 @@
-import type { UserInfo, UserList, UserMessage } from "@/types/UserType";
+import type { Role, UserInfo, UserList, UserMessage } from "@/types/UserType";
 
 export type RoomId = string;
 
@@ -15,8 +15,9 @@ export type UserListSocket = {
 }
 
 export type State = {
-  connected: boolean,
-  userId: string,
-  roomId: string,
-  rooms: Room,
+  connected: boolean;
+  userId: string;
+  roomId: string;
+  role: Role;
+  rooms: Room;
 }

@@ -35,8 +35,9 @@
   onMounted(async () => {
     const messages = await getAllMessages(state.roomId);
 
-    state.rooms[state.roomId].messages = messages;
-
+    if (state.rooms[state.roomId]) {
+      state.rooms[state.roomId].messages = messages;
+    }
     messageElts.value = messages;
     
   })

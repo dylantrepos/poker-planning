@@ -11,7 +11,7 @@
 <script setup lang="ts">
   import { ref } from "vue";
   import { useRouter } from "vue-router";
-  import { socket } from "@/sockets/sockets";
+  import { socket, state } from "@/sockets/sockets";
   import { addCookie } from "@/utils/utils";
   import { v4 as uuidv4 } from 'uuid';
   import type { UserInfo } from "@/types/UserType";
@@ -29,7 +29,7 @@
         roomId: socket.id,
         userId: myuuid,
         username: usernameInput.value,
-        role: 'user'
+        role: 'lead'
       };
       
       socket.emit('join-room', userInfo);

@@ -3,7 +3,7 @@
         <div> Game view </div>
         <LoadingItem :loading="loading">
           <div v-if="isLoggedIn">
-              <h3>Name : {{ userInfo?.username }}</h3>
+              <h3>Name : {{ userInfo?.username }} {{ role === 'lead' ?  '👑' : ''}}</h3>
   
               <UserListItem />
               
@@ -25,7 +25,7 @@
 </template>
 
 <script setup lang="ts">
-  import { onBeforeMount, ref } from "vue";
+  import { onBeforeMount, ref, watch } from "vue";
   import { useRoute } from "vue-router";
   
   import UserListItem from "@/components/game/UserListItem.vue";
@@ -40,7 +40,8 @@
   import { state } from '../sockets/sockets';
   import { connectToSocket } from "@/sockets/sockets";
 
-  import type { UserInfo } from '@/types/UserType';
+  import type { Role, UserInfo } from '@/types/UserType';
+
   
   
   // Variables
@@ -52,7 +53,14 @@
 
   const route = useRoute();
   const roomId = route.params.id as string;
+  const role = ref();
 
+  watch(
+      () => state.rooms[roomId]?.userList,
+      () => { 
+        role.value = state.rooms[roomId]?.userList.find(user => user.userId === state.userId)?.role ?? 'user';
+      }
+    )
 
   // Life cycle
   onBeforeMount( async () => {
@@ -75,7 +83,7 @@
       emitJoinRoom(userInfoData);
       state.userId = userInfoData.userId;
       state.roomId = userInfoData.roomId;
-      
+      state.role = userInfoData.role;
       userInfo.value = userInfoData;
       isLoggedIn.value = true;
   };

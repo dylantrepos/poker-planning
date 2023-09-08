@@ -1,5 +1,6 @@
 import type { UserMessage, UserList } from "@/types/UserType";
 import { getCookie } from "./utils";
+import { state } from "@/sockets/sockets";
 
 /**
  * Retreive list of current user in room `roomId`.
@@ -11,15 +12,18 @@ export const getUserList = async (roomId: string): Promise<UserList> => {
     const listUserRequest = await fetch(`${import.meta.env.VITE_SERVER_ADDRESS}/user-list/${roomId}`);
     const listUserResponse: Awaited<Promise<UserList>> = (await listUserRequest.json()).list;
 
-    console.log('list : ', listUserResponse);
      const cookieData = getCookie();
-        
-    if (roomId === cookieData.roomId) {
-        const listUser: UserList = [...new Map([
-            { userId: cookieData.userId, username: cookieData.username, role: cookieData.role }, 
-            ...listUserResponse
+
+     
+     if (roomId === cookieData.roomId) {
+       const listUser: UserList = [...new Map([
+         { userId: cookieData.userId, username: cookieData.username, role: 'user' }, 
+         ...listUserResponse
         ].map((v: any) => [v.userId, v])).values()];
 
+        console.log('list : ', listUser);
+        state.role = state.connected ? 'lead' : 'user';
+        
         return listUser;
     }
 
