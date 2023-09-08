@@ -1,34 +1,26 @@
 <template>
     <main>
-        <div>
-            Game view
-        </div>
-        <div v-if="!isLoaded">Loading...</div>
-        <div v-else>
-            <div v-if="isLoggedIn">
-                <h3>Name : {{ userInfo?.username }}</h3>
-
-                <UserListItem :room-id="roomId" />
-                
-                <form @submit.prevent="handlePostMessage">
-                    <input type="text" v-model.trim="messageInput" placeholder="Your message...">
-                    <button>
-                        Test socket
-                    </button>
-                </form>
-                <ChatItem :room-id="roomId"/>
-            </div>
-            
-            <div v-else>
-                <div v-if="doesRoomExists">
-                    <JoinRoomItem @submit-join-room="handleJoinRoom" :room-id="roomId"/>
-                </div>
-                <div v-else>
-                    <RoomErrorItem />
-                </div>
-            </div>
-        </div>
-
+        <div> Game view </div>
+        <LoadingItem :loading="loading">
+          <div v-if="isLoggedIn">
+              <h3>Name : {{ userInfo?.username }}</h3>
+  
+              <UserListItem />
+              
+              <form @submit.prevent="handlePostMessage">
+                  <input type="text" v-model.trim="messageInput" placeholder="Your message...">
+                  <button>
+                      Test socket
+                  </button>
+              </form>
+              <VoteItemVue />
+              <ChatItem />
+          </div>
+          
+          <div v-else>
+              <CheckRoomItemVue :room-id="roomId" @submit-join-room="handleJoinRoom"/>
+          </div>
+        </LoadingItem>
     </main>
 </template>
 
@@ -36,24 +28,26 @@
   import { onBeforeMount, ref } from "vue";
   import { useRoute } from "vue-router";
   
-  import JoinRoomItem from "@/components/JoinRoomItem.vue";
-  import RoomErrorItem from "@/components/RoomErrorItem.vue"
-  import UserListItem from "@/components/UserListItem.vue";
-  import ChatItem from '@/components/ChatItem.vue'
+  import UserListItem from "@/components/game/UserListItem.vue";
+  import ChatItem from '@/components/game/ChatItem.vue'
+  import LoadingItem from "@/components/general/LoadingItem.vue";
+  import CheckRoomItemVue from "@/components/room/CheckRoomItem.vue";
+  import VoteItemVue from "@/components/game/VoteItem.vue";
   
   import { emitMessage, emitJoinRoom } from "@/sockets/emitsFunctions";
   import { getCookie } from "@/utils/utils";
   import { checkRoomExists } from '@/utils/room';
-  import type { UserInfo } from '@/types/UserType';
   import { state } from '../sockets/sockets';
   import { connectToSocket } from "@/sockets/sockets";
+
+  import type { UserInfo } from '@/types/UserType';
   
   
   // Variables
   const messageInput = ref('');
   const doesRoomExists = ref(false);
   const isLoggedIn = ref(false);
-  const isLoaded = ref(false);
+  const loading = ref(true);
   const userInfo = ref<UserInfo>();
 
   const route = useRoute();
@@ -61,7 +55,6 @@
 
 
   // Life cycle
-
   onBeforeMount( async () => {
     const roomExists = await checkRoomExists(roomId);
     const cookieData = getCookie();
@@ -73,14 +66,16 @@
     }
 
     doesRoomExists.value = roomExists;
-    isLoaded.value = true;
+    loading.value = false;
   })
   
 
   // Methods
   const handleJoinRoom = async (userInfoData: UserInfo) => {
       emitJoinRoom(userInfoData);
-
+      state.userId = userInfoData.userId;
+      state.roomId = userInfoData.roomId;
+      
       userInfo.value = userInfoData;
       isLoggedIn.value = true;
   };
@@ -93,10 +88,11 @@
             roomId, 
             userId: userInfo.value.userId as string, 
             username: userInfo.value.username as string,
+            role: 'user',
             message: messageInput.value as string
         })
 
         messageInput.value = '';
     }
   } 
-</script>@/sockets/emitsEventsMethods
+</script>

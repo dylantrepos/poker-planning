@@ -10,8 +10,8 @@
   import { ref } from 'vue';
   import { v4 as uuidv4 } from 'uuid';
 
-  import { addCookie } from '../utils/utils';
-  import type { UserInfo } from '../types/UserType';
+  import { addCookie } from '@/utils/utils';
+  import type { UserInfo } from '@/types/UserType';
   import { connectToSocket } from '@/sockets/sockets';
 
 
@@ -33,9 +33,10 @@
 
     const userId = uuidv4();
     
-    const userInfo = {
+    const userInfo: UserInfo = {
       roomId: props.roomId,
       userId,
+      role: 'user',
       username: usernameInput.value
     };
     

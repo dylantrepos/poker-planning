@@ -11,11 +11,12 @@ export const getUserList = async (roomId: string): Promise<UserList> => {
     const listUserRequest = await fetch(`${import.meta.env.VITE_SERVER_ADDRESS}/user-list/${roomId}`);
     const listUserResponse: Awaited<Promise<UserList>> = (await listUserRequest.json()).list;
 
+    console.log('list : ', listUserResponse);
      const cookieData = getCookie();
         
     if (roomId === cookieData.roomId) {
         const listUser: UserList = [...new Map([
-            { userId: cookieData.userId, username: cookieData.username }, 
+            { userId: cookieData.userId, username: cookieData.username, role: cookieData.role }, 
             ...listUserResponse
         ].map((v: any) => [v.userId, v])).values()];
 

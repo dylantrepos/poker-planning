@@ -29,6 +29,7 @@
         roomId: socket.id,
         userId: myuuid,
         username: usernameInput.value,
+        role: 'user'
       };
       
       socket.emit('join-room', userInfo);

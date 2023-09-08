@@ -25,3 +25,7 @@ export const getCookie = (): UserInfo => {
 export const removeCookie = (cname: string) => {
   document.cookie = cname + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 }
+
+export const getPokerPossibilities = (): string[] => {
+  return ['0', '1/2', '1', '2', '3', '5', '8', '13', '20', '40', '100', '?', 'infinity', 'cafe'];
+}

@@ -7,6 +7,7 @@ export const setConnectionToSocket = (connected: boolean = true): void => {
 }
 
 export const updateUserList = (data: UserListSocket): void => {
+  console.log('coucou : ', data);
   const usersList = [...new Map((data.userList)
     .map((v: UserInfo) => [v.userId, v]))
     .values()];
@@ -19,5 +20,5 @@ export const getMessage = ( data: UserMessage ): void => {
 };
 
 export const handleError = (err: Error) => {
-  console.log(`connect_error due to ${err.message}`);
+  console.error(`connect_error due to ${err.message}`);
 }

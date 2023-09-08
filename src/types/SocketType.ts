@@ -16,5 +16,7 @@ export type UserListSocket = {
 
 export type State = {
   connected: boolean,
+  userId: string,
+  roomId: string,
   rooms: Room,
 }

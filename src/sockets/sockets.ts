@@ -8,6 +8,8 @@ import type { State, UserListSocket } from '../types/SocketType';
 
 const state = reactive<State>({
   connected: false,
+  userId: '',
+  roomId: '',
   rooms: {}
 });
 
