@@ -3,7 +3,7 @@ import { socket } from "./sockets";
 
 // Emits events
 export const emitMessage = (userInfo: UserMessageEmit): void => {  
-  socket.emit('chat-message', userInfo);
+  socket.emit('new-message', userInfo);
 }
 
 export const emitJoinRoom = (userInfo: UserInfo): void => {

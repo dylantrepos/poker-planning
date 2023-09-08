@@ -1,5 +1,5 @@
 import type { UserInfo, UserMessage } from "@/types/UserType";
-import type { UserListSocket } from "./SocketType";
+import type { UserListSocket } from "../types/SocketType";
 import { state } from "./sockets";
 
 export const setConnectionToSocket = (connected: boolean = true): void => {

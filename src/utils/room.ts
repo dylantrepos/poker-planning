@@ -32,8 +32,9 @@ export const getUserList = async (roomId: string): Promise<UserList> => {
  * @returns List of messages
  */
 export const getAllMessages = async (roomId: string): Promise<UserMessage[]> => {
-    const getAllMessagesRequest = await fetch(`${import.meta.env.VITE_SERVER_ADDRESS}/conv/${roomId}`);
-    const getAllMessagesResponse: Awaited<UserMessage[]> = (await getAllMessagesRequest.json()).conv.map((e: any) => JSON.parse(e)); 
+    const getAllMessagesRequest = await fetch(`${import.meta.env.VITE_SERVER_ADDRESS}/messages/${roomId}`);
+    const getAllMessagesResponse: Awaited<UserMessage[]> = (await getAllMessagesRequest.json()).messages.map((e: any) => JSON.parse(e)); 
+
     const convOrdered = [...getAllMessagesResponse].sort((a, b) => a.order > b.order ? 1 : -1);
 
     return convOrdered;

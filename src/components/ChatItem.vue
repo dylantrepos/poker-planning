@@ -21,7 +21,7 @@
   import { onMounted, ref, watch } from 'vue';
   import { getCookie } from '../utils/utils';
   import { getAllMessages } from '../utils/room';
-  import { socket, state } from '@/sockets/sockets';
+  import { state } from '@/sockets/sockets';
 
   type Props = {
     roomId: string;
