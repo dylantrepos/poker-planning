@@ -1,7 +1,5 @@
 <template>
-  <div>
   <h5>List users : </h5>
-</div>
   <ul>
       <li v-for="user in usersInRoom" v-bind:key="user.userId">
           {{ user.username ?? 'error' }} : <i>{{ user.userId ?? 'error' }}</i>
@@ -11,7 +9,7 @@
 </template>
 
 <script setup lang="ts">
-import type { UsersInRoom } from '../types/UserType';
+import type { UserList } from '../types/UserType';
 import { getUserList } from '../utils/room';
 import { onMounted, ref, watch } from 'vue';
 import { state } from '@/sockets/sockets';
@@ -21,16 +19,23 @@ import { state } from '@/sockets/sockets';
   }
 
   const props = defineProps<Props>();
-  const usersInRoom = ref<UsersInRoom>([])
-
+  const usersInRoom = ref<UserList>([])
+ 
   watch(
-      () => state.rooms,
-      () => usersInRoom.value = state.rooms
+      () => state.rooms[props.roomId]?.userList,
+      () => { 
+        console.log('room : ', state.rooms);
+        usersInRoom.value = state.rooms[props.roomId].userList
+      }
     )
   
   onMounted(async () => {
-    const userList: UsersInRoom = await getUserList(props.roomId as string);
-    console.log('room id : ', userList);
+    const userList: UserList = await getUserList(props.roomId as string);
+    console.log('userlist first : ', userList);
+    state.rooms[props.roomId] = {
+      userList,
+      messages: []
+    }
     usersInRoom.value.push(...userList)
   })
 

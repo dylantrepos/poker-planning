@@ -35,7 +35,7 @@
   
       addCookie('poker-planning', JSON.stringify(userInfo))
   
-      router.push(`/game/${socket.id}`);
+      router.push(`/room/${socket.id}`);
     })
 
   }

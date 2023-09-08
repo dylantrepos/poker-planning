@@ -1,53 +1,32 @@
-import type { UserInfo, UserMessageEmit } from '@/types/UserType';
+import type { UserInfo, UserMessage, UserMessageEmit } from '@/types/UserType';
 import { io } from 'socket.io-client';
 import { reactive } from 'vue';
-
-type State = {
-  connected: boolean,
-  rooms: UserInfo[],
-}
+import type { State, UserListSocket } from './SocketType';
+import { getMessage, handleError, setConnectionToSocket, updateUserList } from './onFunctions';
 
 export const state = reactive<State>({
-    connected: false,
-    rooms: [],
-  });
+  connected: false,
+  rooms: {}
+});
 
 export const socket = io(import.meta.env.VITE_SERVER_ADDRESS, {
-    autoConnect: false
-  });
-
-
-/**
- * 
- * ON SOCKET
- * 
- */
-socket.on("connect", () => {
-    state.connected = true;
+  autoConnect: false
 });
 
-socket.on("disconnect", () => {
-    state.connected = false;
-});
-
-socket.on(`update-userList`, ( data: UserInfo[] ) => {
-  state.rooms = [...new Map(data.map((v: UserInfo) => [v.userId, v])).values()]
-})
-
-socket.on("connect_error", (err) => {
-  console.log(`connect_error due to ${err.message}`);
-});
-
-
-/**
- * 
- * EMIT SOCKET
- * 
- */
-export const emitMessage = (userInfo: UserMessageEmit): void => {  
-  socket.emit('chat-message', userInfo);
+// Methods
+export const connectToSocket = () => {
+  socket.connect();
 }
 
-export const emitJoinRoom = (userInfo: UserInfo): void => {
-   socket.emit('join-room', userInfo);
-}
+
+
+// On events
+socket.on("connect", () => setConnectionToSocket());
+
+socket.on("disconnect", () => setConnectionToSocket(false));
+
+socket.on(`update-userList`, ( data: UserListSocket ) => updateUserList(data));
+
+socket.on(`message`, ( data: UserMessage ) => getMessage(data));  
+
+socket.on("connect_error", (err: Error) => handleError(err));

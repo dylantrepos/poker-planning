@@ -1,4 +1,4 @@
-import type { UserMessage, UsersInRoom } from "@/types/UserType";
+import type { UserMessage, UserList } from "@/types/UserType";
 import { getCookie } from "./utils";
 
 /**
@@ -7,14 +7,14 @@ import { getCookie } from "./utils";
  * @param roomId 
  * @returns List of users
  */
-export const getUserList = async (roomId: string): Promise<UsersInRoom> => {
+export const getUserList = async (roomId: string): Promise<UserList> => {
     const listUserRequest = await fetch(`${import.meta.env.VITE_SERVER_ADDRESS}/user-list/${roomId}`);
-    const listUserResponse: Awaited<Promise<UsersInRoom>> = (await listUserRequest.json()).list;
+    const listUserResponse: Awaited<Promise<UserList>> = (await listUserRequest.json()).list;
 
      const cookieData = getCookie();
         
     if (roomId === cookieData.roomId) {
-        const listUser: UsersInRoom = [...new Map([
+        const listUser: UserList = [...new Map([
             { userId: cookieData.userId, username: cookieData.username }, 
             ...listUserResponse
         ].map((v: any) => [v.userId, v])).values()];

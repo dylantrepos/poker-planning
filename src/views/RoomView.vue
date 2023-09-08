@@ -16,22 +16,7 @@
                         Test socket
                     </button>
                 </form>
-    
-                <div 
-                    style="margin-top: 5px; padding-top: 5px; border-top: 1px solid red;"
-                      v-for="msg in messageElts" 
-                      v-bind:key="msg.username"
-                >
-                      <b 
-                        style="color: blue;"
-                        :style="{
-                            'color': msg.userId === userInfo?.userId ? 'red' : 'blue'
-                        }"
-                    >
-                        {{ msg.username }}:
-                    </b> 
-                {{ msg.message }}
-                </div>
+                <ChatItem :room-id="roomId"/>
             </div>
             
             <div v-else>
@@ -54,16 +39,17 @@
   import JoinRoomItem from "@/components/JoinRoomItem.vue";
   import RoomErrorItem from "@/components/RoomErrorItem.vue"
   import UserListItem from "@/components/UserListItem.vue";
+  import ChatItem from '@/components/ChatItem.vue'
   
-  import { socket, emitMessage, emitJoinRoom } from "@/sockets/sockets";
+  import { emitMessage, emitJoinRoom } from "@/sockets/emitsFunctions";
   import { getCookie } from "@/utils/utils";
-  import { getAllMessages, checkRoomExists } from '@/utils/room';
-  import type { UserMessage, UserInfo } from '@/types/UserType';
+  import { checkRoomExists } from '@/utils/room';
+  import type { UserInfo } from '@/types/UserType';
+  import { state } from '../sockets/sockets';
+  import { connectToSocket } from "@/sockets/sockets";
   
   
   // Variables
-
-  const messageElts = ref<UserMessage[]>([]);
   const messageInput = ref('');
   const doesRoomExists = ref(false);
   const isLoggedIn = ref(false);
@@ -81,13 +67,9 @@
     const cookieData = getCookie();
     
     if (roomExists && cookieData.roomId === roomId) {
-        socket.connect();
-        
-        emitJoinRoom(cookieData);
-        getMessages();
+        if (!state.connected) connectToSocket();
 
-        userInfo.value = cookieData;
-        isLoggedIn.value = true; 
+        handleJoinRoom(cookieData);
     }
 
     doesRoomExists.value = roomExists;
@@ -96,16 +78,8 @@
   
 
   // Methods
-
-  const getMessages = async (): Promise<void> => {
-    messageElts.value = await getAllMessages(roomId);
-  }
-
   const handleJoinRoom = async (userInfoData: UserInfo) => {
-      socket.connect();
-
       emitJoinRoom(userInfoData);
-      getMessages();
 
       userInfo.value = userInfoData;
       isLoggedIn.value = true;
@@ -124,13 +98,5 @@
 
         messageInput.value = '';
     }
-
-  }
-
-
-  // Sockets Events
-  socket.on(`message`, ( message: UserMessage ) => {
-      messageElts.value.push(message);
-  })   
-
-</script>
+  } 
+</script>@/sockets/emitsEventsMethods

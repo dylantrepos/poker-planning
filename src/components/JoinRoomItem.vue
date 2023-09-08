@@ -11,8 +11,9 @@
   import { v4 as uuidv4 } from 'uuid';
 
   import { addCookie } from '../utils/utils';
-  import { emitJoinRoom } from '../sockets/sockets';
   import type { UserInfo } from '../types/UserType';
+  import { connectToSocket } from '@/sockets/sockets';
+
 
   type Props = {
     roomId: string,
@@ -40,8 +41,8 @@
     
     addCookie('poker-planning', JSON.stringify(userInfo));
     
+    connectToSocket();
+    
     emit('submitJoinRoom', userInfo);
-
-    // emitJoinRoom(userInfo);
   }
 </script>

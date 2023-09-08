@@ -9,6 +9,9 @@ export type UserMessage = UserInfo & {
     order: string;
 }
 
-export type UserMessageEmit = Omit<UserMessage, 'order'>
+export type UserList = {
+  userId: string;
+  username: string;
+}[]
 
-export type UsersInRoom = Omit<UserInfo, 'roomId'>[];
+export type UserMessageEmit = Omit<UserMessage, 'order'>
