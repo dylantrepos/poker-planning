@@ -1,7 +1,7 @@
 import { io } from 'socket.io-client';
 import { reactive } from 'vue';
 
-import { getMessage, handleError, setConnectionToSocket, updateUserList } from './onFunctions';
+import { getMessage, handleError, setConnectionToSocket, updateUserList, updateVote } from './onFunctions';
 
 import type { UserMessage } from '@/types/UserType';
 import type { State, UserListSocket } from '../types/SocketType';
@@ -12,6 +12,7 @@ const state = reactive<State>({
   roomId: '',
   username: '',
   role: 'user',
+  vote: '',
   rooms: {}
 });
 
@@ -32,6 +33,8 @@ socket.on("disconnect", () => setConnectionToSocket(false));
 socket.on(`update-userList`, ( data: UserListSocket ) => updateUserList(data));
 
 socket.on(`message`, ( data: UserMessage ) => getMessage(data));  
+
+socket.on('vote', ( data: UserListSocket ) => updateVote(data));
 
 socket.on("connect_error", (err: Error) => handleError(err));
 

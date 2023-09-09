@@ -4,7 +4,7 @@
       <li 
         v-for="user in state.rooms[state.roomId]?.userList" v-bind:key="user.userId">
           {{ user.username ?? 'error' }} : 
-          <i>{{ user.userId ?? 'error' }} ({{  user.role }} {{ user?.role === 'lead' ?  '👑' : ''}})</i>
+          <i>{{ user.userId ?? 'error' }} ({{  user.role }} {{ user?.role === 'lead' ?  '👑' : ''}})</i> | Vote {{ user.vote ?? 'null' }}
       </li>
   </ul>
 
@@ -18,7 +18,6 @@
   
   onMounted(async () => {
     const userList: UserList = await getUserList(state.roomId as string);
-    
     state.rooms[state.roomId] = {
       userList,
       messages: []

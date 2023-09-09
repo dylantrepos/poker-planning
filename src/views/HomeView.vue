@@ -30,13 +30,15 @@ import { emitJoinRoom } from '../sockets/emitsFunctions';
         roomId: socket.id,
         userId: myuuid,
         username: usernameInput.value,
-        role: 'lead'
+        role: 'lead',
+        vote: ''
       };
       
       state.userId = userInfo.userId;
       state.roomId = userInfo.roomId;
       state.username = userInfo.username;
       state.role = userInfo.role;
+      state.vote = userInfo.vote ?? '';
       
       emitJoinRoom(userInfo);
   

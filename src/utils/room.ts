@@ -19,7 +19,7 @@ export const getUserList = async (roomId: string): Promise<UserList> => {
     
     if (roomId === cookieData.roomId) {
        const listUser: UserList = [...new Map([
-         { userId: cookieData.userId, username: cookieData.username, role: 'user' }, 
+         { userId: cookieData.userId, username: cookieData.username, role: 'user', vote: cookieData.vote }, 
          ...listUserResponse
         ].map((v: any) => [v.userId, v])).values()];
 

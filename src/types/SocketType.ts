@@ -20,5 +20,6 @@ export type State = {
   roomId: string;
   username: string;
   role: Role;
+  vote: string;
   rooms: Room;
 }

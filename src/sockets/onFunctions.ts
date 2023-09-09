@@ -36,6 +36,12 @@ export const getMessage = ( data: UserMessage ): void => {
   state.rooms[data.roomId].messages.push(data);
 };
 
+export const updateVote = (data: UserListSocket) => {
+  state.rooms[data.roomId].userList = [...new Map((data.userList)
+    .map((v: UserInfo) => [v.userId, v]))
+    .values()];
+}
+
 export const handleError = (err: Error) => {
   console.error(`connect_error due to ${err.message}`);
 }

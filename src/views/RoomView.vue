@@ -37,6 +37,7 @@
 
   import type { UserInfo } from '@/types/UserType';
   import MessageItem from "@/components/game/MessageItem.vue";
+import { emitVote } from '../sockets/emitsFunctions';
 
   
   
@@ -63,12 +64,13 @@
     
     if (roomExists && cookieData.roomId === roomId) {
         if (state.connected) {
-          const {userId, roomId, username, role} = state
+          const {userId, roomId, username, role, vote} = state
           userInfo.value = {
             userId,
             roomId,
             username,
             role,
+            vote,
           }
 
           isLoggedIn.value = true;
@@ -84,13 +86,15 @@
 
   // Methods
   const handleJoinRoom = async (userInfoData: UserInfo) => {
-      const {userId, roomId, username} = userInfoData;
+      const {userId, roomId, username, vote} = userInfoData;
 
       emitJoinRoom(userInfoData);
+      emitVote(vote);
 
       state.userId = userId;
       state.roomId = roomId;
       state.username = username;
+      state.vote = vote;
 
       userInfo.value = userInfoData;
 

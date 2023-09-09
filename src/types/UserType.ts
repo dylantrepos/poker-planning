@@ -5,17 +5,19 @@ export type UserInfo = {
     userId: string;
     username: string;
     role: Role;
-}
-
-export type UserMessage = UserInfo & {
+    vote: string;
+  }
+  
+  export type UserMessage = UserInfo & {
     message: string;
     order: string;
-}
-
-export type UserList = {
-  userId: string;
-  username: string;
-  role: Role;
+  }
+  
+  export type UserList = {
+    userId: string;
+    username: string;
+    role: Role;
+    vote: string;
 }[]
 
 export type UserMessageEmit = Omit<UserMessage, 'order'>

@@ -37,7 +37,8 @@
       roomId: props.roomId,
       userId,
       role: 'user',
-      username: usernameInput.value
+      username: usernameInput.value,
+      vote: '',
     };
     
     addCookie('poker-planning', JSON.stringify(userInfo));

@@ -9,3 +9,7 @@ export const emitMessage = (userInfo: UserMessageEmit): void => {
 export const emitJoinRoom = (userInfo: UserInfo): void => {
    socket.emit('join-room', userInfo);
 }
+
+export const emitVote = (vote: string): void => {
+  socket.emit('update-vote', vote);
+}
