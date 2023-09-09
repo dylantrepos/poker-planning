@@ -8,12 +8,28 @@ export const setConnectionToSocket = (connected: boolean = true): void => {
 
 export const updateUserList = (data: UserListSocket): void => {
   const usersList = [...new Map((data.userList)
-    .map((v: UserInfo) => [v.userId, v]))
-    .values()];
+      .map((v: UserInfo) => [v.userId, v]))
+      .values()];
 
-    console.log('update user list');
+  const newUserList: UserInfo[] = [];
+
+  data.userList.map(user => {
+      const exists = newUserList.findIndex(u => u.userId === user.userId);
+      if (exists === -1) {
+        newUserList.push(user);
+      } else {
+        if (user.role === 'lead') {
+          newUserList.splice(exists, 1)
+        }
+      }
+  })
+
+  const userLead = data.userList.find(user => user.role === 'lead');
+
+  state.rooms[data.roomId]?.userList.find(user => user.userId === state.userId)?.role;
+  
   state.rooms[data.roomId].userList = usersList;
-  state.role = state.rooms[data.roomId]?.userList.find(user => user.userId === state.userId)?.role ?? 'user';
+  state.role = userLead?.userId === state.userId ? 'lead' : 'user';
 }
 
 export const getMessage = ( data: UserMessage ): void => {

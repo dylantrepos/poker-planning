@@ -14,8 +14,10 @@ export const getUserList = async (roomId: string): Promise<UserList> => {
 
      const cookieData = getCookie();
 
-     
-     if (roomId === cookieData.roomId) {
+    //  const exists = 
+
+    
+    if (roomId === cookieData.roomId) {
        const listUser: UserList = [...new Map([
          { userId: cookieData.userId, username: cookieData.username, role: 'user' }, 
          ...listUserResponse

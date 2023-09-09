@@ -2,32 +2,32 @@
     <main>
         <div> Game view </div>
         <LoadingItem :loading="loading">
-            <CheckRoomItemVue 
+            <CheckRoomItem 
               :room-id="roomId" 
               :is-logged-in="isLoggedIn"
               @submit-join-room="handleJoinRoom" 
             >
-              <h3>Name : {{ state.username }} {{ state.role === 'lead' ?  '👑' : ''}}</h3>
+              <h3>Name : {{ state.username }}  {{ state.role === 'lead' ?  ' 👑' : ''}}</h3>
   
               <UserListItem />
               <MessageItem />
-              <VoteItemVue />
+              <VoteItem />
               <ChatItem />
 
-              </CheckRoomItemVue>
+              </CheckRoomItem>
         </LoadingItem>
     </main>
 </template>
 
 <script setup lang="ts">
-  import { onBeforeMount, ref } from "vue";
-  import { useRoute } from "vue-router";
+  import { onBeforeMount, ref, watch } from "vue";
+  import { useRoute } from "vue-router";``
   
   import UserListItem from "@/components/game/UserListItem.vue";
   import ChatItem from '@/components/game/ChatItem.vue'
   import LoadingItem from "@/components/general/LoadingItem.vue";
-  import CheckRoomItemVue from "@/components/room/CheckRoomItem.vue";
-  import VoteItemVue from "@/components/game/VoteItem.vue";
+  import CheckRoomItem from "@/components/room/CheckRoomItem.vue";
+  import VoteItem from "@/components/game/VoteItem.vue";
   
   import { emitJoinRoom } from "@/sockets/emitsFunctions";
   import { getCookie } from "@/utils/utils";
@@ -36,7 +36,7 @@
   import { connectToSocket } from "@/sockets/sockets";
 
   import type { UserInfo } from '@/types/UserType';
-import MessageItem from "@/components/game/MessageItem.vue";
+  import MessageItem from "@/components/game/MessageItem.vue";
 
   
   
@@ -47,6 +47,14 @@ import MessageItem from "@/components/game/MessageItem.vue";
 
   const route = useRoute();
   const roomId = route.params.id as string;
+
+  watch(
+    () => state.rooms[state.roomId]?.userList,
+    () => {
+      const user = state.rooms[state.roomId].userList.find(user => user.userId === state.userId);
+      state.role = user?.role ?? 'user';
+    }
+  )
 
   // Life cycle
   onBeforeMount( async () => {
@@ -66,7 +74,7 @@ import MessageItem from "@/components/game/MessageItem.vue";
           isLoggedIn.value = true;
         } else {
           connectToSocket();
-          handleJoinRoom({...cookieData, role: 'user'});
+          handleJoinRoom(cookieData);
         }
     }
 
@@ -76,14 +84,13 @@ import MessageItem from "@/components/game/MessageItem.vue";
 
   // Methods
   const handleJoinRoom = async (userInfoData: UserInfo) => {
-      const {userId, roomId, role, username} = userInfoData;
+      const {userId, roomId, username} = userInfoData;
 
       emitJoinRoom(userInfoData);
 
       state.userId = userId;
       state.roomId = roomId;
       state.username = username;
-      state.role = role;
 
       userInfo.value = userInfoData;
 

@@ -30,15 +30,16 @@
     () => {
       messageElts.value = state.rooms[state.roomId]?.messages;
     }
-  )
-
-  onMounted(async () => {
-    const messages = await getAllMessages(state.roomId);
-
-    if (state.rooms[state.roomId]) {
-      state.rooms[state.roomId].messages = messages;
-    }
-    messageElts.value = messages;
+    )
+    
+    onMounted(async () => {
+      const messages = await getAllMessages(state.roomId);
+      
+      setTimeout(() => {
+        if (state.rooms[state.roomId]) {
+          state.rooms[state.roomId].messages = messages;
+        }
+      }, 50)
     
   })
 </script>
