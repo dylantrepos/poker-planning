@@ -11,6 +11,7 @@ export const updateUserList = (data: UserListSocket): void => {
     .map((v: UserInfo) => [v.userId, v]))
     .values()];
 
+    console.log('update user list');
   state.rooms[data.roomId].userList = usersList;
   state.role = state.rooms[data.roomId]?.userList.find(user => user.userId === state.userId)?.role ?? 'user';
 }

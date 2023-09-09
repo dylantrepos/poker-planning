@@ -18,6 +18,7 @@ export type State = {
   connected: boolean;
   userId: string;
   roomId: string;
+  username: string;
   role: Role;
   rooms: Room;
 }

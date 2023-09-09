@@ -1,10 +1,10 @@
 <template>
-   <div v-if="doesRoomExists">
-        <JoinRoomItem @submit-join-room="onSubmitJoinRoom" :room-id="roomId"/>
+    <div v-if="isLoggedIn">
+      <slot></slot>
     </div>
-    <div v-else>
-        <RoomErrorItem />
-    </div>
+    <RoomErrorItem v-else :does-room-exists="doesRoomExists" >
+      <JoinRoomItem @submit-join-room="onSubmitJoinRoom" :room-id="roomId"/>
+    </RoomErrorItem>
 </template>
 
 <script setup lang="ts">
@@ -16,6 +16,7 @@ import type { UserInfo } from '@/types/UserType';
 
 type Props = {
   roomId: string;
+  isLoggedIn: boolean;
 }
 
 const props = defineProps<Props>();

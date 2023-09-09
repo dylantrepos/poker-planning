@@ -10,6 +10,7 @@ const state = reactive<State>({
   connected: false,
   userId: '',
   roomId: '',
+  username: '',
   role: 'user',
   rooms: {}
 });

@@ -21,9 +21,6 @@ export const getUserList = async (roomId: string): Promise<UserList> => {
          ...listUserResponse
         ].map((v: any) => [v.userId, v])).values()];
 
-        console.log('list : ', listUser);
-        state.role = state.connected ? 'lead' : 'user';
-        
         return listUser;
     }
 
