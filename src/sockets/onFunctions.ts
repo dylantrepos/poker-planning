@@ -1,15 +1,14 @@
 import type { UserInfo, UserMessage } from "@/types/UserType";
 import type { UserListSocket } from "../types/SocketType";
 import { state } from "./sockets";
+import { getUserList } from "@/utils/room";
 
 export const setConnectionToSocket = (connected: boolean = true): void => {
   state.connected = connected;
 }
 
 export const updateUserList = (data: UserListSocket): void => {
-  const usersList = [...new Map((data.userList)
-      .map((v: UserInfo) => [v.userId, v]))
-      .values()];
+  const usersList = data.userList
 
   const newUserList: UserInfo[] = [];
 
@@ -33,13 +32,17 @@ export const updateUserList = (data: UserListSocket): void => {
 }
 
 export const getMessage = ( data: UserMessage ): void => {
-  state.rooms[data.roomId].messages.push(data);
+  if (state.rooms[state.roomId].messages) {
+    state.rooms[state.roomId].messages.push(data);
+  }
+
 };
 
-export const updateVote = (data: UserListSocket) => {
-  state.rooms[data.roomId].userList = [...new Map((data.userList)
-    .map((v: UserInfo) => [v.userId, v]))
-    .values()];
+export const updateVote = async (data: UserListSocket) => {
+  state.rooms[data.roomId].userList = data.userList;
+  await getUserList();
+
+  state.rooms[data.roomId].userList = data.userList;
 }
 
 export const handleError = (err: Error) => {

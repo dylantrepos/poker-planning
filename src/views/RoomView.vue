@@ -3,7 +3,6 @@
         <div> Game view </div>
         <LoadingItem :loading="loading">
             <CheckRoomItem 
-              :room-id="roomId" 
               :is-logged-in="isLoggedIn"
               @submit-join-room="handleJoinRoom" 
             >
@@ -37,17 +36,15 @@
 
   import type { UserInfo } from '@/types/UserType';
   import MessageItem from "@/components/game/MessageItem.vue";
-import { emitVote } from '../sockets/emitsFunctions';
 
   
   
   // Variables
   const isLoggedIn = ref(false);
   const loading = ref(true);
-  const userInfo = ref<UserInfo>();
 
   const route = useRoute();
-  const roomId = route.params.id as string;
+  state.roomId = route.params.id as string;
 
   watch(
     () => state.rooms[state.roomId]?.userList,
@@ -59,45 +56,26 @@ import { emitVote } from '../sockets/emitsFunctions';
 
   // Life cycle
   onBeforeMount( async () => {
-    const roomExists = await checkRoomExists(roomId);
+    const roomExists = await checkRoomExists();
     const cookieData = getCookie();
     
-    if (roomExists && cookieData.roomId === roomId) {
+    if (roomExists && cookieData.roomId === state.roomId) {
         if (state.connected) {
-          const {userId, roomId, username, role, vote} = state
-          userInfo.value = {
-            userId,
-            roomId,
-            username,
-            role,
-            vote,
-          }
-
           isLoggedIn.value = true;
         } else {
           connectToSocket();
           handleJoinRoom(cookieData);
         }
-    }
-
-    loading.value = false;
-  })
-  
-
-  // Methods
-  const handleJoinRoom = async (userInfoData: UserInfo) => {
-      const {userId, roomId, username, vote} = userInfoData;
-
-      emitJoinRoom(userInfoData);
-      emitVote(vote);
-
-      state.userId = userId;
-      state.roomId = roomId;
-      state.username = username;
-      state.vote = vote;
-
-      userInfo.value = userInfoData;
+      }
+      
+      loading.value = false;
+    })
+    
+    
+    // Methods
+    const handleJoinRoom = async (userInfoData: UserInfo) => {
+      await emitJoinRoom(userInfoData);
 
       isLoggedIn.value = true;
-  };
+    };
 </script>

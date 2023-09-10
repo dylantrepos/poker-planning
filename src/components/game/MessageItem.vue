@@ -10,23 +10,13 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { emitMessage } from '../../sockets/emitsFunctions';
-import { state } from '@/sockets/sockets';
 
   const messageInput = ref('');
 
   const handlePostMessage = (): void => {
     if (messageInput.value.length === 0) return;
 
-    const {roomId, userId, username, role, vote} = state; 
-
-    emitMessage({
-        roomId, 
-        userId, 
-        username,
-        role,
-        vote,
-        message: messageInput.value as string
-    })
+    emitMessage(messageInput.value);
 
     messageInput.value = '';
   } 

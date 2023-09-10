@@ -11,7 +11,7 @@
 <script setup lang="ts">
   import { ref } from "vue";
   import { useRouter } from "vue-router";
-  import { socket, state } from "@/sockets/sockets";
+  import { socket } from "@/sockets/sockets";
   import { addCookie } from "@/utils/utils";
   import { v4 as uuidv4 } from 'uuid';
   import type { UserInfo } from "@/types/UserType";
@@ -25,7 +25,7 @@ import { emitJoinRoom } from '../sockets/emitsFunctions';
   const redirectToGame = (): void => {
     socket.connect();
 
-    socket.on('connect', () => {
+    socket.on('connect', async () => {
       const userInfo: UserInfo = {
         roomId: socket.id,
         userId: myuuid,
@@ -33,14 +33,8 @@ import { emitJoinRoom } from '../sockets/emitsFunctions';
         role: 'lead',
         vote: ''
       };
-      
-      state.userId = userInfo.userId;
-      state.roomId = userInfo.roomId;
-      state.username = userInfo.username;
-      state.role = userInfo.role;
-      state.vote = userInfo.vote ?? '';
-      
-      emitJoinRoom(userInfo);
+
+      await emitJoinRoom(userInfo);
   
       addCookie('poker-planning', JSON.stringify(userInfo))
   

@@ -1,9 +1,9 @@
 <template>
-    <div v-if="isLoggedIn">
+    <div v-if="props.isLoggedIn">
       <slot></slot>
     </div>
     <RoomErrorItem v-else :does-room-exists="doesRoomExists" >
-      <JoinRoomItem @submit-join-room="onSubmitJoinRoom" :room-id="roomId"/>
+      <JoinRoomItem @submit-join-room="onSubmitJoinRoom" />
     </RoomErrorItem>
 </template>
 
@@ -15,7 +15,6 @@ import { checkRoomExists } from '@/utils/room';
 import type { UserInfo } from '@/types/UserType';
 
 type Props = {
-  roomId: string;
   isLoggedIn: boolean;
 }
 
@@ -28,7 +27,7 @@ const emit = defineEmits<{
   }>()
 
 onBeforeMount( async () => {
-    const roomExists = await checkRoomExists(props.roomId);
+    const roomExists = await checkRoomExists();
 
     doesRoomExists.value = roomExists;
   })

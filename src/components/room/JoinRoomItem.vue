@@ -12,14 +12,8 @@
 
   import { addCookie } from '@/utils/utils';
   import type { UserInfo } from '@/types/UserType';
-  import { connectToSocket } from '@/sockets/sockets';
+  import { connectToSocket, state } from '@/sockets/sockets';
 
-
-  type Props = {
-    roomId: string,
-  }
-
-  const props = defineProps<Props>();
 
   const usernameInput = ref('');
 
@@ -34,7 +28,7 @@
     const userId = uuidv4();
     
     const userInfo: UserInfo = {
-      roomId: props.roomId,
+      roomId: state.roomId,
       userId,
       role: 'user',
       username: usernameInput.value,

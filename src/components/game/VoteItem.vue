@@ -17,7 +17,7 @@ import { getPokerPossibilities, getCookie, addCookie } from '../../utils/utils';
   import { emitVote } from '../../sockets/emitsFunctions';
   import { ref, watch } from 'vue';
 
-  const vote = ref('')
+  const vote = ref('');
 
   watch(
     () => state.rooms[state.roomId]?.userList,
@@ -32,7 +32,10 @@ import { getPokerPossibilities, getCookie, addCookie } from '../../utils/utils';
   const handleVote = (vote: string): void => {
     const cookieData = getCookie();
     
+    state.vote = vote;
+
     emitVote(vote);
+
     addCookie('poker-planning', JSON.stringify({...cookieData, vote}));
   }
 </script>

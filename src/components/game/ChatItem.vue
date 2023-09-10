@@ -1,7 +1,7 @@
 <template>
   <div 
     style="margin-top: 5px; padding-top: 5px; border-top: 1px solid red;"
-      v-for="msg in messageElts" 
+      v-for="msg in state.rooms[state.roomId]?.messages" 
       v-bind:key="msg.username"
 >
       <b 
@@ -17,29 +17,5 @@
 </template>
 
 <script setup lang="ts">
-  import { onMounted, ref, watch } from 'vue';
-  
-  import type { UserMessage } from '@/types/UserType';
-  import { getAllMessages } from '@/utils/room';
   import { state } from '@/sockets/sockets';
-
-  const messageElts = ref<UserMessage[]>([]);
-
-  watch(
-    () => state.rooms[state.roomId]?.messages,
-    () => {
-      messageElts.value = state.rooms[state.roomId]?.messages;
-    }
-    )
-    
-    onMounted(async () => {
-      const messages = await getAllMessages(state.roomId);
-      
-      setTimeout(() => {
-        if (state.rooms[state.roomId]) {
-          state.rooms[state.roomId].messages = messages;
-        }
-      }, 50)
-    
-  })
 </script>

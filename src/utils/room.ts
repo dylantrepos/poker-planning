@@ -1,5 +1,4 @@
 import type { UserMessage, UserList } from "@/types/UserType";
-import { getCookie } from "./utils";
 import { state } from "@/sockets/sockets";
 
 /**
@@ -8,26 +7,13 @@ import { state } from "@/sockets/sockets";
  * @param roomId 
  * @returns List of users
  */
-export const getUserList = async (roomId: string): Promise<UserList> => {
-    const listUserRequest = await fetch(`${import.meta.env.VITE_SERVER_ADDRESS}/user-list/${roomId}`);
+export const getUserList = async (): Promise<void> => {
+  console.log('listUserRequestst test : ', state.roomId);
+    const listUserRequest = await fetch(`${import.meta.env.VITE_SERVER_ADDRESS}/user-list/${state.roomId}`);
     const listUserResponse: Awaited<Promise<UserList>> = (await listUserRequest.json()).list;
 
-     const cookieData = getCookie();
-
-    //  const exists = 
-
-    
-    if (roomId === cookieData.roomId) {
-       const listUser: UserList = [...new Map([
-         { userId: cookieData.userId, username: cookieData.username, role: 'user', vote: cookieData.vote }, 
-         ...listUserResponse
-        ].map((v: any) => [v.userId, v])).values()];
-
-        return listUser;
-    }
-
-    return [];
-}
+    state.rooms[state.roomId].userList = listUserResponse
+  }
 
 /**
  * Retreive all messages from room `roomId`
@@ -35,17 +21,14 @@ export const getUserList = async (roomId: string): Promise<UserList> => {
  * @param roomId 
  * @returns List of messages
  */
-export const getAllMessages = async (roomId: string): Promise<UserMessage[]> => {
-    const getAllMessagesRequest = await fetch(`${import.meta.env.VITE_SERVER_ADDRESS}/messages/${roomId}`);
-    const getAllMessagesResponse: Awaited<UserMessage[]> = (await getAllMessagesRequest.json()).messages.map((e: any) => JSON.parse(e)); 
+export const getAllMessages = async (): Promise<void> => {
+    const getAllMessagesRequest = await fetch(`${import.meta.env.VITE_SERVER_ADDRESS}/messages/${state.roomId}`);
 
-    const convOrdered = [...getAllMessagesResponse].sort((a, b) => a.order > b.order ? 1 : -1);
-
-    return convOrdered;
+    state.rooms[state.roomId].messages = (await getAllMessagesRequest.json()).messages;
 }
 
-export const checkRoomExists = async (roomId: string): Promise<boolean> => {
-    const roomExistsRequest = await fetch(`${import.meta.env.VITE_SERVER_ADDRESS}/check/${roomId}`);
+export const checkRoomExists = async (): Promise<boolean> => {
+    const roomExistsRequest = await fetch(`${import.meta.env.VITE_SERVER_ADDRESS}/check/${state.roomId}`);
     const roomExistsResponse = await roomExistsRequest.json();
     
     return roomExistsResponse.exist;

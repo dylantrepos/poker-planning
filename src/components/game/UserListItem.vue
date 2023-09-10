@@ -11,17 +11,6 @@
 </template>
 
 <script setup lang="ts">
-  import type { UserList } from '@/types/UserType';
-  import { getUserList } from '@/utils/room';
-  import { onMounted } from 'vue';
   import { state } from '@/sockets/sockets';
-  
-  onMounted(async () => {
-    const userList: UserList = await getUserList(state.roomId as string);
-    state.rooms[state.roomId] = {
-      userList,
-      messages: []
-    }
-  })
 
 </script>
