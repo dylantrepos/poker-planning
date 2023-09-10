@@ -11,34 +11,32 @@
   import { v4 as uuidv4 } from 'uuid';
 
   import { addCookie } from '@/utils/utils';
-  import type { UserInfo } from '@/types/UserType';
-  import { connectToSocket, state } from '@/sockets/sockets';
+  import { state } from '@/sockets/sockets';
+  import { emitJoinRoom } from '../../sockets/emitsFunctions';
 
 
   const usernameInput = ref('');
 
-  const emit = defineEmits<{
-    (e: 'submitJoinRoom', userData: UserInfo): void
-  }>()
-
   // Methods 
-  const handleJoinRoom = (): void => {
+  const handleJoinRoom = async (): Promise<void> => {
     if (usernameInput.value.length === 0) return;
 
     const userId = uuidv4();
     
-    const userInfo: UserInfo = {
+    const userInfo = {
       roomId: state.roomId,
       userId,
-      role: 'user',
       username: usernameInput.value,
       vote: '',
+      connected: true,
     };
     
     addCookie('poker-planning', JSON.stringify(userInfo));
+    addCookie('poker-planning2', userId);
     
-    connectToSocket();
+    await emitJoinRoom(userInfo);
+
+    state.connected = true
     
-    emit('submitJoinRoom', userInfo);
   }
 </script>

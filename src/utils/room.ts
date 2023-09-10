@@ -1,5 +1,7 @@
-import type { UserMessage, UserList } from "@/types/UserType";
+import type { UserList } from "@/types/UserType";
 import { state } from "@/sockets/sockets";
+import { getCookieString } from "./utils";
+import { emitJoinRoom } from "@/sockets/emitsFunctions";
 
 /**
  * Retreive list of current user in room `roomId`.
@@ -8,12 +10,11 @@ import { state } from "@/sockets/sockets";
  * @returns List of users
  */
 export const getUserList = async (): Promise<void> => {
-  console.log('listUserRequestst test : ', state.roomId);
-    const listUserRequest = await fetch(`${import.meta.env.VITE_SERVER_ADDRESS}/user-list/${state.roomId}`);
-    const listUserResponse: Awaited<Promise<UserList>> = (await listUserRequest.json()).list;
+  const listUserRequest = await fetch(`${import.meta.env.VITE_SERVER_ADDRESS}/user-list/${state.roomId}`);
+  const listUserResponse: Awaited<Promise<UserList>> = (await listUserRequest.json()).list;
 
-    state.rooms[state.roomId].userList = listUserResponse
-  }
+  state.rooms[state.roomId].userList = listUserResponse
+}
 
 /**
  * Retreive all messages from room `roomId`
@@ -22,14 +23,34 @@ export const getUserList = async (): Promise<void> => {
  * @returns List of messages
  */
 export const getAllMessages = async (): Promise<void> => {
-    const getAllMessagesRequest = await fetch(`${import.meta.env.VITE_SERVER_ADDRESS}/messages/${state.roomId}`);
+  const getAllMessagesRequest = await fetch(`${import.meta.env.VITE_SERVER_ADDRESS}/messages/${state.roomId}`);
+  const getAllMessagesResponse = await getAllMessagesRequest.json();
 
-    state.rooms[state.roomId].messages = (await getAllMessagesRequest.json()).messages;
+  state.rooms[state.roomId].messages = getAllMessagesResponse;
 }
 
-export const checkRoomExists = async (): Promise<boolean> => {
-    const roomExistsRequest = await fetch(`${import.meta.env.VITE_SERVER_ADDRESS}/check/${state.roomId}`);
-    const roomExistsResponse = await roomExistsRequest.json();
+export const getAllVotes = async (): Promise<void> => {
+  const getAllvotesRequest = await fetch(`${import.meta.env.VITE_SERVER_ADDRESS}/votes/${state.roomId}`);
+  const getAllVoteResponse = await getAllvotesRequest.json();
+
+  state.rooms[state.roomId].votes = getAllVoteResponse;
+}
+
+export const checkRoomExists = async (): Promise<void> => {
+  const roomExistsRequest = await fetch(`${import.meta.env.VITE_SERVER_ADDRESS}/check-room/${state.roomId}`);
+  const roomExistsResponse = await roomExistsRequest.json();
+  
+  state.roomExists = roomExistsResponse.exist;
+}
+
+export const checkUserExists = async (): Promise<void> => {
+  const userIdFromCookie = getCookieString('poker-planning2') || '';
+  
+  const userExistsRequest = await fetch(
+    `${import.meta.env.VITE_SERVER_ADDRESS}/check-user/${state.roomId}/${userIdFromCookie}`);
+    const userExistsResponse = await userExistsRequest.json();
     
-    return roomExistsResponse.exist;
+    if (userExistsResponse.userId.length > 0) {
+      await emitJoinRoom(userExistsResponse);
+    }
 }

@@ -2,10 +2,7 @@
     <main>
         <div> Game view </div>
         <LoadingItem :loading="loading">
-            <CheckRoomItem 
-              :is-logged-in="isLoggedIn"
-              @submit-join-room="handleJoinRoom" 
-            >
+            <CheckRoomItem>
               <h3>Name : {{ state.username }}  {{ state.role === 'lead' ?  ' 👑' : ''}}</h3>
   
               <UserListItem />
@@ -27,16 +24,12 @@
   import LoadingItem from "@/components/general/LoadingItem.vue";
   import CheckRoomItem from "@/components/room/CheckRoomItem.vue";
   import VoteItem from "@/components/game/VoteItem.vue";
+  import MessageItem from "@/components/game/MessageItem.vue";
   
-  import { emitJoinRoom } from "@/sockets/emitsFunctions";
   import { getCookie } from "@/utils/utils";
   import { checkRoomExists } from '@/utils/room';
-  import { state } from '../sockets/sockets';
-  import { connectToSocket } from "@/sockets/sockets";
-
-  import type { UserInfo } from '@/types/UserType';
-  import MessageItem from "@/components/game/MessageItem.vue";
-
+  import { state, connectToSocket } from "@/sockets/sockets";;
+  import { checkUserExists } from '../utils/room';
   
   
   // Variables
@@ -56,26 +49,13 @@
 
   // Life cycle
   onBeforeMount( async () => {
-    const roomExists = await checkRoomExists();
-    const cookieData = getCookie();
+    await checkRoomExists();
     
-    if (roomExists && cookieData.roomId === state.roomId) {
-        if (state.connected) {
-          isLoggedIn.value = true;
-        } else {
-          connectToSocket();
-          handleJoinRoom(cookieData);
-        }
-      }
+    if (state.roomExists && getCookie().roomId === state.roomId) {
+        if (!state.connected) checkUserExists();
+    }
       
-      loading.value = false;
-    })
-    
-    
-    // Methods
-    const handleJoinRoom = async (userInfoData: UserInfo) => {
-      await emitJoinRoom(userInfoData);
-
-      isLoggedIn.value = true;
-    };
+    loading.value = false;
+    isLoggedIn.value = state.connected;
+  })
 </script>

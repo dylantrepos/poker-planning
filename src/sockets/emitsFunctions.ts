@@ -1,46 +1,68 @@
 import type { UserInfo, UserMessageEmit } from "@/types/UserType";
-import { socket, state } from "./sockets";
-import { getAllMessages, getUserList } from "@/utils/room";
+import { connectToSocket, socket, state } from "./sockets";
 
 // Emits events
-export const emitMessage = (message: string): void => {  
-  const {roomId, userId, username, role, vote} = state; 
 
-  const messageData: UserMessageEmit = {
-    roomId, 
-    userId, 
-    username,
-    role,
-    vote,
-    message,
-}
-
-  socket.emit('new-message', messageData);
-}
-
-export const emitJoinRoom = async (userInfo: UserInfo): Promise<void> => {
-  const {userId, roomId, username, vote, role} = userInfo;
+// CREATE ROOM
+export const emitCreateRoom = async (userInfo: UserInfo): Promise<void> => {
+  const {userId, roomId, username, vote} = userInfo;
   
   state.userId = userId;
   state.roomId = roomId;
-  state.role = role;
   state.username = username;
-  state.vote = vote;
+  state.rooms[roomId] = {
+    userList: [{
+      userId,
+      username,
+      role: 'lead',
+      vote: '',
+    }],
+    messages: [],
+    votes: [],
+  }
+  
+  socket.emit('room:create', userInfo);
+}
+
+// SEND MESSAGE
+export const emitMessage = (message: string): void => {  
+  const { roomId, userId, username } = state; 
+
+  const messageData: any = {
+    roomId, 
+    userId, 
+    username,
+    message,
+}
+
+  socket.emit('message:create', messageData);
+}
+
+// JOIN ROOM
+export const emitJoinRoom = async (userInfo: UserInfo): Promise<void> => {
+  const {userId, roomId, username} = userInfo;
+  
+  state.userId = userId;
+  state.roomId = roomId;
+  state.username = username;
   state.rooms[roomId] = {
     userList: [],
     messages: [],
+    votes: [],
   }
+
+  connectToSocket();
+  socket.emit('room:join', userInfo);
   
-  socket.emit('join-room', userInfo);
-
-  await getUserList();
-
-  await getAllMessages();
-
-  emitVote(vote);
-
+  // emitVote(vote);
 }
 
+// EMIT VOTE
 export const emitVote = (vote: string): void => {
-  socket.emit('update-vote', vote);
+  const data = {
+    userId: state.userId,
+    roomId: state.roomId,
+    vote: vote
+  }
+  socket.emit('vote:create', data);
 }

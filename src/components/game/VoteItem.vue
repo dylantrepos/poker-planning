@@ -20,10 +20,10 @@ import { getPokerPossibilities, getCookie, addCookie } from '../../utils/utils';
   const vote = ref('');
 
   watch(
-    () => state.rooms[state.roomId]?.userList,
+    () => state.rooms[state.roomId]?.votes,
     () => {
-      const userVotefound = state.rooms[state.roomId].userList.find(user => user.userId === state.userId);
-      vote.value = userVotefound?.vote ?? state.vote ?? '';
+      const userVotefound = state.rooms[state.roomId].votes.find(user => user.userId === state.userId);
+      vote.value = userVotefound?.vote ?? '';
     }
   )
 
@@ -32,8 +32,6 @@ import { getPokerPossibilities, getCookie, addCookie } from '../../utils/utils';
   const handleVote = (vote: string): void => {
     const cookieData = getCookie();
     
-    state.vote = vote;
-
     emitVote(vote);
 
     addCookie('poker-planning', JSON.stringify({...cookieData, vote}));
