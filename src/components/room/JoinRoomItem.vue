@@ -14,6 +14,8 @@
   import { addCookie } from '@/utils/utils';
   import { emitJoinRoom } from '@/sockets/emitsFunctions';
 
+  import type { User } from '../../types/UserType';
+
 
   const usernameInput = ref('');
 
@@ -23,13 +25,12 @@
 
     const userId = uuidv4();
     
-    const userInfo = {
+    const userInfo: User = {
       roomId: state.roomId,
       userId,
       username: usernameInput.value,
       role: 'user',
       vote: '',
-      connected: true,
     };
     
     addCookie('poker-planning', JSON.stringify(userInfo));

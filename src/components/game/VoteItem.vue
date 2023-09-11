@@ -3,7 +3,7 @@
   <button 
     v-for="vote in voteAvailable" 
     v-bind:key="vote"
-    @click="handleVote(vote)"
+    @click="handleVote(vote as Vote)"
   >
     {{ vote }}
   </button>
@@ -13,10 +13,11 @@
   import { addCookie, getCookie, getPokerPossibilities } from '@/utils/utils';
   import { emitVote } from '@/sockets/emitsFunctions';
   import { state } from '@/utils/state';
+  import type { Vote } from '../../types/GenericType';
 
   const voteAvailable = getPokerPossibilities();
 
-  const handleVote = (vote: string): void => {
+  const handleVote = (vote: Vote): void => {
     const cookieData = getCookie();
     
     emitVote(vote);

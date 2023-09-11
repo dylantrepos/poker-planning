@@ -9,7 +9,7 @@
 
 <script setup lang="ts">
   import { state } from '@/utils/state';
-import JoinRoomItem from './JoinRoomItem.vue';
+  import JoinRoomItem from './JoinRoomItem.vue';
   import RoomErrorItem from './RoomErrorItem.vue';
 
 </script>

@@ -1,7 +1,10 @@
 import { getAllMessages, getAllVotes, getLeadId } from '@/utils/room';
 import { state } from "@/utils/state";
 
-import type { UserInfo, UserList, UserMessage, UserVote } from "@/types/UserType";
+import type { User } from "@/types/UserType";
+import type { Message } from '@/types/MessageType';
+import type { VoteInfo } from '@/types/VoteType';
+import type { LeadId, VoteState } from '@/types/GenericType';
 
 
 export const setConnectionToSocket = async (connected: boolean = true): Promise<void> => {
@@ -11,7 +14,7 @@ export const setConnectionToSocket = async (connected: boolean = true): Promise<
   await getLeadId();
 }
 
-export const updateUserList = async (userList: UserList): Promise<void> => {
+export const updateUserList = async (userList: User[]): Promise<void> => {
 
   if (state.leadId === '') await getLeadId();
 
@@ -21,34 +24,34 @@ export const updateUserList = async (userList: UserList): Promise<void> => {
   }));
 }
 
-export const messageReceived = ( data: UserMessage ): void => {
+export const messageReceived = ( message: Message ): void => {
   if (state.messages) {
-    state.messages.push(data);
+    state.messages.push(message);
   }
 };
 
-export const updateVote = async (data: UserVote) => {
-  state.votes[data.userId] = data.vote;
+export const updateVote = async (userVote: VoteInfo) => {
+  state.votes[userVote.userId] = userVote.vote;
 
-  if (data.userId === state.userId) state.vote = data.vote;
+  if (userVote.userId === state.userId) state.vote = userVote.vote;
 }
 
-export const closeVote = async (data: Boolean) => {
-  state.voteClose = data;
+export const closeVote = async (voteState: VoteState) => {
+  state.voteClose = voteState;
 }
 
-export const openVote = async (data: Boolean) => {
-  state.voteClose = data;
+export const openVote = async (voteState: VoteState) => {
+  state.voteClose = voteState;
   state.vote = '';
   state.votes = {};
-  state.userList.forEach((user) => {
+  state.userList.forEach((user: User) => {
     delete state.votes[user.userId];
     user.vote = ''
   });
 }
 
-export const updateLead = async (data: string) => {
-  state.leadId = data;
+export const updateLead = async (leadId: LeadId) => {
+  state.leadId = leadId;
 }
 
 export const handleError = (err: Error) => {

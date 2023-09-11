@@ -18,6 +18,4 @@
 
 <script setup lang="ts">
 import { state } from '@/utils/state';
-
-
 </script>

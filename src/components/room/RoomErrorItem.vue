@@ -11,7 +11,7 @@
 
 <script setup lang="ts">
   import { state } from "@/utils/state";
-import { useRouter } from "vue-router";
+  import { useRouter } from "vue-router";
 
   const router = useRouter();
 </script>

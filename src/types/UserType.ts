@@ -1,26 +1,14 @@
-export type Role = 'user' | 'lead';
+/**
+ * User
+ */
+import type { LeadId, Role, RoomId, UserId, UserName } from "./GenericType";
 
-export type UserInfo = {
-    roomId: string;
-    userId: string;
-    username: string;
+export type User = {
+    roomId: RoomId;
+    userId: UserId;
+    username: UserName;
     vote: string;
     role: Role;
-}
-
-export type UserMessage = {
-  roomId: string;
-  userId: string;
-  username: string;
-  vote: string;
-  message: string;
-  order: string;
-}
-export type UserMessageEmit = {
-  roomId: string; 
-  userId: string; 
-  username: string;
-  message: string;
 }
 
 export type UserList = {
@@ -30,9 +18,7 @@ export type UserList = {
   vote: string;
 }[]
 
-export type UserVote = {
-  userId: string;
-  roomId: string;
-  vote: string;
+export type LeadEmit = {
+  roomId: RoomId;
+  leadId: LeadId;
 }
-

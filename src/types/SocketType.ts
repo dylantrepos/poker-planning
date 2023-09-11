@@ -1,37 +1,26 @@
-import type { Role, UserInfo, UserList, UserMessage, UserVote } from "@/types/UserType";
+import type { LeadEmit, User } from "@/types/UserType";
+import { Socket as SocketType } from "socket.io-client";
+import type { LeadId, VoteState } from "./GenericType";
+import type { Message, MessageEmit } from "./MessageType";
+import type { VoteEmit, VoteInfo } from "./VoteType";
 
-export type RoomId = string;
-
-export type RoomData = {
-  userList: UserList;
-  messages: UserMessage[];
-  votes: UserVote[];
-};
-
-export type Room = Record<RoomId, RoomData>;
-
-export type UserListSocket = {
-  roomId: RoomId;
-  userList: UserInfo[];
+export interface ServerToClientEvents {
+  'userList:update': (userList: User[]) => void;
+  'message:received': (message: Message) => void;
+  'vote:received': (voteInfo: VoteInfo) => void;
+  'vote:close': (voteState: VoteState) => void;
+  'vote:open': (voteState: VoteState) => void;
+  'lead:update': (leadId: LeadId) => void;
 }
 
-export type VoteListSocket = {
-  userId: string;
-  roomId: string;
-  vote: string;
+export interface ClientToServerEvents {
+  'room:join': (userInfo: User) => void;
+  'message:create': (message: MessageEmit) => void;
+  'vote:create': (vote: VoteInfo) => void;
+  'vote:close': (voteState: VoteEmit) => void;
+  'vote:open': (voteState: VoteEmit) => void;
+  'lead:update': (leadInfo: LeadEmit) => void;
 }
 
-export type State = {
-  connected: boolean;
-  roomId: string;
-  roomExists: boolean;
-  userId: string;
-  username: string;
-  role: Role;
-  vote: string;
-  voteClose: Boolean; 
-  leadId: string;
-  userList: UserList;
-  messages: UserMessage[];
-  votes: Record<string, string>;
-}
+export type Socket = SocketType<ClientToServerEvents, ServerToClientEvents>
+

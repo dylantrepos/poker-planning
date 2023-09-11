@@ -22,9 +22,11 @@
 
 <script setup lang="ts">
   import { state } from '@/utils/state';
-import { emitLead } from '../../sockets/emitsFunctions';
+  import { emitLead } from '../../sockets/emitsFunctions';
+  
+  import type { LeadId } from '@/types/GenericType';
 
-  const handleChangeLead = (leadId: string) => {
+  const handleChangeLead = (leadId: LeadId) => {
     emitLead(leadId);
   }
 </script>

@@ -45,7 +45,9 @@
   import { state } from '@/utils/state';
   import { checkRoomExists } from '@/utils/room';
   import { connectToSocket } from "@/sockets/sockets";
-import { emitCloseVote, emitOpenVote } from '../sockets/emitsFunctions';
+  import { emitCloseVote, emitOpenVote } from '../sockets/emitsFunctions';
+  
+  import type { RoomId } from '../types/GenericType';
   
   
   // Variables
@@ -53,7 +55,7 @@ import { emitCloseVote, emitOpenVote } from '../sockets/emitsFunctions';
   const loading = ref(true);
 
   const route = useRoute();
-  state.roomId = route.params.id as string;
+  state.roomId = route.params.id as RoomId;
 
   // Life cycle
   onBeforeMount( async () => {

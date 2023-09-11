@@ -16,7 +16,7 @@
   import { v4 as uuidv4 } from 'uuid';
   import { emitJoinRoom } from '../sockets/emitsFunctions';
   import { state } from "@/utils/state";
- import type { Role } from '../types/UserType';
+  import type { Role } from '../types/GenericType';
 
   const router = useRouter();
   const usernameInput = ref('');

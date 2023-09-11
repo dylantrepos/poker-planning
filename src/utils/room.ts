@@ -1,4 +1,4 @@
-import type { UserList } from "@/types/UserType";
+import type { LeadId, Message, RoomExists, User, UserId, UserList, Vote } from "@/types/UserType";
 import { state } from '@/utils/state';
 
 /**
@@ -10,7 +10,7 @@ import { state } from '@/utils/state';
  */
 export const getUserList = async (): Promise<void> => {
   const listUserRequest = await fetch(`${import.meta.env.VITE_SERVER_ADDRESS}/user-list/${state.roomId}`);
-  const listUserResponse: Awaited<Promise<UserList>> = (await listUserRequest.json()).list;
+  const listUserResponse: Awaited<User[]> = (await listUserRequest.json()).list;
 
   state.userList = listUserResponse.map((user) => ({
     ...user,
@@ -27,7 +27,7 @@ export const getUserList = async (): Promise<void> => {
  */
 export const getAllMessages = async (): Promise<void> => {
   const getAllMessagesRequest = await fetch(`${import.meta.env.VITE_SERVER_ADDRESS}/messages/${state.roomId}`);
-  const getAllMessagesResponse = await getAllMessagesRequest.json();
+  const getAllMessagesResponse: Awaited<Message[]> = await getAllMessagesRequest.json();
 
   state.messages = getAllMessagesResponse;
 }
@@ -38,7 +38,7 @@ export const getAllMessages = async (): Promise<void> => {
  */
 export const getAllVotes = async (): Promise<void> => {
   const getAllvotesRequest = await fetch(`${import.meta.env.VITE_SERVER_ADDRESS}/votes/${state.roomId}`);
-  const getAllVoteResponse = await getAllvotesRequest.json();
+  const getAllVoteResponse: Awaited<Record<UserId, Vote>> = await getAllvotesRequest.json();
 
   if (getAllVoteResponse[state.userId]) state.vote = getAllVoteResponse[state.userId];
 
@@ -52,7 +52,7 @@ export const getAllVotes = async (): Promise<void> => {
  */
 export const getLeadId = async (): Promise<void> => {
   const getLeadIdRequest = await fetch(`${import.meta.env.VITE_SERVER_ADDRESS}/lead/${state.roomId}`);
-  const getLeadResponse = (await getLeadIdRequest.json()).leadId;
+  const getLeadResponse: Awaited<LeadId> = (await getLeadIdRequest.json()).leadId;
 
   if (getLeadResponse === state.userId) state.role = 'lead'
   state.leadId = getLeadResponse;
@@ -64,7 +64,7 @@ export const getLeadId = async (): Promise<void> => {
  */
 export const checkRoomExists = async (): Promise<void> => {
   const roomExistsRequest = await fetch(`${import.meta.env.VITE_SERVER_ADDRESS}/check-room/${state.roomId}`);
-  const roomExistsResponse = await roomExistsRequest.json();
+  const roomExistsResponse : Awaited<RoomExists> = await roomExistsRequest.json();
   
   state.roomExists = roomExistsResponse.exist;
 }
