@@ -1,20 +1,9 @@
 import { io } from 'socket.io-client';
-import { reactive } from 'vue';
-
-import { handleError, messageReceived, setConnectionToSocket, updateUserList, updateVote } from './onFunctions';
+import { handleError, messageReceived, setConnectionToSocket, updateLead, updateUserList, updateVote } from '@/sockets/onFunctions';
+import { state } from '@/utils/state';
 
 import type { UserList, UserMessage, UserVote } from '@/types/UserType';
-import type { State } from '../types/SocketType';
 
-const state = reactive<State>({
-  connected: false,
-  userId: '',
-  roomId: '',
-  username: '',
-  roomExists: false,
-  role: 'user',
-  rooms: {}
-});
 
 const socket = io(import.meta.env.VITE_SERVER_ADDRESS, {
   autoConnect: false,
@@ -35,8 +24,10 @@ socket.on(`userList:update`, ( data: UserList ) => updateUserList(data));
 
 socket.on(`message:received`, ( data: UserMessage ) => messageReceived(data));  
 
-socket.on('vote:received', ( data: UserVote[] ) => updateVote(data));
+socket.on('vote:received', ( data: UserVote ) => updateVote(data));
+
+socket.on('lead:update', ( data: string ) => updateLead(data));
 
 socket.on("connect_error", (err: Error) => handleError(err));
 
-export { state, socket, connectToSocket };
+export { socket, connectToSocket };

@@ -14,7 +14,8 @@
   import { socket, connectToSocket } from '@/sockets/sockets';
   import { addCookie } from "@/utils/utils";
   import { v4 as uuidv4 } from 'uuid';
-  import {  emitCreateRoom } from '../sockets/emitsFunctions';
+  import { emitJoinRoom } from '../sockets/emitsFunctions';
+  import { state } from "@/utils/state";
 
   const router = useRouter();
   const usernameInput = ref('');
@@ -30,12 +31,14 @@
         userId: userId,
         username: usernameInput.value,
         vote: '',
+        role: 'lead',
         connected: true,
       };
   
-      emitCreateRoom(userInfo);
+      emitJoinRoom(userInfo);
+
+      state.leadId = userId;
       
-      addCookie('poker-planning2', userId);
       addCookie('poker-planning', JSON.stringify(userInfo))
   
       router.push(`/room/${socket.id}`);

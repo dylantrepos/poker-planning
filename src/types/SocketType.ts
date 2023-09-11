@@ -28,5 +28,9 @@ export type State = {
   userId: string;
   username: string;
   role: Role;
-  rooms: Room;
+  vote: string;
+  leadId: string;
+  userList: UserList;
+  messages: UserMessage[];
+  votes: Record<string, string>;
 }

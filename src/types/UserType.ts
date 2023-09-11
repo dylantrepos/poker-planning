@@ -7,9 +7,19 @@ export type UserInfo = {
     vote: string;
 }
 
-export type UserMessage = UserInfo & {
+export type UserMessage = {
+  roomId: string;
+  userId: string;
+  username: string;
+  vote: string;
   message: string;
   order: string;
+}
+export type UserMessageEmit = {
+  roomId: string; 
+  userId: string; 
+  username: string;
+  message: string;
 }
 
 export type UserList = {
@@ -25,4 +35,3 @@ export type UserVote = {
   vote: string;
 }
 
-export type UserMessageEmit = Omit<UserMessage, 'order'>

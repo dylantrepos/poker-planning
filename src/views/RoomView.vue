@@ -1,9 +1,12 @@
 <template>
     <main>
         <div> Game view </div>
+        <button @click="handleCopyURL">Share room</button>
         <LoadingItem :loading="loading">
-            <CheckRoomItem>
-              <h3>Name : {{ state.username }}  {{ state.role === 'lead' ?  ' 👑' : ''}}</h3>
+            <CheckRoomItem 
+              :is-logged-in="state.connected"
+            >
+              <h3>Name : {{ state.username }}  {{ state.userId === state.leadId ?  ' 👑' : ''}}</h3>
   
               <UserListItem />
               <MessageItem />
@@ -16,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-  import { onBeforeMount, ref, watch } from "vue";
+  import { onBeforeMount, ref } from "vue";
   import { useRoute } from "vue-router";``
   
   import UserListItem from "@/components/game/UserListItem.vue";
@@ -26,10 +29,11 @@
   import VoteItem from "@/components/game/VoteItem.vue";
   import MessageItem from "@/components/game/MessageItem.vue";
   
+  import { emitJoinRoom } from "@/sockets/emitsFunctions";
   import { getCookie } from "@/utils/utils";
+  import { state } from '@/utils/state';
   import { checkRoomExists } from '@/utils/room';
-  import { state, connectToSocket } from "@/sockets/sockets";;
-  import { checkUserExists } from '../utils/room';
+  import { connectToSocket } from "@/sockets/sockets";
   
   
   // Variables
@@ -39,23 +43,31 @@
   const route = useRoute();
   state.roomId = route.params.id as string;
 
-  watch(
-    () => state.rooms[state.roomId]?.userList,
-    () => {
-      const user = state.rooms[state.roomId].userList.find(user => user.userId === state.userId);
-      state.role = user?.role ?? 'user';
-    }
-  )
-
   // Life cycle
   onBeforeMount( async () => {
     await checkRoomExists();
     
     if (state.roomExists && getCookie().roomId === state.roomId) {
-        if (!state.connected) checkUserExists();
+        if (!state.connected) handleJoinRoom();
     }
       
     loading.value = false;
     isLoggedIn.value = state.connected;
   })
+    
+    
+  // Methods
+  const handleJoinRoom = async () => {
+      connectToSocket();
+
+      const cookieData = getCookie();
+      
+      if (cookieData) {
+        emitJoinRoom(cookieData);
+      }
+  };
+
+  const handleCopyURL = () => {
+    navigator.clipboard.writeText(`${import.meta.env.VITE_CLIENT_ADDRESS}${route.fullPath}`);
+  }
 </script>

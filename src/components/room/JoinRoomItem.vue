@@ -10,9 +10,9 @@
   import { ref } from 'vue';
   import { v4 as uuidv4 } from 'uuid';
 
+  import { state } from '@/utils/state';
   import { addCookie } from '@/utils/utils';
-  import { state } from '@/sockets/sockets';
-  import { emitJoinRoom } from '../../sockets/emitsFunctions';
+  import { emitJoinRoom } from '@/sockets/emitsFunctions';
 
 
   const usernameInput = ref('');
@@ -27,6 +27,7 @@
       roomId: state.roomId,
       userId,
       username: usernameInput.value,
+      role: 'user',
       vote: '',
       connected: true,
     };

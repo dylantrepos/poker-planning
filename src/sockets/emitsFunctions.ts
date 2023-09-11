@@ -1,34 +1,43 @@
 import type { UserInfo, UserMessageEmit } from "@/types/UserType";
-import { connectToSocket, socket, state } from "./sockets";
+import { connectToSocket, socket } from "./sockets";
+import { state } from "@/utils/state";
 
-// Emits events
+/**
+ * 
+ * ROOM EVENTS
+ * 
+ */
 
-// CREATE ROOM
-export const emitCreateRoom = async (userInfo: UserInfo): Promise<void> => {
+// JOIN ROOM
+export const emitJoinRoom = async (userInfo: UserInfo): Promise<void> => {
   const {userId, roomId, username, vote} = userInfo;
   
   state.userId = userId;
   state.roomId = roomId;
+  state.role = state.userId === state.leadId ? 'lead' : 'user';
   state.username = username;
-  state.rooms[roomId] = {
-    userList: [{
-      userId,
-      username,
-      role: 'lead',
-      vote: '',
-    }],
-    messages: [],
-    votes: [],
-  }
-  
-  socket.emit('room:create', userInfo);
+  state.vote = vote;
+  state.userList = [];
+  state.messages = [];
+  state.votes = {};
+
+  if (!state.connected) connectToSocket();
+
+  socket.emit('room:join', userInfo);
 }
+
+
+/**
+ * 
+ * MESSAGE EVENTS
+ * 
+ */
 
 // SEND MESSAGE
 export const emitMessage = (message: string): void => {  
   const { roomId, userId, username } = state; 
 
-  const messageData: any = {
+  const messageData: UserMessageEmit = {
     roomId, 
     userId, 
     username,
@@ -38,24 +47,12 @@ export const emitMessage = (message: string): void => {
   socket.emit('message:create', messageData);
 }
 
-// JOIN ROOM
-export const emitJoinRoom = async (userInfo: UserInfo): Promise<void> => {
-  const {userId, roomId, username} = userInfo;
-  
-  state.userId = userId;
-  state.roomId = roomId;
-  state.username = username;
-  state.rooms[roomId] = {
-    userList: [],
-    messages: [],
-    votes: [],
-  }
 
-  connectToSocket();
-  socket.emit('room:join', userInfo);
-  
-  // emitVote(vote);
-}
+/**
+ * 
+ * VOTE EVENTS
+ * 
+ */
 
 // EMIT VOTE
 export const emitVote = (vote: string): void => {

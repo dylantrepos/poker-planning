@@ -1,5 +1,5 @@
 <template>
-    <div v-if="props.doesRoomExists">
+    <div v-if="state.roomExists">
         <slot></slot>
     </div>
     <div v-else>
@@ -10,13 +10,8 @@
 </template>
 
 <script setup lang="ts">
-  import { useRouter } from "vue-router";
-
-  type Props = {
-    doesRoomExists: boolean;
-  }
-
-  const props = defineProps<Props>();
+  import { state } from "@/utils/state";
+import { useRouter } from "vue-router";
 
   const router = useRouter();
 </script>
