@@ -63,3 +63,20 @@ export const emitVote = (vote: string): void => {
   }
   socket.emit('vote:create', data);
 }
+
+
+/**
+ * 
+ * LEAD EVENTS
+ * 
+ */
+
+// EMIT NEW LEAD
+export const emitLead = (leadId: string): void => {
+  state.leadId = leadId;
+  
+  socket.emit('lead:update', {
+    roomId: state.roomId,
+    leadId
+  });
+}

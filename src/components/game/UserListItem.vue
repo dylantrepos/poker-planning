@@ -4,14 +4,23 @@
       <li 
         v-for="user in state.userList" v-bind:key="user.userId">
           {{ user.username ?? 'error' }} : 
-          <i>{{ user.userId ?? 'error' }} ({{  user.role }} {{ user.role === 'lead' ?  '👑' : ''}})</i> | Vote {{ state.votes[user.userId] ?? '' }}
+          <i>{{ user.userId ?? 'error' }} ({{  user.role }} {{ user.userId === state.leadId ?  '👑' : ''}})</i> | Vote {{ state.votes[user.userId] ?? '' }}
+          <button 
+            v-if="user.userId !== state.leadId && state.userId === state.leadId"
+            @click="handleChangeLead(user.userId)"
+          >
+            Set leader
+          </button>
       </li>
   </ul>
 
 </template>
 
 <script setup lang="ts">
-import { state } from '@/utils/state';
+  import { state } from '@/utils/state';
+import { emitLead } from '../../sockets/emitsFunctions';
 
-
+  const handleChangeLead = (leadId: string) => {
+    emitLead(leadId);
+  }
 </script>
