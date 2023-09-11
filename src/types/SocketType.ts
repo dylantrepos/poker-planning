@@ -29,6 +29,7 @@ export type State = {
   username: string;
   role: Role;
   vote: string;
+  voteClose: Boolean; 
   leadId: string;
   userList: UserList;
   messages: UserMessage[];

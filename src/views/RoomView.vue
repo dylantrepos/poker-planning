@@ -7,7 +7,18 @@
               :is-logged-in="state.connected"
             >
               <h3>Name : {{ state.username }}  {{ state.userId === state.leadId ?  ' 👑' : ''}}</h3>
-  
+              <button
+                v-if="state.userId === state.leadId && !state.voteClose"
+                @click="handleCloseVote"
+              >
+                Close vote
+              </button>
+              <button
+                v-if="state.userId === state.leadId && state.voteClose"
+                @click="handleOpenVote"
+              >
+                Open vote
+              </button>
               <UserListItem />
               <MessageItem />
               <VoteItem />
@@ -34,6 +45,7 @@
   import { state } from '@/utils/state';
   import { checkRoomExists } from '@/utils/room';
   import { connectToSocket } from "@/sockets/sockets";
+import { emitCloseVote, emitOpenVote } from '../sockets/emitsFunctions';
   
   
   // Variables
@@ -69,5 +81,13 @@
 
   const handleCopyURL = () => {
     navigator.clipboard.writeText(`${import.meta.env.VITE_CLIENT_ADDRESS}${route.fullPath}`);
+  }
+
+  const handleCloseVote = () => {
+    emitCloseVote();
+  }
+
+  const handleOpenVote = () => {
+    emitOpenVote();
   }
 </script>

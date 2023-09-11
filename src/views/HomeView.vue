@@ -16,6 +16,7 @@
   import { v4 as uuidv4 } from 'uuid';
   import { emitJoinRoom } from '../sockets/emitsFunctions';
   import { state } from "@/utils/state";
+ import type { Role } from '../types/UserType';
 
   const router = useRouter();
   const usernameInput = ref('');
@@ -31,7 +32,7 @@
         userId: userId,
         username: usernameInput.value,
         vote: '',
-        role: 'lead',
+        role: 'lead' as Role,
         connected: true,
       };
   

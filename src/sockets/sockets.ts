@@ -1,5 +1,5 @@
 import { io } from 'socket.io-client';
-import { handleError, messageReceived, setConnectionToSocket, updateLead, updateUserList, updateVote } from '@/sockets/onFunctions';
+import { closeVote, handleError, messageReceived, openVote, setConnectionToSocket, updateLead, updateUserList, updateVote } from '@/sockets/onFunctions';
 import { state } from '@/utils/state';
 
 import type { UserList, UserMessage, UserVote } from '@/types/UserType';
@@ -25,6 +25,10 @@ socket.on(`userList:update`, ( data: UserList ) => updateUserList(data));
 socket.on(`message:received`, ( data: UserMessage ) => messageReceived(data));  
 
 socket.on('vote:received', ( data: UserVote ) => updateVote(data));
+
+socket.on('vote:close', ( data: Boolean ) => closeVote(data));
+
+socket.on('vote:open', ( data: Boolean ) => openVote(data));
 
 socket.on('lead:update', ( data: string ) => updateLead(data));
 

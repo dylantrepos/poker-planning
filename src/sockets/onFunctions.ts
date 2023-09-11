@@ -1,7 +1,7 @@
 import { getAllMessages, getAllVotes, getLeadId } from '@/utils/room';
 import { state } from "@/utils/state";
 
-import type { UserList, UserMessage, UserVote } from "@/types/UserType";
+import type { UserInfo, UserList, UserMessage, UserVote } from "@/types/UserType";
 
 
 export const setConnectionToSocket = async (connected: boolean = true): Promise<void> => {
@@ -31,6 +31,20 @@ export const updateVote = async (data: UserVote) => {
   state.votes[data.userId] = data.vote;
 
   if (data.userId === state.userId) state.vote = data.vote;
+}
+
+export const closeVote = async (data: Boolean) => {
+  state.voteClose = data;
+}
+
+export const openVote = async (data: Boolean) => {
+  state.voteClose = data;
+  state.vote = '';
+  state.votes = {};
+  state.userList.forEach((user) => {
+    delete state.votes[user.userId];
+    user.vote = ''
+  });
 }
 
 export const updateLead = async (data: string) => {

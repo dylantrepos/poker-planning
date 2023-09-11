@@ -5,6 +5,7 @@ export type UserInfo = {
     userId: string;
     username: string;
     vote: string;
+    role: Role;
 }
 
 export type UserMessage = {

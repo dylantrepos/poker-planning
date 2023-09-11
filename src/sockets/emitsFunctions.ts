@@ -64,6 +64,18 @@ export const emitVote = (vote: string): void => {
   socket.emit('vote:create', data);
 }
 
+// EMIT CLOSE VOTE
+export const emitCloseVote = (): void => {
+  const {roomId, userId} = state;
+  socket.emit('vote:close', {roomId, userId});
+}
+
+// EMIT CLOSE VOTE
+export const emitOpenVote = (): void => {
+  const {roomId, userId} = state;
+  socket.emit('vote:open', {roomId, userId});
+}
+
 
 /**
  * 
@@ -74,7 +86,7 @@ export const emitVote = (vote: string): void => {
 // EMIT NEW LEAD
 export const emitLead = (leadId: string): void => {
   state.leadId = leadId;
-  
+
   socket.emit('lead:update', {
     roomId: state.roomId,
     leadId
