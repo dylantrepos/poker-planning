@@ -1,15 +1,15 @@
-import type { LeadEmit, User } from "@/types/UserType";
+import type { LeadEmit, User, UserList } from "@/types/UserType";
 import { Socket as SocketType } from "socket.io-client";
-import type { LeadId, VoteState } from "./GenericType";
+import type { LeadId, RoomId } from "./GenericType";
 import type { Message, MessageEmit } from "./MessageType";
-import type { VoteEmit, VoteInfo } from "./VoteType";
+import type { VoteInfo } from "./VoteType";
 
 export interface ServerToClientEvents {
-  'userList:update': (userList: User[]) => void;
+  'userList:update': (userList: UserList) => void;
   'message:received': (message: Message) => void;
   'vote:received': (voteInfo: VoteInfo) => void;
-  'vote:close': (voteState: VoteState) => void;
-  'vote:open': (voteState: VoteState) => void;
+  'vote:close': () => void;
+  'vote:open': () => void;
   'lead:update': (leadId: LeadId) => void;
 }
 
@@ -17,8 +17,8 @@ export interface ClientToServerEvents {
   'room:join': (userInfo: User) => void;
   'message:create': (message: MessageEmit) => void;
   'vote:create': (vote: VoteInfo) => void;
-  'vote:close': (voteState: VoteEmit) => void;
-  'vote:open': (voteState: VoteEmit) => void;
+  'vote:close': (roomId: RoomId) => void;
+  'vote:open': (roomId: RoomId) => void;
   'lead:update': (leadInfo: LeadEmit) => void;
 }
 

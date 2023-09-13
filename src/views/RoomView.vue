@@ -45,7 +45,7 @@
   import { state } from '@/utils/state';
   import { checkRoomExists } from '@/utils/room';
   import { connectToSocket } from "@/sockets/sockets";
-  import { emitCloseVote, emitOpenVote } from '../sockets/emitsFunctions';
+  import { emitCloseVote, emitOpenVote, emitVote } from '../sockets/emitsFunctions';
   
   import type { RoomId } from '../types/GenericType';
   
@@ -78,6 +78,7 @@
       
       if (cookieData) {
         emitJoinRoom(cookieData);
+        emitVote(cookieData.vote)
       }
   };
 

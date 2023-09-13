@@ -1,10 +1,11 @@
-import { getAllMessages, getAllVotes, getLeadId } from '@/utils/room';
+import { checkVoteOpen, getAllMessages, getAllVotes, getLeadId } from '@/utils/room';
 import { state } from "@/utils/state";
 
-import type { User } from "@/types/UserType";
+import type { UserList } from "@/types/UserType";
 import type { Message } from '@/types/MessageType';
 import type { VoteInfo } from '@/types/VoteType';
-import type { LeadId, VoteState } from '@/types/GenericType';
+import type { LeadId } from '@/types/GenericType';
+import { addCookie, getCookie } from '@/utils/utils';
 
 
 export const setConnectionToSocket = async (connected: boolean = true): Promise<void> => {
@@ -12,17 +13,16 @@ export const setConnectionToSocket = async (connected: boolean = true): Promise<
   await getAllMessages();
   await getAllVotes();
   await getLeadId();
+  await checkVoteOpen();
 }
 
-export const updateUserList = async (userList: User[]): Promise<void> => {
-
+export const updateUserList = async (userList: UserList): Promise<void> => {
   if (state.leadId === '') await getLeadId();
 
-  state.userList = [...userList].map((user) => ({
-    ...user,
-    role: user.userId === state.leadId ? 'lead' : 'user'
-  }));
+  state.userList = userList;
 }
+
+
 
 export const messageReceived = ( message: Message ): void => {
   if (state.messages) {
@@ -31,23 +31,26 @@ export const messageReceived = ( message: Message ): void => {
 };
 
 export const updateVote = async (userVote: VoteInfo) => {
-  state.votes[userVote.userId] = userVote.vote;
-
-  if (userVote.userId === state.userId) state.vote = userVote.vote;
+  state.votes = userVote;
 }
 
-export const closeVote = async (voteState: VoteState) => {
-  state.voteClose = voteState;
+export const closeVote = async () => {
+  state.voteClose = true;
 }
 
-export const openVote = async (voteState: VoteState) => {
-  state.voteClose = voteState;
+export const openVote = async () => {
+  const cookieData = getCookie();
+
+  addCookie('poker-planning', JSON.stringify({...cookieData, vote: ''}));
+
+  state.voteClose = false;
   state.vote = '';
   state.votes = {};
-  state.userList.forEach((user: User) => {
-    delete state.votes[user.userId];
-    user.vote = ''
-  });
+
+  for (const [key] of Object.entries(state.userList)) {
+    state.userList[key].vote = '';
+  }
+  
 }
 
 export const updateLead = async (leadId: LeadId) => {
@@ -55,5 +58,5 @@ export const updateLead = async (leadId: LeadId) => {
 }
 
 export const handleError = (err: Error) => {
-  console.error(`connect_error due to ${err.message}`);
+  console.error(`Error: connection impossible due to ${err.message}`);
 }

@@ -1,22 +1,17 @@
 /**
  * User
  */
-import type { LeadId, Role, RoomId, UserId, UserName } from "./GenericType";
+import type { Connected, LeadId, RoomId, UserId, UserName, Vote } from "./GenericType";
 
 export type User = {
     roomId: RoomId;
     userId: UserId;
     username: UserName;
-    vote: string;
-    role: Role;
+    vote: Vote;
+    connected: Connected;
 }
 
-export type UserList = {
-  userId: string;
-  username: string;
-  role: Role;
-  vote: string;
-}[]
+export type UserList = Record<UserId, User>;
 
 export type LeadEmit = {
   roomId: RoomId;

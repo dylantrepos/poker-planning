@@ -1,4 +1,6 @@
-import type { LeadId, Message, RoomExists, User, UserId, UserList, Vote } from "@/types/UserType";
+import type { LeadId, UserId, Vote, VoteState } from '@/types/GenericType';
+import type { Message } from '@/types/MessageType';
+import type { UserList } from '@/types/UserType';
 import { state } from '@/utils/state';
 
 /**
@@ -10,12 +12,9 @@ import { state } from '@/utils/state';
  */
 export const getUserList = async (): Promise<void> => {
   const listUserRequest = await fetch(`${import.meta.env.VITE_SERVER_ADDRESS}/user-list/${state.roomId}`);
-  const listUserResponse: Awaited<User[]> = (await listUserRequest.json()).list;
+  const listUserResponse: Awaited<UserList> = (await listUserRequest.json()).list;
 
-  state.userList = listUserResponse.map((user) => ({
-    ...user,
-    role: user.userId === state.leadId ? 'lead' : 'user'
-  }))
+  state.userList = listUserResponse;
 }
 
 /**
@@ -26,10 +25,16 @@ export const getUserList = async (): Promise<void> => {
  * @returns List of messages
  */
 export const getAllMessages = async (): Promise<void> => {
-  const getAllMessagesRequest = await fetch(`${import.meta.env.VITE_SERVER_ADDRESS}/messages/${state.roomId}`);
-  const getAllMessagesResponse: Awaited<Message[]> = await getAllMessagesRequest.json();
+  let messages: Message[] = [];
 
-  state.messages = getAllMessagesResponse;
+  try {
+    const getAllMessagesRequest = await fetch(`${import.meta.env.VITE_SERVER_ADDRESS}/messages/${state.roomId}`);
+    messages = await getAllMessagesRequest.json();
+  } catch (e) {
+    console.warn(`Warning : Fail to get messages from server.`);
+  }
+
+  state.messages = messages;
 }
 
 /**
@@ -37,12 +42,16 @@ export const getAllMessages = async (): Promise<void> => {
  * - Update state.votes value.
  */
 export const getAllVotes = async (): Promise<void> => {
-  const getAllvotesRequest = await fetch(`${import.meta.env.VITE_SERVER_ADDRESS}/votes/${state.roomId}`);
-  const getAllVoteResponse: Awaited<Record<UserId, Vote>> = await getAllvotesRequest.json();
+  let votes: Record<UserId, Vote> = {};
 
-  if (getAllVoteResponse[state.userId]) state.vote = getAllVoteResponse[state.userId];
+  try {
+    const getAllvotesRequest = await fetch(`${import.meta.env.VITE_SERVER_ADDRESS}/votes/${state.roomId}`);
+    votes = await getAllvotesRequest.json();
+  } catch (e) {
+    console.warn(`Warning : Fail to get votes from server.`);
+  }
 
-  state.votes = getAllVoteResponse;
+  state.votes = votes;
 }
 
 /**
@@ -51,11 +60,16 @@ export const getAllVotes = async (): Promise<void> => {
  * 
  */
 export const getLeadId = async (): Promise<void> => {
-  const getLeadIdRequest = await fetch(`${import.meta.env.VITE_SERVER_ADDRESS}/lead/${state.roomId}`);
-  const getLeadResponse: Awaited<LeadId> = (await getLeadIdRequest.json()).leadId;
+  let leadId: LeadId = '';
 
-  if (getLeadResponse === state.userId) state.role = 'lead'
-  state.leadId = getLeadResponse;
+  try {
+    const getLeadIdRequest = await fetch(`${import.meta.env.VITE_SERVER_ADDRESS}/lead/${state.roomId}`);
+    leadId = (await getLeadIdRequest.json()).leadId;
+  } catch (e) {
+    console.warn(`Warning : Fail to get lead from server.`);
+  }
+
+  state.leadId = leadId;
 }
 
 /**
@@ -63,8 +77,31 @@ export const getLeadId = async (): Promise<void> => {
  * - Update state.roomExists value.
  */
 export const checkRoomExists = async (): Promise<void> => {
-  const roomExistsRequest = await fetch(`${import.meta.env.VITE_SERVER_ADDRESS}/check-room/${state.roomId}`);
-  const roomExistsResponse : Awaited<RoomExists> = await roomExistsRequest.json();
+  let roomExists: boolean = false;
+
+  try {
+    const roomExistsRequest = await fetch(`${import.meta.env.VITE_SERVER_ADDRESS}/check-room/${state.roomId}`);
+    roomExists = (await roomExistsRequest.json()).exist;
+  } catch (e) {
+    console.warn(`Warning : Fail to check if room exists from server.`);
+  }
   
-  state.roomExists = roomExistsResponse.exist;
+  state.roomExists = roomExists;
+}
+
+/**
+ * Check if vote is open for `state.roomId`.
+ * - Update state.voteClose value.
+ */
+export const checkVoteOpen = async (): Promise<void> => {
+  let voteClose: VoteState = false; 
+
+  try {
+    const stateVoteRequest = await fetch(`${import.meta.env.VITE_SERVER_ADDRESS}/vote-state/${state.roomId}`);
+    voteClose = (await stateVoteRequest.json()).close;
+  } catch (e) {
+    console.warn(`Warning : Fail to get vote state from server.`);
+  }
+
+  state.voteClose = voteClose;
 }

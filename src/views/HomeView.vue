@@ -11,12 +11,14 @@
 <script setup lang="ts">
   import { ref } from "vue";
   import { useRouter } from "vue-router";
-  import { socket, connectToSocket } from '@/sockets/sockets';
-  import { addCookie } from "@/utils/utils";
   import { v4 as uuidv4 } from 'uuid';
-  import { emitJoinRoom } from '../sockets/emitsFunctions';
+
+  import { socket, connectToSocket } from '@/sockets/sockets';
+  import { emitJoinRoom } from '@/sockets/emitsFunctions';
+  import { addCookie } from "@/utils/utils";
   import { state } from "@/utils/state";
-  import type { Role } from '../types/GenericType';
+
+  import type { User } from '../types/UserType';
 
   const router = useRouter();
   const usernameInput = ref('');
@@ -27,12 +29,11 @@
     connectToSocket();
 
     socket.on('connect', async () => {
-      const userInfo = {
+      const userInfo: User = {
         roomId: socket.id,
         userId: userId,
         username: usernameInput.value,
         vote: '',
-        role: 'lead' as Role,
         connected: true,
       };
   

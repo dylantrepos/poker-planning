@@ -3,6 +3,7 @@
   <button 
     v-for="vote in voteAvailable" 
     v-bind:key="vote"
+    :disabled="state.voteClose"
     @click="handleVote(vote as Vote)"
   >
     {{ vote }}

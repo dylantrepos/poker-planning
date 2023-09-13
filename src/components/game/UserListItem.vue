@@ -3,12 +3,18 @@
   <ul v-if="state.userList">
       <li 
         v-for="user in state.userList" v-bind:key="user.userId">
-          {{ user.username ?? 'error' }} : 
+          <b
+            :style="{
+              'color': user.connected ? 'green' : 'red',
+            }"
+          > 
+            {{ user.username ?? 'error' }} 
+          </b>: 
           <i>{{ user.userId ?? 'error' }} 
             ({{  user.userId === state.leadId ?  'lead' : 'user' }}
             {{ user.userId === state.leadId ?  '👑' : ''}})
           </i> 
-            | {{ state.voteClose ? `Vote : ${state.votes[user.userId] ?? 'No vote'}`  :  (state.votes[user.userId] ? 'Voted !' : 'Waiting for vote...') }}
+            | {{ state.voteClose ? `Vote : ${state.votes[user.userId]?.length > 0 ?? false ? state.votes[user.userId] : 'No vote'}`  :  (state.votes[user.userId] ? 'Voted !' : 'Waiting for vote...') }}
           <button 
             v-if="user.userId !== state.leadId && state.userId === state.leadId"
             @click="handleChangeLead(user.userId)"

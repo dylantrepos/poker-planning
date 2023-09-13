@@ -8,12 +8,12 @@ export type Message = {
   userId: UserId;
   username: UserName;
   vote: Vote;
-  message: Message;
+  message: string;
   order: Order;
 }
 export type MessageEmit = {
   roomId: RoomId; 
   userId: UserId; 
   username: UserName;
-  message: Message;
+  message: string;
 }

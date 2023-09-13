@@ -13,3 +13,8 @@ export type VoteEmit = {
   userId: UserId;
   roomId: RoomId;
 }
+
+
+export type VoteStateEmit = {
+  close: boolean
+}

@@ -29,8 +29,8 @@
       roomId: state.roomId,
       userId,
       username: usernameInput.value,
-      role: 'user',
       vote: '',
+      connected: true,
     };
     
     addCookie('poker-planning', JSON.stringify(userInfo));

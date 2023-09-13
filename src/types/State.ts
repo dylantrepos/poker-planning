@@ -1,4 +1,7 @@
-import type { Role, Message, RoomId, UserId, UserName, Vote, VoteState, LeadId, User } from "./UserType";
+import type { LeadId, RoomId, UserId, UserName, Vote, VoteState } from "./GenericType";
+import type { Message } from "./MessageType";
+import type { UserList } from "./UserType";
+
 
 export type State = {
   connected: boolean;
@@ -6,11 +9,10 @@ export type State = {
   roomExists: boolean;
   userId: UserId;
   username: UserName;
-  role: Role;
   vote: Vote;
   voteClose: VoteState; 
   leadId: LeadId;
-  userList: User[];
+  userList: UserList;
   messages: Message[];
   votes: Record<string, string>;
 }

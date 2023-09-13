@@ -1,8 +1,9 @@
 /**
  * COOKIE
- */
+*/
 
-import type { UserInfo } from "@/types/UserType";
+import type { User } from "@/types/UserType";
+
 
 export const addCookie = (cname: string, cvalue: string, exdays: number = 7) => {
     const date = new Date();
@@ -18,7 +19,7 @@ export const getCookieString = (cname: string): string | null => {
   ?.split("=")[1] ?? null;
 }
 
-export const getCookie = (): UserInfo => {
+export const getCookie = (): User => {
   return JSON.parse(getCookieString('poker-planning') || '{}')
 }
   

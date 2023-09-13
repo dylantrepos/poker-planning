@@ -1,5 +1,5 @@
 import { reactive } from 'vue';
-import type { State } from '../types/SocketType';
+import type { State } from '../types/State';
 
 export const state = reactive<State>({
   connected: false,
@@ -10,8 +10,7 @@ export const state = reactive<State>({
   roomExists: false,
   vote: '',
   voteClose: false,
-  role: 'user',
   messages: [],
-  userList: [],
+  userList: {},
   votes: {}
 });
