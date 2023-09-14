@@ -1,10 +1,14 @@
 <template>
-  <h4>Vote ({{ state.vote }})</h4>
+  <h4>Vote ({{ state.votes[state.userId] }})</h4>
   <button 
     v-for="vote in voteAvailable" 
     v-bind:key="vote"
     :disabled="state.voteClose"
-    @click="handleVote(vote as Vote)"
+    @click="handleVote((vote === state.votes[state.userId] ? '' : vote) as Vote)"
+    :style="{
+      'background': vote === state.votes[state.userId] ? 'green ' : 'transparent',
+      'color': vote === state.votes[state.userId] ? 'white ' : 'black',
+    }"
   >
     {{ vote }}
   </button>

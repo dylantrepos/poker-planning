@@ -1,5 +1,6 @@
 <template>
     <main>
+      <CheckServerItem>
         <div> Game view </div>
         <button @click="handleCopyURL">Share room</button>
         <LoadingItem :loading="loading">
@@ -26,6 +27,7 @@
 
               </CheckRoomItem>
         </LoadingItem>
+      </CheckServerItem>
     </main>
 </template>
 
@@ -48,6 +50,7 @@
   import { emitCloseVote, emitOpenVote, emitVote } from '../sockets/emitsFunctions';
   
   import type { RoomId } from '../types/GenericType';
+import CheckServerItem from "@/components/general/CheckServerItem.vue";
   
   
   // Variables

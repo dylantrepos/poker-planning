@@ -4,6 +4,7 @@ import type { UserList } from "./UserType";
 
 
 export type State = {
+  serverLive: boolean;
   connected: boolean;
   roomId: RoomId;
   roomExists: boolean;

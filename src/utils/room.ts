@@ -4,6 +4,20 @@ import type { UserList } from '@/types/UserType';
 import { state } from '@/utils/state';
 
 /**
+ * Check if server is live.
+ * - Udapte state.serverLive value.
+ */
+export const checkServerState = async () => {
+  try {
+    const tryConnectionRequest = fetch(import.meta.env.VITE_SERVER_ADDRESS);
+    const connectionStatus = (await tryConnectionRequest).status
+    state.serverLive = connectionStatus >= 200 && connectionStatus < 300 ? true : false;
+  } catch (e) {
+    state.serverLive = false;
+  }
+}
+
+/**
  * Retreive list of current user in room `state.roomId`.
  * - Update state.userList value.
  * 
@@ -32,6 +46,7 @@ export const getAllMessages = async (): Promise<void> => {
     messages = await getAllMessagesRequest.json();
   } catch (e) {
     console.warn(`Warning : Fail to get messages from server.`);
+    await checkServerState();
   }
 
   state.messages = messages;
@@ -49,6 +64,7 @@ export const getAllVotes = async (): Promise<void> => {
     votes = await getAllvotesRequest.json();
   } catch (e) {
     console.warn(`Warning : Fail to get votes from server.`);
+    await checkServerState();
   }
 
   state.votes = votes;
@@ -67,6 +83,7 @@ export const getLeadId = async (): Promise<void> => {
     leadId = (await getLeadIdRequest.json()).leadId;
   } catch (e) {
     console.warn(`Warning : Fail to get lead from server.`);
+    await checkServerState();
   }
 
   state.leadId = leadId;
@@ -84,6 +101,7 @@ export const checkRoomExists = async (): Promise<void> => {
     roomExists = (await roomExistsRequest.json()).exist;
   } catch (e) {
     console.warn(`Warning : Fail to check if room exists from server.`);
+    await checkServerState();
   }
   
   state.roomExists = roomExists;
@@ -95,12 +113,12 @@ export const checkRoomExists = async (): Promise<void> => {
  */
 export const checkVoteOpen = async (): Promise<void> => {
   let voteClose: VoteState = false; 
-
   try {
     const stateVoteRequest = await fetch(`${import.meta.env.VITE_SERVER_ADDRESS}/vote-state/${state.roomId}`);
     voteClose = (await stateVoteRequest.json()).close;
   } catch (e) {
     console.warn(`Warning : Fail to get vote state from server.`);
+    await checkServerState();
   }
 
   state.voteClose = voteClose;

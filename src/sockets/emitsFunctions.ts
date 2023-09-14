@@ -56,21 +56,22 @@ export const emitMessage = (message: string): void => {
  */
 
 // EMIT VOTE
-export const emitVote = (voteValue: string): void => {
+export const emitVote = (voteValue: Vote): void => {
   const vote = {
     userId: state.userId,
     roomId: state.roomId,
-    vote: voteValue as Vote
+    vote: voteValue
   }
+  
   socket.emit('vote:create', vote);
 }
 
-// EMIT CLOSE VOTE
+// CLOSE VOTE
 export const emitCloseVote = (): void => {
   socket.emit('vote:close', state.roomId);
 }
 
-// EMIT CLOSE VOTE
+// OPEN VOTE
 export const emitOpenVote = (): void => {
   socket.emit('vote:open', state.roomId);
 }
