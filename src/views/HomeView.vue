@@ -31,8 +31,6 @@
   const usernameInput = ref('');
   const userId = uuidv4();
 
-  checkServerState();
-
   // Methods
   const redirectToGame = (): void => {
     connectToSocket();

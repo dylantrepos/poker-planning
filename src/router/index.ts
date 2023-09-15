@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '../views/HomeView.vue';
 import RoomView from '../views/RoomView.vue';
+import { checkServerState } from '@/utils/room';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -16,6 +17,10 @@ const router = createRouter({
       component: RoomView
     }
   ]
+})
+
+router.beforeEach(() =>  {
+  checkServerState();
 })
 
 export default router

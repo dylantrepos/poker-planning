@@ -2,9 +2,10 @@
  * COOKIE
 */
 
-import type { User, UserCookie } from "@/types/UserType";
+import { state } from "@/utils/state";
+
+import type { UserCookie } from "@/types/UserType";
 import type { VoteResults } from "@/types/VoteType";
-import { state } from "./state";
 
 
 export const addCookie = (cname: string, cvalue: string, exdays: number = 7) => {
@@ -44,8 +45,8 @@ export const updateVoteResults = (): void => {
     const vote = state.votes[user.userId];
 
     // Skip if vote is empty
-    if (!vote || vote === '') return; 
-
+    if (!vote || vote === '') break; 
+    
     if (results[vote]) {
       results[vote].vote++;
       results[vote].users.push(user.userName);
@@ -59,4 +60,5 @@ export const updateVoteResults = (): void => {
   }
 
   state.voteResults = results;
+
 }

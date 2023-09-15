@@ -2,6 +2,7 @@ import type { LeadId, UserId, Vote, VoteState } from '@/types/GenericType';
 import type { Message } from '@/types/MessageType';
 import type { UserList } from '@/types/UserType';
 import { state } from '@/utils/state';
+import { updateVoteResults } from './utils';
 
 /**
  * Check if server is live.
@@ -20,9 +21,6 @@ export const checkServerState = async () => {
 /**
  * Retreive list of current user in room `state.roomId`.
  * - Update state.userList value.
- * 
- * @param roomId 
- * @returns List of users
  */
 export const getUserList = async (): Promise<void> => {
   const listUserRequest = await fetch(`${import.meta.env.VITE_SERVER_ADDRESS}/user-list/${state.roomId}`);
@@ -34,9 +32,6 @@ export const getUserList = async (): Promise<void> => {
 /**
  * Retreive all messages from room `state.roomId`.
  * - Update state.messages value.
- * 
- * @param roomId 
- * @returns List of messages
  */
 export const getAllMessages = async (): Promise<void> => {
   let messages: Message[] = [];
@@ -116,6 +111,7 @@ export const checkVoteOpen = async (): Promise<void> => {
   try {
     const stateVoteRequest = await fetch(`${import.meta.env.VITE_SERVER_ADDRESS}/vote-state/${state.roomId}`);
     voteClose = (await stateVoteRequest.json()).close;
+    if (voteClose) updateVoteResults();
   } catch (e) {
     console.warn(`Warning : Fail to get vote state from server.`);
     await checkServerState();

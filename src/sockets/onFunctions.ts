@@ -10,10 +10,11 @@ import { addCookie, getCookie, updateVoteResults } from '@/utils/utils';
 
 export const setConnectionToSocket = async (connected: boolean = true): Promise<void> => {
   state.connected = connected;
-  await checkVoteOpen();
+
   await getAllMessages();
   await getAllVotes();
   await getLeadId();
+  await checkVoteOpen();
 }
 
 // Userlist
@@ -47,7 +48,6 @@ export const openVote = async () => {
   const cookieData = getCookie();
 
   addCookie('poker-planning', JSON.stringify({...cookieData, vote: ''}));
-
   state.voteClose = false;
   state.voteResults = {};
   state.votes = {};
