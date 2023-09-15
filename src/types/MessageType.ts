@@ -4,16 +4,16 @@ import type { Order, RoomId, UserId, UserName, Vote } from "./GenericType";
  * Message
  */
 export type Message = {
-  roomId: RoomId;
-  userId: UserId;
-  username: UserName;
-  vote: Vote;
   message: string;
   order: Order;
+  roomId: RoomId;
+  userId: UserId;
+  userName: UserName;
+  vote: Vote;
 }
 export type MessageEmit = {
+  message: string;
   roomId: RoomId; 
   userId: UserId; 
-  username: UserName;
-  message: string;
+  userName: UserName;
 }

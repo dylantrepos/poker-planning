@@ -6,8 +6,8 @@ import type { VoteInfo } from "./VoteType";
  * Room
  */
 export type RoomData = {
-  userList: User[];
   messages: Message[];
+  userList: User[];
   votes: VoteInfo[];
 };
 

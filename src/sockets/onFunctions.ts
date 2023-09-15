@@ -3,17 +3,17 @@ import { state } from "@/utils/state";
 
 import type { UserList } from "@/types/UserType";
 import type { Message } from '@/types/MessageType';
-import type { VoteInfo, VoteResults } from '@/types/VoteType';
+import type { VoteInfo } from '@/types/VoteType';
 import type { LeadId } from '@/types/GenericType';
 import { addCookie, getCookie, updateVoteResults } from '@/utils/utils';
 
 
 export const setConnectionToSocket = async (connected: boolean = true): Promise<void> => {
   state.connected = connected;
+  await checkVoteOpen();
   await getAllMessages();
   await getAllVotes();
   await getLeadId();
-  await checkVoteOpen();
 }
 
 // Userlist
@@ -49,13 +49,8 @@ export const openVote = async () => {
   addCookie('poker-planning', JSON.stringify({...cookieData, vote: ''}));
 
   state.voteClose = false;
-  state.vote = '';
+  state.voteResults = {};
   state.votes = {};
-
-  for (const [key] of Object.entries(state.userList)) {
-    state.userList[key].vote = '';
-  }
-  
 }
 
 export const updateLead = async (leadId: LeadId) => {

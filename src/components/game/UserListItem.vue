@@ -8,7 +8,7 @@
               'color': user.connected ? 'green' : 'red',
             }"
           > 
-            {{ user.username ?? 'error' }} 
+            {{ user.userName ?? 'error' }} 
           </b>: 
           <i>{{ user.userId ?? 'error' }} 
             ({{  user.userId === state.leadId ?  'lead' : 'user' }}

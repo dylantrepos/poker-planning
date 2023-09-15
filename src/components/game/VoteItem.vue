@@ -18,6 +18,7 @@
   import { addCookie, getCookie, getPokerPossibilities } from '@/utils/utils';
   import { emitVote } from '@/sockets/emitsFunctions';
   import { state } from '@/utils/state';
+  
   import type { Vote } from '../../types/GenericType';
 
   const voteAvailable = getPokerPossibilities();

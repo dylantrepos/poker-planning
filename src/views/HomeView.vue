@@ -39,11 +39,10 @@
 
     socket.on('connect', async () => {
       const userInfo: User = {
+        connected: true,
         roomId: socket.id,
         userId: userId,
-        username: usernameInput.value,
-        vote: '',
-        connected: true,
+        userName: usernameInput.value,
       };
   
       emitJoinRoom(userInfo);

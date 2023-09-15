@@ -7,7 +7,7 @@
             <CheckRoomItem 
               :is-logged-in="state.connected"
             >
-              <h3>Name : {{ state.username }}  {{ state.userId === state.leadId ?  ' 👑' : ''}}</h3>
+              <h3>Name : {{ state.userName }}  {{ state.userId === state.leadId ?  ' 👑' : ''}}</h3>
               <button
                 v-if="state.userId === state.leadId && !state.voteClose"
                 @click="handleCloseVote"
@@ -42,17 +42,16 @@
   import CheckRoomItem from "@/components/room/CheckRoomItem.vue";
   import VoteItem from "@/components/game/VoteItem.vue";
   import MessageItem from "@/components/game/MessageItem.vue";
+  import CheckServerItem from "@/components/general/CheckServerItem.vue";
+  import VotesResultItem from "@/components/game/VotesResultItem.vue";
   
-  import { emitJoinRoom } from "@/sockets/emitsFunctions";
   import { getCookie } from "@/utils/utils";
   import { state } from '@/utils/state';
   import { checkRoomExists } from '@/utils/room';
   import { connectToSocket } from "@/sockets/sockets";
-  import { emitCloseVote, emitOpenVote, emitVote } from '../sockets/emitsFunctions';
+  import { emitJoinRoom, emitCloseVote, emitOpenVote, emitVote } from '@/sockets/emitsFunctions';
   
-  import type { RoomId } from '../types/GenericType';
-import CheckServerItem from "@/components/general/CheckServerItem.vue";
-import VotesResultItem from "@/components/game/VotesResultItem.vue";
+  import type { RoomId } from '@/types/GenericType';
   
   
   // Variables
@@ -70,8 +69,8 @@ import VotesResultItem from "@/components/game/VotesResultItem.vue";
         if (!state.connected) handleJoinRoom();
     }
       
-    loading.value = false;
     isLoggedIn.value = state.connected;
+    loading.value = false;
   })
     
     

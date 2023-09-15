@@ -2,7 +2,7 @@
  * COOKIE
 */
 
-import type { User } from "@/types/UserType";
+import type { User, UserCookie } from "@/types/UserType";
 import type { VoteResults } from "@/types/VoteType";
 import { state } from "./state";
 
@@ -20,7 +20,7 @@ export const getCookieString = (cname: string): string | null =>
   .find((row) => row.startsWith(`${cname}=`))
   ?.split("=")[1] ?? null;
 
-export const getCookie = (): User => JSON.parse(getCookieString('poker-planning') || '{}');
+export const getCookie = (): UserCookie => JSON.parse(getCookieString('poker-planning') || '{}');
   
 export const removeCookie = (cname: string) => {
   document.cookie = cname + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
@@ -42,18 +42,18 @@ export const updateVoteResults = (): void => {
 
   for (const user of Object.values(state.userList)) {
     const vote = state.votes[user.userId];
-    
+
     // Skip if vote is empty
-    if (vote === '') return; 
-    
+    if (!vote || vote === '') return; 
+
     if (results[vote]) {
       results[vote].vote++;
-      results[vote].users.push(user.username);
+      results[vote].users.push(user.userName);
     }
     else { 
       results[vote] = {
         vote: 1,
-        users: [user.username]
+        users: [user.userName]
       }
     }
   }

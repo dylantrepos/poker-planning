@@ -12,14 +12,13 @@ import type { Vote } from "@/types/GenericType";
 
 // JOIN ROOM
 export const emitJoinRoom = async (userInfo: User): Promise<void> => {
-  const {userId, roomId, username, vote} = userInfo;
+  const { userId, roomId, userName } = userInfo;
   
-  state.userId = userId;
-  state.roomId = roomId;
-  state.username = username;
-  state.vote = vote;
-  state.userList = {};
   state.messages = [];
+  state.roomId = roomId;
+  state.userId = userId;
+  state.userList = {};
+  state.userName = userName;
   state.votes = {};
 
   if (!state.connected) connectToSocket();
@@ -36,13 +35,13 @@ export const emitJoinRoom = async (userInfo: User): Promise<void> => {
 
 // SEND MESSAGE
 export const emitMessage = (message: string): void => {  
-  const { roomId, userId, username } = state; 
+  const { roomId, userId, userName } = state; 
 
   const messageData: MessageEmit = {
+    message,
     roomId, 
     userId, 
-    username,
-    message,
+    userName,
 }
 
   socket.emit('message:create', messageData);
@@ -58,8 +57,8 @@ export const emitMessage = (message: string): void => {
 // EMIT VOTE
 export const emitVote = (voteValue: Vote): void => {
   const vote = {
-    userId: state.userId,
     roomId: state.roomId,
+    userId: state.userId,
     vote: voteValue
   }
   
@@ -88,7 +87,7 @@ export const emitLead = (leadId: string): void => {
   state.leadId = leadId;
 
   socket.emit('lead:update', {
+    leadId,
     roomId: state.roomId,
-    leadId
   });
 }

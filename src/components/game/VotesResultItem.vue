@@ -1,11 +1,5 @@
 <template>
   <h4>Vote final</h4>
-  <ul>
-    <li 
-      v-for="(count, vote, index) in state.voteResults"
-      v-bind:key="`vote-${index}`"
-    >{{ vote }} ({{ count }})</li> 
-  </ul>
   <div v-if="Object.keys(state.voteResults).length === 0">No vote !</div>
   <PieChart v-else :chartData="chartData" :plugins="[ChartDataLabels]" :options="plugin"/>
 </template>
@@ -32,13 +26,13 @@
           formatter: (_, context) => Object.keys(state.voteResults)[context.dataIndex],
         },
         tooltip: {
+          bodySpacing: 5,
           callbacks: {
             label: (value) =>  Object.values(state.voteResults)[value.dataIndex].users,
           },
-          bodySpacing: 5,
+          caretPadding: 20,
           displayColors: false,
           padding: 10,
-          caretPadding: 20,
         }
       }
   };
@@ -46,8 +40,8 @@
   const chartData: ChartData<'pie'> = {
     datasets: [
       {
-        data: Object.values(state.voteResults).map(e => e.vote),
         backgroundColor: getColorPalette(),
+        data: Object.values(state.voteResults).map(e => e.vote),
       },
     ],
   };

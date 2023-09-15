@@ -28,7 +28,7 @@
     const userInfo: User = {
       roomId: state.roomId,
       userId,
-      username: usernameInput.value,
+      userName: usernameInput.value,
       vote: '',
       connected: true,
     };
