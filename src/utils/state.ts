@@ -10,7 +10,8 @@ export const state = reactive<State>({
   leadId: '',
   roomExists: false,
   vote: '',
-  voteClose: true,
+  voteResults: {},
+  voteClose: false,
   messages: [],
   userList: {},
   votes: {}

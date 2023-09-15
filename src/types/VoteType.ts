@@ -1,4 +1,4 @@
-import type { RoomId, UserId, Vote } from "./GenericType";
+import type { RoomId, UserId, UserName, Vote } from "./GenericType";
 
 /**
  * Vote
@@ -18,3 +18,10 @@ export type VoteEmit = {
 export type VoteStateEmit = {
   close: boolean
 }
+
+export type VoteResultsInfo = {
+  vote: number,
+  users: UserName[],
+}
+
+export type VoteResults = Record<string, VoteResultsInfo>

@@ -21,6 +21,7 @@
                 Open vote
               </button>
               <UserListItem />
+              <VotesResultItem v-if="state.voteClose" />
               <MessageItem />
               <VoteItem />
               <ChatItem />
@@ -51,6 +52,7 @@
   
   import type { RoomId } from '../types/GenericType';
 import CheckServerItem from "@/components/general/CheckServerItem.vue";
+import VotesResultItem from "@/components/game/VotesResultItem.vue";
   
   
   // Variables

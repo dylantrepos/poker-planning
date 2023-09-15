@@ -23,6 +23,9 @@
   import { checkServerState } from '@/utils/room';
   import CheckServerItem from "@/components/general/CheckServerItem.vue";
   import type { User } from '@/types/UserType';
+  import { Chart, DoughnutController, ArcElement, Tooltip } from 'chart.js';
+  
+  Chart.register(DoughnutController, ArcElement, Tooltip);
 
   const router = useRouter();
   const usernameInput = ref('');

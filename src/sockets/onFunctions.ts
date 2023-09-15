@@ -3,9 +3,9 @@ import { state } from "@/utils/state";
 
 import type { UserList } from "@/types/UserType";
 import type { Message } from '@/types/MessageType';
-import type { VoteInfo } from '@/types/VoteType';
+import type { VoteInfo, VoteResults } from '@/types/VoteType';
 import type { LeadId } from '@/types/GenericType';
-import { addCookie, getCookie } from '@/utils/utils';
+import { addCookie, getCookie, updateVoteResults } from '@/utils/utils';
 
 
 export const setConnectionToSocket = async (connected: boolean = true): Promise<void> => {
@@ -16,6 +16,7 @@ export const setConnectionToSocket = async (connected: boolean = true): Promise<
   await checkVoteOpen();
 }
 
+// Userlist
 export const updateUserList = async (userList: UserList): Promise<void> => {
   if (state.leadId === '') await getLeadId();
 
@@ -23,19 +24,23 @@ export const updateUserList = async (userList: UserList): Promise<void> => {
 }
 
 
-
+// Message
 export const messageReceived = ( message: Message ): void => {
   if (state.messages) {
     state.messages.push(message);
   }
 };
 
+
+// Vote
 export const updateVote = async (userVote: VoteInfo) => {
   state.votes = userVote;
 }
 
 export const closeVote = async () => {
   state.voteClose = true;
+
+  updateVoteResults();
 }
 
 export const openVote = async () => {
