@@ -1,5 +1,7 @@
 <template>
-  <h4>Vote ({{ state.votes[state.userId] }})</h4>
+  <h4>
+    Vote ({{ state.votes[state.userId] }})
+  </h4>
   <button 
     v-for="vote in voteAvailable" 
     v-bind:key="vote"
@@ -15,19 +17,19 @@
 </template>
 
 <script setup lang="ts">
-  import { addCookie, getCookie, getPokerPossibilities } from '@/utils/utils';
-  import { emitVote } from '@/sockets/emitsFunctions';
-  import { state } from '@/utils/state';
+   import { addCookie, getCookie, getPokerPossibilities } from '@/utils/utils';
+   import { emitVote } from '@/sockets/emitsFunctions';
+   import { state } from '@/utils/state';
   
-  import type { Vote } from '../../types/GenericType';
+   import type { Vote } from '../../types/GenericType';
 
-  const voteAvailable = getPokerPossibilities();
+   const voteAvailable = getPokerPossibilities();
 
-  const handleVote = (vote: Vote): void => {
-    const cookieData = getCookie();
+   const handleVote = (vote: Vote): void => {
+      const cookieData = getCookie();
     
-    emitVote(vote);
+      emitVote(vote);
 
-    addCookie('poker-planning', JSON.stringify({...cookieData, vote}));
-  }
+      addCookie('poker-planning', JSON.stringify({...cookieData, vote}));
+   };
 </script>

@@ -17,7 +17,7 @@ const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(import.met
 const connectToSocket = () => {
   socket.connect();
   state.connected = true;
-}
+};
 
 // On events
 socket.on("connect", () => setConnectionToSocket());

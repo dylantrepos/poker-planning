@@ -1,0 +1,35 @@
+body {
+  background: linear-gradient(113deg, var(--background-color-one), var(--background-color-two));
+  height: 100dvh;
+}
+
+* {
+    border: 0;
+    box-sizing: border-box;
+    color: var(--text-color);
+    font-family: Poppins, sans-serif;
+    font-style: normal;
+    font-weight: 300;
+    margin: 0;
+    padding: 0;
+}
+
+.button-primary {
+  background: var(--button-background-color);
+  border: 1px solid var(--button-border-color); 
+  border-radius: 100px;
+  color: var(--button-text-color);
+  cursor: pointer;
+  font-size: .8rem;
+  font-weight: 400;  
+  height: fit-content;
+  padding: .5rem 2rem;
+  transition: 
+    background var(--transition-duration) ease-in-out,
+    color var(--transition-duration) ease-in-out;
+
+  &:hover {
+    background: var(--button-background-color-hover);
+    color: var(--button-text-color-hover);
+  }
+}

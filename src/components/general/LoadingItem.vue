@@ -1,16 +1,18 @@
 <template>
-  <div v-if="props.loading">Loading...</div>
+  <div v-if="props.loading">
+    Loading...
+  </div>
   <slot v-else></slot>
 </template>
 
 <script setup lang="ts">
 
-  type Props = {
-    loading: boolean
-  }
+   type Props = {
+      loading: boolean
+   }
 
-  const props = withDefaults(defineProps<Props>(), {
-    loading: true
-  });
+   const props = withDefaults(defineProps<Props>(), {
+      loading: true
+   });
 
 </script>

@@ -17,10 +17,10 @@ const router = createRouter({
       component: RoomView
     }
   ]
-})
+});
 
 router.beforeEach(() =>  {
   checkServerState();
-})
+});
 
-export default router
+export default router;

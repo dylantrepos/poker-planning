@@ -13,7 +13,7 @@ export const addCookie = (cname: string, cvalue: string, exdays: number = 7) => 
     date.setTime(date.getTime() + (exdays*24*60*60*1000));
     const expires = "expires=" + date.toUTCString();
     document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
-}
+};
   
 export const getCookieString = (cname: string): string | null => 
   document.cookie
@@ -25,7 +25,7 @@ export const getCookie = (): UserCookie => JSON.parse(getCookieString('poker-pla
   
 export const removeCookie = (cname: string) => {
   document.cookie = cname + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-}
+};
 
 export const getPokerPossibilities = (): string[] => [
     '0', '1/2', '1', '2', '3', '5', '8', '13', 
@@ -55,10 +55,10 @@ export const updateVoteResults = (): void => {
       results[vote] = {
         vote: 1,
         users: [user.userName]
-      }
+      };
     }
   }
 
   state.voteResults = results;
 
-}
+};

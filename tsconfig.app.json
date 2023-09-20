@@ -1,12 +1,25 @@
 {
   "extends": "@vue/tsconfig/tsconfig.dom.json",
-  "include": ["env.d.ts", "src/**/*", "src/**/*.vue|ts", "src/**/*.ts"],
-  "exclude": ["src/**/__tests__/*"],
+  "include": [
+    "env.d.ts",
+    "src/**/*",
+    "src/**/*.vue|ts",
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "src/**/__tests__/*"
+  ],
+  "types": [
+    "vite",
+    "vite-plugin-eslint"
+  ],
   "compilerOptions": {
     "composite": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": [
+        "./src/*"
+      ]
     }
   }
-} 
+}

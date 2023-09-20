@@ -24,7 +24,7 @@ export const emitJoinRoom = async (userInfo: User): Promise<void> => {
   if (!state.connected) connectToSocket();
 
   socket.emit('room:join', userInfo);
-}
+};
 
 
 /**
@@ -42,10 +42,10 @@ export const emitMessage = (message: string): void => {
     roomId, 
     userId, 
     userName,
-}
+};
 
   socket.emit('message:create', messageData);
-}
+};
 
 
 /**
@@ -60,20 +60,20 @@ export const emitVote = (voteValue: Vote): void => {
     roomId: state.roomId,
     userId: state.userId,
     vote: voteValue
-  }
+  };
   
   socket.emit('vote:create', vote);
-}
+};
 
 // CLOSE VOTE
 export const emitCloseVote = (): void => {
   socket.emit('vote:close', state.roomId);
-}
+};
 
 // OPEN VOTE
 export const emitOpenVote = (): void => {
   socket.emit('vote:open', state.roomId);
-}
+};
 
 
 /**
@@ -90,4 +90,4 @@ export const emitLead = (leadId: string): void => {
     leadId,
     roomId: state.roomId,
   });
-}
+};

@@ -1,38 +1,41 @@
 <template>
-  <h5>List users : </h5>
+  <h5>
+    List users :
+  </h5>
   <ul v-if="state.userList">
-      <li 
-        v-for="user in state.userList" v-bind:key="user.userId">
-          <b
-            :style="{
-              'color': user.connected ? 'green' : 'red',
-            }"
-          > 
-            {{ user.userName ?? 'error' }} 
-          </b>: 
-          <i>{{ user.userId ?? 'error' }} 
-            ({{  user.userId === state.leadId ?  'lead' : 'user' }}
-            {{ user.userId === state.leadId ?  '👑' : ''}})
-          </i> 
-            | {{ state.voteClose ? `Vote : ${state.votes[user.userId]?.length > 0 ?? false ? state.votes[user.userId] : 'No vote'}`  :  (state.votes[user.userId] ? 'Voted !' : 'Waiting for vote...') }}
-          <button 
-            v-if="user.userId !== state.leadId && state.userId === state.leadId"
-            @click="handleChangeLead(user.userId)"
-          >
-            Set leader
-          </button>
-      </li>
+    <li 
+      v-for="user in state.userList"
+      v-bind:key="user.userId">
+      <b
+        :style="{
+          'color': user.connected ? 'green' : 'red',
+        }"
+      > 
+        {{ user.userName ?? 'error' }} 
+      </b>: 
+      <i>{{ user.userId ?? 'error' }} 
+        ({{  user.userId === state.leadId ?  'lead' : 'user' }}
+        {{ user.userId === state.leadId ?  '👑' : ''}})
+      </i> 
+      | {{ state.voteClose ? `Vote : ${state.votes[user.userId]?.length > 0 ?? false ? state.votes[user.userId] : 'No vote'}`  :  (state.votes[user.userId] ? 'Voted !' : 'Waiting for vote...') }}
+      <button 
+        v-if="user.userId !== state.leadId && state.userId === state.leadId"
+        @click="handleChangeLead(user.userId)"
+      >
+        Set leader
+      </button>
+    </li>
   </ul>
 
 </template>
 
 <script setup lang="ts">
-  import { state } from '@/utils/state';
-  import { emitLead } from '../../sockets/emitsFunctions';
+   import { state } from '@/utils/state';
+   import { emitLead } from '../../sockets/emitsFunctions';
   
-  import type { LeadId } from '@/types/GenericType';
+   import type { LeadId } from '@/types/GenericType';
 
-  const handleChangeLead = (leadId: LeadId) => {
-    emitLead(leadId);
-  }
+   const handleChangeLead = (leadId: LeadId) => {
+      emitLead(leadId);
+   };
 </script>

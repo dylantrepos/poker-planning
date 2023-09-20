@@ -11,12 +11,12 @@ import { updateVoteResults } from './utils';
 export const checkServerState = async () => {
   try {
     const tryConnectionRequest = fetch(import.meta.env.VITE_SERVER_ADDRESS);
-    const connectionStatus = (await tryConnectionRequest).status
+    const connectionStatus = (await tryConnectionRequest).status;
     state.serverLive = connectionStatus >= 200 && connectionStatus < 300 ? true : false;
   } catch (e) {
     state.serverLive = false;
   }
-}
+};
 
 /**
  * Retreive list of current user in room `state.roomId`.
@@ -27,7 +27,7 @@ export const getUserList = async (): Promise<void> => {
   const listUserResponse: Awaited<UserList> = (await listUserRequest.json()).list;
 
   state.userList = listUserResponse;
-}
+};
 
 /**
  * Retreive all messages from room `state.roomId`.
@@ -45,7 +45,7 @@ export const getAllMessages = async (): Promise<void> => {
   }
 
   state.messages = messages;
-}
+};
 
 /**
  * Retreive all votes from room `state.roomId`.
@@ -63,7 +63,7 @@ export const getAllVotes = async (): Promise<void> => {
   }
 
   state.votes = votes;
-}
+};
 
 /**
  * Retreive the ID of the lead user.
@@ -82,7 +82,7 @@ export const getLeadId = async (): Promise<void> => {
   }
 
   state.leadId = leadId;
-}
+};
 
 /**
  * Check if room `state.roomId` exists.
@@ -100,7 +100,7 @@ export const checkRoomExists = async (): Promise<void> => {
   }
   
   state.roomExists = roomExists;
-}
+};
 
 /**
  * Check if vote is open for `state.roomId`.
@@ -111,11 +111,13 @@ export const checkVoteOpen = async (): Promise<void> => {
   try {
     const stateVoteRequest = await fetch(`${import.meta.env.VITE_SERVER_ADDRESS}/vote-state/${state.roomId}`);
     voteClose = (await stateVoteRequest.json()).close;
+
     if (voteClose) updateVoteResults();
   } catch (e) {
     console.warn(`Warning : Fail to get vote state from server.`);
+
     await checkServerState();
   }
 
   state.voteClose = voteClose;
-}
+};

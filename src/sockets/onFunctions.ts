@@ -15,14 +15,14 @@ export const setConnectionToSocket = async (connected: boolean = true): Promise<
   await getAllVotes();
   await getLeadId();
   await checkVoteOpen();
-}
+};
 
 // Userlist
 export const updateUserList = async (userList: UserList): Promise<void> => {
   if (state.leadId === '') await getLeadId();
 
   state.userList = userList;
-}
+};
 
 
 // Message
@@ -36,13 +36,13 @@ export const messageReceived = ( message: Message ): void => {
 // Vote
 export const updateVote = async (userVote: VoteInfo) => {
   state.votes = userVote;
-}
+};
 
 export const closeVote = async () => {
   state.voteClose = true;
 
   updateVoteResults();
-}
+};
 
 export const openVote = async () => {
   const cookieData = getCookie();
@@ -51,12 +51,12 @@ export const openVote = async () => {
   state.voteClose = false;
   state.voteResults = {};
   state.votes = {};
-}
+};
 
 export const updateLead = async (leadId: LeadId) => {
   state.leadId = leadId;
-}
+};
 
 export const handleError = (err: Error) => {
   console.error(`Error: connection impossible due to ${err.message}`);
-}
+};

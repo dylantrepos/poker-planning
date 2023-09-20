@@ -1,19 +1,24 @@
 <template>
   <div class="header__container">
-    <div class="header__title" @click="redirectToHome">Poker planning</div>
+    <div 
+      class="header__title"
+      @click="redirectToHome"
+    >
+      Poker planning
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { useRouter } from "vue-router";
+   import { useRouter } from "vue-router";
 
 
-  const router = useRouter();
+   const router = useRouter();
 
-  // Methods 
-  const redirectToHome = (): void => {
-    router.push('/');
-  }
+   // Methods 
+   const redirectToHome = (): void => {
+      router.push('/');
+   };
 </script>
 
 <style scoped>

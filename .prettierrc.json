@@ -4,5 +4,20 @@
   "tabWidth": 2,
   "singleQuote": true,
   "printWidth": 100,
-  "trailingComma": "none"
+  "trailingComma": "none",
+  "arrowParens": "always",
+  "plugins": ["prettier-plugin-sort-imports", "prettier-plugin-css-order"],
+  "rules": {
+    "prettier-plugin-sort-imports": "true",
+    "sort-imports": [
+      "style",
+      {
+        "ignoreCase": false,
+        "ignoreDeclarationSort": false,
+        "ignoreMemberSort": false,
+        "memberSyntaxSortOrder": ["none", "all", "multiple", "single"],
+        "caseSensitive": false
+      }
+    ]
+  }
 }
