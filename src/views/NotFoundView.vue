@@ -1,34 +1,35 @@
 <template>
-  <div v-if="state.roomExists">
-    <slot></slot>
-  </div>
-  <div v-else
-       class="room-error__container"
-  >
-    <h1>
-      Sorry !
+  <main class="not-found__container">
+    <h1 class="not-found__title">
+      Oups !
     </h1>
-    <p class="room-error__text">
-      This room doesn't exist...
+    <p class="not-found__text">
+      This page doesn't exist. <br>
+      Go to homepage to create a game.
     </p>
     <button 
       class="button"
-      @click="router.push('/')"
+      @click="handleRedirectToHome"
     >
-      Create a room
+      Go to home
     </button>
-  </div>
+  </main>
 </template>
 
 <script setup lang="ts">
-   import { state } from "@/utils/state";
    import { useRouter } from "vue-router";
 
    const router = useRouter();
+     
+   // Methods
+   const handleRedirectToHome = async () => {
+      router.push('/');
+   };
 </script>
 
+
 <style lang="scss">
-  .room-error__container {
+  .not-found__container {
     align-items: center;
     display: flex;
     flex-direction: column;
@@ -37,11 +38,11 @@
     justify-content: center;
   }
 
-  .room-error__title {
+  .not-found__title {
     font-weight: 500;
   }
 
-  .room-error__text {
+  .not-found__text {
     margin: 2rem;
     text-align: center;
   }

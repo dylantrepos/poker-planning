@@ -1,85 +1,46 @@
 <template>
-  <header>
-    <HeaderItem />
-  </header>
-  <main>
-    <CheckServerItem>
-      <div>
-        Game view
-      </div>
-      <button @click="handleCopyURL">
-        Share room
-      </button>
+  <ServerErrorItem>
+    <RoomNotExistsItem>
+      <header v-if="state.roomExists">
+        <HeaderItem />
+      </header>
       <LoadingItem :loading="loading">
-        <CheckRoomItem 
-          :is-logged-in="state.connected"
-        >
-          <h3>
-            Name : {{ state.userName }}  {{ state.userId === state.leadId ?  ' 👑' : ''}}
-          </h3>
-          <button
-            v-if="state.userId === state.leadId && !state.voteClose"
-            @click="handleCloseVote"
-          >
-            Close vote
-          </button>
-          <button
-            v-if="state.userId === state.leadId && state.voteClose"
-            @click="handleOpenVote"
-          >
-            Open vote
-          </button>
-          <UserListItem />
-          <VotesResultItem v-if="state.voteClose" />
-          <MessageItem />
-          <VoteItem />
-          <ChatItem />
-
-        </CheckRoomItem>
+        <RoomItem v-if="state.connected" />
+        <JoinRoomItem v-else />
       </LoadingItem>
-    </CheckServerItem>
-  </main>
+    </RoomNotExistsItem>
+  </ServerErrorItem>
 </template>
 
 <script setup lang="ts">
    import { onBeforeMount, ref } from "vue";
-   import { useRoute } from "vue-router";``;
-  
-   import UserListItem from "@/components/game/UserListItem.vue";
-   import ChatItem from '@/components/game/ChatItem.vue';
+   import { useRoute } from "vue-router";
+
    import LoadingItem from "@/components/general/LoadingItem.vue";
-   import CheckRoomItem from "@/components/room/CheckRoomItem.vue";
-   import VoteItem from "@/components/game/VoteItem.vue";
-   import MessageItem from "@/components/game/MessageItem.vue";
-   import CheckServerItem from "@/components/general/CheckServerItem.vue";
-   import VotesResultItem from "@/components/game/VotesResultItem.vue";
-  
-   import { getCookie } from "@/utils/utils";
-   import { state } from '@/utils/state';
-   import { checkRoomExists } from '@/utils/room';
-   import { connectToSocket } from "@/sockets/sockets";
-   import { emitJoinRoom, emitCloseVote, emitOpenVote, emitVote } from '@/sockets/emitsFunctions';
-  
-   import type { RoomId } from '@/types/GenericType';
    import HeaderItem from "@/components/general/HeaderItem.vue";
+   import JoinRoomItem from "@/components/room/JoinRoomItem.vue";
+   import ServerErrorItem from "@/components/general/ServerErrorItem.vue";
+   import RoomItem from "@/components/room/RoomItem.vue";
+   import RoomNotExistsItem from "@/components/room/RoomNotExistsItem.vue";
   
+   import { state } from '@/utils/state';
+   import { connectToSocket } from '@/sockets/sockets';
+   import { getCookie } from '@/utils/utils';
+   import { emitJoinRoom, emitVote } from '@/sockets/emitsFunctions';
+   
+   import type { RoomId } from '@/types/GenericType';
   
    // Variables
-   const isLoggedIn = ref(false);
    const loading = ref(true);
-
    const route = useRoute();
    state.roomId = route.params.id as RoomId;
 
    // Life cycle
    onBeforeMount( async () => {
-      await checkRoomExists();
-    
       if (state.roomExists && getCookie().roomId === state.roomId) {
          if (!state.connected) handleJoinRoom();
       }
       
-      isLoggedIn.value = state.connected;
       loading.value = false;
    });
     
@@ -96,16 +57,11 @@
       }
 
    };
-
-   const handleCopyURL = () => {
-      navigator.clipboard.writeText(`${import.meta.env.VITE_CLIENT_ADDRESS}${route.fullPath}`);
-   };
-
-   const handleCloseVote = () => {
-      emitCloseVote();
-   };
-
-   const handleOpenVote = () => {
-      emitOpenVote();
-   };
 </script>
+
+
+<style lang="scss">
+  .room-view__container {
+    height: 100dvh;
+  }
+</style>

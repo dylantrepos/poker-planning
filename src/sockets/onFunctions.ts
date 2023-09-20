@@ -7,14 +7,17 @@ import type { VoteInfo } from '@/types/VoteType';
 import type { LeadId } from '@/types/GenericType';
 import { addCookie, getCookie, updateVoteResults } from '@/utils/utils';
 
-
 export const setConnectionToSocket = async (connected: boolean = true): Promise<void> => {
   state.connected = connected;
-
-  await getAllMessages();
-  await getAllVotes();
-  await getLeadId();
-  await checkVoteOpen();
+  
+  if (connected) {
+    await getAllMessages();
+    await getAllVotes();
+    await getLeadId();
+    await checkVoteOpen();
+  }  else {
+    state.serverLive = false;
+  }
 };
 
 // Userlist

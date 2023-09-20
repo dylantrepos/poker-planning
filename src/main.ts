@@ -2,8 +2,8 @@ import { createApp } from 'vue';
 import './assets/fonts.scss';
 import './assets/variables.scss';
 import './assets/base.scss';
-import App from './App.vue';
 import router from './router';
+import App from './App.vue';
 
 const app = createApp(App);
 

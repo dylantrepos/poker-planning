@@ -1,21 +1,21 @@
-import type { LeadId, UserId, Vote, VoteState } from '@/types/GenericType';
+import { state } from '@/utils/state';
+import { updateVoteResults } from '@/utils/utils';
+
+import type { LeadId, RoomId, UserId, Vote, VoteState } from '@/types/GenericType';
 import type { Message } from '@/types/MessageType';
 import type { UserList } from '@/types/UserType';
-import { state } from '@/utils/state';
-import { updateVoteResults } from './utils';
 
 /**
  * Check if server is live.
  * - Udapte state.serverLive value.
  */
-export const checkServerState = async () => {
-  try {
-    const tryConnectionRequest = fetch(import.meta.env.VITE_SERVER_ADDRESS);
-    const connectionStatus = (await tryConnectionRequest).status;
-    state.serverLive = connectionStatus >= 200 && connectionStatus < 300 ? true : false;
-  } catch (e) {
-    state.serverLive = false;
-  }
+export const checkServerState = async (): Promise<boolean> => {
+  const tryConnectionRequest = fetch(import.meta.env.VITE_SERVER_ADDRESS);
+  const connectionStatus = (await tryConnectionRequest).status;
+  const serverLive = connectionStatus >= 200 && connectionStatus < 300 ? true : false;
+  state.serverLive = serverLive;
+  
+  return serverLive;
 };
 
 /**
@@ -88,11 +88,11 @@ export const getLeadId = async (): Promise<void> => {
  * Check if room `state.roomId` exists.
  * - Update state.roomExists value.
  */
-export const checkRoomExists = async (): Promise<void> => {
+export const checkRoomExists = async (id: RoomId): Promise<boolean> => {
   let roomExists: boolean = false;
 
   try {
-    const roomExistsRequest = await fetch(`${import.meta.env.VITE_SERVER_ADDRESS}/check-room/${state.roomId}`);
+    const roomExistsRequest = await fetch(`${import.meta.env.VITE_SERVER_ADDRESS}/check-room/${id}`);
     roomExists = (await roomExistsRequest.json()).exist;
   } catch (e) {
     console.warn(`Warning : Fail to check if room exists from server.`);
@@ -100,6 +100,8 @@ export const checkRoomExists = async (): Promise<void> => {
   }
   
   state.roomExists = roomExists;
+
+  return roomExists;
 };
 
 /**

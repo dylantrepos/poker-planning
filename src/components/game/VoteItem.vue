@@ -9,8 +9,8 @@
     @click="handleVote((vote === state.votes[state.userId] ? '' : vote) as Vote)"
     :style="{
       'background': vote === state.votes[state.userId] ? 'green ' : 'transparent',
-      'color': vote === state.votes[state.userId] ? 'white ' : 'black',
     }"
+    class="button vote__button"
   >
     {{ vote }}
   </button>
@@ -33,3 +33,10 @@
       addCookie('poker-planning', JSON.stringify({...cookieData, vote}));
    };
 </script>
+
+<style lang="scss">
+  .vote__button {
+    padding: 1rem 2rem;
+    color: white;
+  }
+</style>

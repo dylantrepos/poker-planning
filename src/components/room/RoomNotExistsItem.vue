@@ -1,9 +1,8 @@
 <template>
-  <div v-if="state.roomExists">
-    <slot></slot>
-  </div>
-  <div v-else
-       class="room-error__container"
+  <slot v-if="state.roomExists"></slot>
+  <main 
+    v-else
+    class="room-error__container"
   >
     <h1>
       Sorry !
@@ -17,7 +16,7 @@
     >
       Create a room
     </button>
-  </div>
+  </main>
 </template>
 
 <script setup lang="ts">

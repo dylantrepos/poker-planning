@@ -1,36 +1,51 @@
 <template>
-  <main>
-    <CheckServerItem>
-      <h1>
-        Welcome !
+  <ServerErrorItem>
+    <main  
+      class="home-view_container"
+    >
+      <h1 class="home-view_title">
+        Poker planning
       </h1>
-      <form @submit.prevent="redirectToGame">
+      <p class="home-view_text">
+        To start a game, <br>
+        enter your name and share the link with other players
+      </p>
+      <p class="home-view_text">
+        You will be the lead of the game, <br>
+        but you give the role to any other player.
+      </p>
+      <form 
+        @submit.prevent="redirectToGame"
+        class="home-view_form"
+      >
         <input 
+          class="text-input"
           type="text"
           v-model="usernameInput"
           placeholder="Your name" 
         />
-        <button class="button-primary">
+        <button class="button">
           Create a room
         </button>
       </form>
-    </CheckServerItem>
-  </main>
+    </main>
+  </ServerErrorItem>
 </template>
 
 <script setup lang="ts">
    import { ref } from "vue";
    import { useRouter } from "vue-router";
    import { v4 as uuidv4 } from 'uuid';
+   import { Chart, DoughnutController, ArcElement, Tooltip } from 'chart.js';
 
+   import ServerErrorItem from '@/components/general/ServerErrorItem.vue';
+   
    import { socket, connectToSocket } from '@/sockets/sockets';
    import { emitJoinRoom } from '@/sockets/emitsFunctions';
    import { addCookie } from "@/utils/utils";
    import { state } from "@/utils/state";
 
-   import CheckServerItem from "@/components/general/CheckServerItem.vue";
    import type { User } from '@/types/UserType';
-   import { Chart, DoughnutController, ArcElement, Tooltip } from 'chart.js';
   
    Chart.register(DoughnutController, ArcElement, Tooltip);
 
@@ -62,3 +77,33 @@
    };
 
 </script>
+
+<style lang="scss">
+  .home-view_container {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    height: 100dvh;
+    justify-content: center;
+  }
+
+  .home-view_title {
+    margin-bottom: 2rem;
+    font-weight: 500;
+  }
+
+  .home-view_text {
+    margin: .8rem 2rem;
+    text-align: center;
+  }
+
+  .home-view_form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+</style>

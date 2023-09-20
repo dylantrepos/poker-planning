@@ -1,15 +1,27 @@
 <template>
-  <h3>
-    Join a room
-  </h3>
-  <form @submit.prevent="handleJoinRoom">
-    <input type="text"
-           placeholder="Your name"
-           v-model="usernameInput" />
-    <button>
-      Join the room
-    </button>
-  </form>
+  <main class="join-room__container">
+    <h1 class="join-room_title">
+      Join a room
+    </h1>
+    <p class="home-view_text">
+      To join this game, <br>
+      you must choose a name.
+    </p>
+    <form 
+      class="join-room_form"
+      @submit.prevent="handleJoinRoom"
+    >
+      <input 
+        type="text"
+        placeholder="Your name"
+        class="text-input"
+        v-model="usernameInput" 
+      />
+      <button class="button">
+        Join the room
+      </button>
+    </form>
+  </main>
 </template>
 
 <script setup lang="ts">
@@ -22,8 +34,8 @@
 
    import type { User } from '../../types/UserType';
 
-
    const usernameInput = ref('');
+   
 
    // Methods 
    const handleJoinRoom = async (): Promise<void> => {
@@ -47,3 +59,24 @@
     
    };
 </script>
+
+
+<style lang="scss">
+  .join-room__container {
+    height: 100dvh;
+  }
+
+  .join-room_title {
+    text-align: center;
+    margin-top: 10rem;
+  }
+
+  .join-room_form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+</style>
