@@ -4,6 +4,9 @@
 
   --text-color: #fff;
 
+  // Header
+  --header-height: 5rem;
+
   // Transition
   --transition-duration: .4s;
   
@@ -17,7 +20,7 @@
 }
 
 // Screen
-$xxs: 320px; /* Extra, extra small screens */
+$xxs: 380px; /* Extra, extra small screens */
 $xs: 480px; /* Extra small screens */
 $m: 768px; /* Medium screens (typically tablets) */
 $l: 992px; /* Large screens (desktop) */

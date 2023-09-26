@@ -9,13 +9,11 @@ import type { UserList } from '@/types/UserType';
  * Check if server is live.
  * - Udapte state.serverLive value.
  */
-export const checkServerState = async (): Promise<boolean> => {
+export const checkServerState = async (): Promise<void> => {
   const tryConnectionRequest = fetch(import.meta.env.VITE_SERVER_ADDRESS);
   const connectionStatus = (await tryConnectionRequest).status;
   const serverLive = connectionStatus >= 200 && connectionStatus < 300 ? true : false;
   state.serverLive = serverLive;
-  
-  return serverLive;
 };
 
 /**

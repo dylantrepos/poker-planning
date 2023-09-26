@@ -1,15 +1,10 @@
 <template>
-  <ServerErrorItem>
-    <RoomNotExistsItem>
-      <header v-if="state.roomExists">
-        <HeaderItem />
-      </header>
-      <LoadingItem :loading="loading">
-        <RoomItem v-if="state.connected" />
-        <JoinRoomItem v-else />
-      </LoadingItem>
-    </RoomNotExistsItem>
-  </ServerErrorItem>
+  <RoomNotExistsItem>
+    <LoadingItem :loading="loading">
+      <RoomItem v-if="state.connected" />
+      <JoinRoomItem v-else />
+    </LoadingItem>
+  </RoomNotExistsItem>
 </template>
 
 <script setup lang="ts">
@@ -17,9 +12,7 @@
    import { useRoute } from "vue-router";
 
    import LoadingItem from "@/components/general/LoadingItem.vue";
-   import HeaderItem from "@/components/general/HeaderItem.vue";
    import JoinRoomItem from "@/components/room/JoinRoomItem.vue";
-   import ServerErrorItem from "@/components/general/ServerErrorItem.vue";
    import RoomItem from "@/components/room/RoomItem.vue";
    import RoomNotExistsItem from "@/components/room/RoomNotExistsItem.vue";
   

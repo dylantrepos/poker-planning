@@ -2,7 +2,7 @@
   <slot v-if="state.roomExists"></slot>
   <main 
     v-else
-    class="room-error__container"
+    class="container"
   >
     <h1>
       Sorry !
@@ -27,15 +27,6 @@
 </script>
 
 <style lang="scss">
-  .room-error__container {
-    align-items: center;
-    display: flex;
-    flex-direction: column;
-    text-align: center;
-    height: 100dvh;
-    justify-content: center;
-  }
-
   .room-error__title {
     font-weight: 500;
   }

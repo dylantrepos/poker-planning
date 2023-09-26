@@ -61,5 +61,6 @@ export const updateLead = async (leadId: LeadId) => {
 };
 
 export const handleError = (err: Error) => {
+  state.serverLive = false;
   console.error(`Error: connection impossible due to ${err.message}`);
 };

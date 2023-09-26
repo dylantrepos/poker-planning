@@ -1,5 +1,5 @@
 <template>
-  <div class="header__container">
+  <header class="header__container">
     <div 
       class="header__title"
       @click="redirectToHome"
@@ -12,7 +12,7 @@
     >
       Share room
     </button>
-  </div>
+  </header>
 </template>
 
 <script setup lang="ts">
@@ -40,7 +40,7 @@
   @import '../../assets/variables.scss'; 
 
 .header__container {
-  height: 5rem;
+  height: var(--header-height);
   display: flex;
   justify-content: space-between;
   align-items: center;

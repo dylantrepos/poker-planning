@@ -1,5 +1,5 @@
 <template>
-  <main class="not-found__container">
+  <main class="container">
     <h1 class="not-found__title">
       Oups !
     </h1>
@@ -29,15 +29,6 @@
 
 
 <style lang="scss">
-  .not-found__container {
-    align-items: center;
-    display: flex;
-    flex-direction: column;
-    text-align: center;
-    height: 100dvh;
-    justify-content: center;
-  }
-
   .not-found__title {
     font-weight: 500;
   }

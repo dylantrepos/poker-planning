@@ -2,6 +2,7 @@
 
 body {
   background: linear-gradient(113deg, var(--background-color-one), var(--background-color-two));
+  background-attachment: fixed;
   background-repeat: no-repeat;
   height: 100vh;
   width: 100dvw;
@@ -61,4 +62,13 @@ p {
     height: 2.5rem;
     max-width: 15rem;
   }
+}
+
+.container {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  justify-content: center;
+  text-align: center;
 }
