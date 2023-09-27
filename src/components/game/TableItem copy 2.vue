@@ -84,19 +84,8 @@
 <style lang="scss">
   @import '../../assets/variables'; 
 
-  @for $i from 1 through 17 {
-    .c-#{$i} {
-      grid-area: c#{$i};
-    }
-  }
-
   .table-container {
     height: calc(100dvh - var(--header-height));
-    justify-content: start;
-    
-    @media (min-width: $m) {
-      justify-content: center;
-    }
   }
 
   .table__players-container {
@@ -122,8 +111,7 @@
     @media (min-width: $m) {
       width: 65dvw;
       height: auto;
-      aspect-ratio: 16/9;
-      min-height: 370px;
+      aspect-ratio: 13/9;
       max-width: 1100px;
       max-height: auto;
     }
@@ -138,122 +126,48 @@
     display: grid;
 
     grid-template: 
-        'c13 c2 c14' 
+        'c13 c2 c14'
         'c5  t  c7'
         'c9  t  c11'
         'c3  t  c4'
         'c10 t  c12'
         'c6  t  c8'
-        'c15 c1 c16' 
+        'c15 c1 c16'
     ;
     
     @media (min-width: $m) {
-      width: 75%;
+      width: 80%;
       height: 65%;
-      min-width: 300px;
       gap: 2px;
 
       grid-template: 
-          'c13 c5 c9  c2 c10 c6 c14' 1fr
-          'c3  t  t   t  t   t  c4'  7dvw
-          'c15 c7 c11 c1 c12 c8 c16' 1fr
+          'c13 c5 c9  c2 c10 c6 c14'
+          'c3  t  t   t  t   t  c4' 1fr
+          'c15 c7 c11 c1 c12 c8 c16'
       ;
     
     }
   }
 
   .table__player-item {
-    // border: 1px solid yellow;
+    border: 1px solid yellow;
     display: flex;
     justify-content: center;
     align-items: center;
     position: relative;
+
   }
 
-  .c-13, .c-14, .c-15, .c-16 {
-    align-items: end;
-    justify-content: end;
-  }
+  @for $i from 1 through 17 {
+    .c-#{$i} {
+      grid-area: c#{$i};
 
-  .c-14, .c-16 {
-    justify-content: start;
-  }
-
-  .c-15, .c-16 {
-    align-items: start;
-  }
-  
-  @media (min-width: $m) and (max-width: $xl) {
-    .c-13 {
-      margin-bottom: .2rem;
-      margin-right: .2rem;
-    }
-  
-    .c-14 {
-      margin-bottom: .2rem;
-      margin-left: .2rem;
-    }
-    
-    .c-15 {
-      margin-top: .2rem;
-      margin-right: .2rem;
-    }
-  
-    .c-16 {
-      margin-top: .2rem;
-      margin-left: .2rem;
-    }
-    
-    .c-9, .c-2, .c-10 {
-      margin-bottom: 1rem;
-    }
-
-    .c-11, .c-1, .c-12 {
-      margin-top: 1rem;
+      
     }
   }
-  
-  @media (min-width: $xl) {
-    .c-13 {
-      margin-bottom: .5rem;
-      margin-right: .5rem;
-    }
-  
-    .c-14 {
-      margin-bottom: .5rem;
-      margin-left: .5rem;
-    }
-    
-    .c-15 {
-      margin-top: .5rem;
-      margin-right: .5rem;
-    }
-  
-    .c-16 {
-      margin-top: .5rem;
-      margin-left: .5rem;
-    }
-    
-    .c-9, .c-2, .c-10 {
-      margin-bottom: 2rem;
-    }
-
-    .c-11, .c-1, .c-12 {
-      margin-top: 2rem;
-    }
-
-    .c-5, .c-6 {
-      margin-bottom: 1rem;
-    }
-
-    .c-7, .c-8 {
-      margin-top: 1rem;
-    }
-  }
-
   
   .table__card-item {
-    width: 5dvw;
+    width: 4dvw;
     max-width: 25px;
     aspect-ratio: 2/3;
     border: 1px solid white;
@@ -261,14 +175,6 @@
 
     &.-played {
       background-color: black;
-    }
-
-    @media (min-width: $m) and (max-width: $l) {
-      max-width: 20px;
-    }
-
-    @media (min-width: $xl) {
-      max-width: 35px;
     }
   }
   

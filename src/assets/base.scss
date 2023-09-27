@@ -4,7 +4,9 @@ body {
   background: linear-gradient(113deg, var(--background-color-one), var(--background-color-two));
   background-attachment: fixed;
   background-repeat: no-repeat;
-  height: 100vh;
+  height: 100dvh;
+  min-height: 100dvh;
+  min-width: 360px;
   width: 100dvw;
 }
 
