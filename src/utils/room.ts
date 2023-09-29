@@ -1,5 +1,5 @@
 import { state } from '@/utils/state';
-import { updateVoteResults } from '@/utils/utils';
+import { setUserPosition, updateVoteResults } from '@/utils/utils';
 
 import type { LeadId, RoomId, UserId, Vote, VoteState } from '@/types/GenericType';
 import type { Message } from '@/types/MessageType';
@@ -19,12 +19,14 @@ export const checkServerState = async (): Promise<void> => {
 /**
  * Retreive list of current user in room `state.roomId`.
  * - Update state.userList value.
+ * - Update state.userListOrdered value.
  */
 export const getUserList = async (): Promise<void> => {
   const listUserRequest = await fetch(`${import.meta.env.VITE_SERVER_ADDRESS}/user-list/${state.roomId}`);
   const listUserResponse: Awaited<UserList> = (await listUserRequest.json()).list;
 
   state.userList = listUserResponse;
+  state.userListOrdered = setUserPosition();
 };
 
 /**

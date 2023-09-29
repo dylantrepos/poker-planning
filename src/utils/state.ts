@@ -10,6 +10,11 @@ export const state = reactive<State>({
   serverLive: true,
   userId: '',
   userList: {},
+  userListOrdered: {
+    xxs: [],
+    sm: [],
+    lg: []
+  },
   userName: '',
   voteClose: false,
   voteResults: {},

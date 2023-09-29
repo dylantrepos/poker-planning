@@ -1,77 +1,139 @@
 <template>
-  <div class="container table-container">
-    <div class="table__players-container">
-      <div class="table__cards-container">
-        <div 
-          class="table__player-item"
-          :class="`c-${i}`"
-          v-for="i in order"
-          v-bind:key="i"
-        >
-          
-          <div class="table__player-info">
-            <p>
-              <!-- {{ userList[order[i-1]-1]?.userId === state.leadId ?  '👑' : '' }} -->
-            </p>
-            <p>
-              <!-- {{ userToRemove[order[i-1]-1] }} -->
-              <!-- {{ userList[order[i-1]-1]?.userName }} -->
-            </p>
-          </div>
-          <div 
-            class="table__card-item"
-            :class="{ '-played': i === posPlayer }"
-          >{{ i }}</div>
+  <div 
+    class="table"
+    :class="{
+      '-large': tableLargerThanScreen
+    }"
+  >
+    <div 
+      class="table__container"
+      ref="tableDivElt"
+    >
+      <div 
+        class="table__top"
+      >
+        <PlayerItemVue
+          v-for="user in (state.userListOrdered[screenSize][0])"
+          v-bind:key="user.userId"
+          :user="{ ...user }"
+          :additionnal-classes="{ 
+            'three': state.userListOrdered[screenSize][0].length === 3 && !screenSizeLarge,
+          }"
+          place="-top"
+        />
+      </div>
+      <div 
+        class="table__left"
+        ref="leftDivElt"
+      >
+        <PlayerItemVue 
+          v-for="user in state.userListOrdered[screenSize][1]"
+          v-bind:key="user.userId"
+          :user="{ ...user }"
+          :additionnal-classes="{ 
+            'three': state.userListOrdered[screenSize][1].length === 3 && screenSizeLarge,
+            'large': hasHigherElt,
+          }"
+          place="-left"
+        />
+      </div>
+      <div class="table__center">
+        <div class="table__table-item">
         </div>
-        <div 
-          class="table__table-info-container"
-        >
-          <div>
-            table
-          </div>
-        </div>
+      </div>
+      <div 
+        class="table__right"
+        ref="rightDivElt"
+      >
+        <PlayerItemVue 
+          v-for="user in state.userListOrdered[screenSize][2]"
+          v-bind:key="user.userId"
+          :user="{ ...user }"
+          :additionnal-classes="{ 
+            'three': state.userListOrdered[screenSize][2].length === 3 && screenSizeLarge,
+            'large': hasHigherElt
+          }"
+          place="-right"
+        />
+      </div>
+      <div class="table__bottom">
+        <PlayerItemVue 
+          v-for="user in state.userListOrdered[screenSize][3]"
+          v-bind:key="user.userId"
+          :user="{ ...user }"
+          :additionnal-classes="{ 
+            'three': state.userListOrdered[screenSize][3].length === 3 && !screenSizeLarge,
+          }"
+          place="-bottom"
+        />
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-   import type { User } from '@/types/UserType';
    import { state } from '@/utils/state';
-   import { onBeforeMount, onBeforeUnmount, ref, watch } from 'vue';
+   import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
+   import PlayerItemVue from '@/components/game/PlayerItem.vue';
+
+   
+   const screenSizeLarge = ref(window.innerWidth >= 767);
+   const screenSize = ref<'xxs' | 'sm' | 'lg'>('sm');
+   const tableLargerThanScreen = ref(false);
+   const tableDivElt = ref<HTMLDivElement>();
+   const leftDivElt = ref<HTMLDivElement>();
+   const rightDivElt = ref<HTMLDivElement>();
+   const hasHigherElt = ref(false);
+   const throttlePause = ref(false);
 
    watch(
-      () => state.userList,
+      () => state.userListOrdered,
       () => {
-         userList.value = Object.values(state.userList).sort();
+         if (leftDivElt.value && rightDivElt.value && leftDivElt.value.children.length > 1) resizeHighestSideElt();
       }
    );
 
-   const getSizeWindow = () => {
-      order.value = window.innerWidth >= 767 
-         ? [13, 5, 9, 2, 10, 6, 14, 3, 4, 15, 7, 11, 1, 12, 8, 16]
-         : [13, 2, 14, 5, 7, 9, 11, 3, 4, 10, 12, 6, 8, 15, 1, 16];
-      
-      posPlayer.value = window.innerWidth >= 768 ? 13 : 15;
+   const resizeHighestSideElt = () => {
+      const sideDivChildren = [...(leftDivElt.value?.children ?? []), ...rightDivElt.value?.children ?? []];
+      const maxHeight = Math.max(...sideDivChildren.map((child) => child.clientHeight)); 
 
-      console.log('window.screen.width : ',window.innerWidth);
+      if (maxHeight > 50) hasHigherElt.value = true;
+   };
+
+   // Throttle
+   const throttle = (callback: Function, time: number) => {
+      if (throttlePause.value) return;
+
+      throttlePause.value = true;
+
+      setTimeout(() => {
+         callback();
+         throttlePause.value = false;
+      }, time);
+   };
+
+   const getSizeWindow = () => {      
+      screenSizeLarge.value = window.innerWidth >= 767;
+
+      if (window.innerWidth < 500) screenSize.value = 'xxs';
+      else if (window.innerWidth < 767) screenSize.value = 'sm';
+      else screenSize.value = 'lg';
+
+      tableLargerThanScreen.value = (tableDivElt.value?.offsetWidth ?? 0) > window.innerWidth;
    }; 
 
-   //  console.log('state : ', state.userList);
-   //  console.log('state fnd : ', Object.values(state.userList));
+
+   /**
+    * Life cycle
+    */
    
-   const order = ref<number[]>([]);
-   //  const userToRemove = ref([
-   //     'jean', 'paul', 'robert', 'michael', 'johnny', 'Bennjy', 
-   //     'jean michel', 'Raoul', 'Tom', 'Ezikakfezfzezffsdfdsfakame', 'Albert',
-   //     'David', 'Kevin', 'Dylan', 'Lilian', 'jordan']);
-   const posPlayer = ref(0);
-   const userList = ref<User[]>([]);
-   
-   onBeforeMount(() => {
-      window.addEventListener('resize', () => getSizeWindow());
-      console.log('user : ', state.userList);
+   onMounted(() => {
+      window.addEventListener('resize', () => throttle(getSizeWindow, 250));
       getSizeWindow();
+
+      setTimeout(() => {
+         tableLargerThanScreen.value = (tableDivElt.value?.offsetWidth ?? 0) > window.innerWidth;
+      }, 50);
    });
     
    onBeforeUnmount(() => {
@@ -84,224 +146,212 @@
 <style lang="scss">
   @import '../../assets/variables'; 
 
-  @for $i from 1 through 17 {
-    .c-#{$i} {
-      grid-area: c#{$i};
-    }
-  }
-
-  .table-container {
-    height: calc(100dvh - var(--header-height));
-    justify-content: start;
+  .table {
+    display: flex;
+    justify-content: center;
     
     @media (min-width: $m) {
-      justify-content: center;
+      width: 100vw;
+      margin-top: 2rem;
+
+      &.-large {
+        justify-content: unset;
+        overflow: scroll;
+      }
+      
     }
   }
 
-  .table__players-container {
+  .table__container {
+    display: grid;
+    grid-template-areas:
+        ".    top    .    "
+        "left center  right"
+        ".    bottom .    ";
+    grid-template-columns: 6rem 1fr 6rem;
+    grid-template-rows: auto minmax(50dvh, 1fr) auto;
+    align-items: stretch;
+    width: calc(100vw - 1rem);
+    max-width: 30rem;
+    min-width: 20rem;
     background-color: red;
 
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    
-    width: 100dvw;
-    height: 110dvw;
-    min-width: 350px;
-    min-height: 450px;
-    max-width: 550px;
-    margin-bottom: 5dvh;
-    aspect-ratio: 2.1 / 3;
-    
-    @media (min-width: $xxs) {
-      height: 130dvw;
-      max-height: 600px;
-    }
-    
     @media (min-width: $m) {
-      width: 65dvw;
-      height: auto;
-      aspect-ratio: 16/9;
-      min-height: 370px;
-      max-width: 1100px;
-      max-height: auto;
+      // grid-template-columns: minmax(8rem, auto) minmax(30rem, auto) minmax(8rem, auto);
+      // grid-template-columns: auto minmax(30rem, auto) auto;
+      grid-template-columns: 8rem 1fr 8rem;
+      grid-template-rows: auto minmax(20rem, 1fr) auto;
+      max-width: unset;
+      min-width: unset;
+      padding: 0 2%;
+      width: auto;
+    }
+
+    @media (min-width: $l) {
+      padding: 0 5%;
+    }
+
+    > * {
+      border: 1px solid yellow;
+    }
+  }
+
+
+  /**
+   * GRID DIRECTION
+   */
+  .table__top {
+    grid-area: top;
+
+    @media (min-width: $xxs) and (max-width: $m)  {
+
+      gap: 1.5rem;
+
+      .table__player.-three:nth-child(2), .table__player.-three:nth-child(3) {
+        position: absolute;
+        overflow: visible;
+        bottom: 0;
+      }
+
+      .table__player.-three:nth-child(2) {
+        left: -4rem;
+
+        .table__player-card {
+          right: -2rem;
+        }
+
+        @media (min-width: $xs)  {
+          left: -3rem;
+
+          .table__player-card {
+            right: -2rem;
+          }
+        }
+        
+      }
+
+      .table__player.-three:nth-child(3) {
+        right: -4rem;
+
+        .table__player-card {
+          left: -2rem;
+        }
+
+        @media (min-width: $xs)  {
+          right: -3rem;
+
+          .table__player-card {
+            left: -2rem;
+          }
+        }
+      }
+    }
+  }
+
+  .table__bottom {
+    grid-area: bottom;
+
+    @media (min-width: $xxs) and (max-width: $m)  {
+
+      gap: 1.5rem;
+
+      .table__player.-three:nth-child(2), .table__player.-three:nth-child(3) {
+        position: absolute;
+        overflow: visible;
+        top: 0;
+      }
+
+      .table__player.-three:nth-child(2) {
+        left: -4rem;
+
+        .table__player-card {
+          right: -2rem;
+        }
+
+        @media (min-width: $xs)  {
+          left: -3rem;
+
+          .table__player-card {
+            right: -2rem;
+          }
+        }
+      }
+
+      .table__player.-three:nth-child(3) {
+        right: -4rem;
+
+        .table__player-card {
+          left: -2rem;
+        }
+
+        @media (min-width: $xs)  {
+          right: -3rem;
+
+          .table__player-card {
+            left: -2rem;
+          }
+        }
+      }
     }
   }
   
-  .table__cards-container {
-    background-color: green;
-    width: 55%;
-    height: 80%;
-    border-radius: 1000px;
-    // outline: 5px solid #74461f;
-    display: grid;
-
-    grid-template: 
-        'c13 c2 c14' 
-        'c5  t  c7'
-        'c9  t  c11'
-        'c3  t  c4'
-        'c10 t  c12'
-        'c6  t  c8'
-        'c15 c1 c16' 
-    ;
-    
-    @media (min-width: $m) {
-      width: 75%;
-      height: 65%;
-      min-width: 300px;
-      gap: 2px;
-
-      grid-template: 
-          'c13 c5 c9  c2 c10 c6 c14' 1fr
-          'c3  t  t   t  t   t  c4'  7dvw
-          'c15 c7 c11 c1 c12 c8 c16' 1fr
-      ;
-    
-    }
+  .table__left {
+    grid-area: left;
   }
 
-  .table__player-item {
-    // border: 1px solid yellow;
+  .table__right {
+    grid-area: right;
+  }
+
+  .table__top, .table__bottom, .table__left, .table__right {
     display: flex;
-    justify-content: center;
-    align-items: center;
     position: relative;
+    gap: 1rem;
   }
 
-  .c-13, .c-14, .c-15, .c-16 {
-    align-items: end;
-    justify-content: end;
-  }
-
-  .c-14, .c-16 {
-    justify-content: start;
-  }
-
-  .c-15, .c-16 {
-    align-items: start;
-  }
-  
-  @media (min-width: $m) and (max-width: $xl) {
-    .c-13 {
-      margin-bottom: .2rem;
-      margin-right: .2rem;
-    }
-  
-    .c-14 {
-      margin-bottom: .2rem;
-      margin-left: .2rem;
-    }
-    
-    .c-15 {
-      margin-top: .2rem;
-      margin-right: .2rem;
-    }
-  
-    .c-16 {
-      margin-top: .2rem;
-      margin-left: .2rem;
-    }
-    
-    .c-9, .c-2, .c-10 {
-      margin-bottom: 1rem;
-    }
-
-    .c-11, .c-1, .c-12 {
-      margin-top: 1rem;
-    }
-  }
-  
-  @media (min-width: $xl) {
-    .c-13 {
-      margin-bottom: .5rem;
-      margin-right: .5rem;
-    }
-  
-    .c-14 {
-      margin-bottom: .5rem;
-      margin-left: .5rem;
-    }
-    
-    .c-15 {
-      margin-top: .5rem;
-      margin-right: .5rem;
-    }
-  
-    .c-16 {
-      margin-top: .5rem;
-      margin-left: .5rem;
-    }
-    
-    .c-9, .c-2, .c-10 {
-      margin-bottom: 2rem;
-    }
-
-    .c-11, .c-1, .c-12 {
-      margin-top: 2rem;
-    }
-
-    .c-5, .c-6 {
-      margin-bottom: 1rem;
-    }
-
-    .c-7, .c-8 {
-      margin-top: 1rem;
-    }
-  }
-
-  
-  .table__card-item {
-    width: 5dvw;
-    max-width: 25px;
-    aspect-ratio: 2/3;
-    border: 1px solid white;
-    border-radius: 2px;
-
-    &.-played {
-      background-color: black;
-    }
-
-    @media (min-width: $m) and (max-width: $l) {
-      max-width: 20px;
-    }
-
-    @media (min-width: $xl) {
-      max-width: 35px;
-    }
-  }
-  
-  .table__table-info-container {
-    border: 1px solid orange;
-    display: flex;
+  .table__top, .table__bottom {
     justify-content: center;
-    align-items: center;
-    height: auto;
-    grid-area: t;
-  }
-
-  .table__player-info {
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    text-align: center;
-    width: 20dvw;
-    max-height: 3rem;
-    background-color: purple;
-    
-    > p {
-      display: -webkit-box;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: break-spaces;
-      -webkit-line-clamp: 2;
-      word-wrap: break-word;
-      -webkit-box-orient: vertical;
-    }
+    min-height: 3.5rem;
 
     @media (min-width: $m) {
-      width: 5dvw;
+      padding: 0 5rem;
+      flex-direction: row;
+    }    
+    
+    @media (min-width: $l) {
+      gap: 2rem;
+    }
+  }
+
+  .table__left, .table__right {
+    flex-direction: column;
+    justify-content: space-evenly;
+    padding: 5rem 0;
+    min-height: 14rem;
+
+    @media (min-width: $xs) {
+      padding: 5rem 0;
+    }    
+
+    @media (min-width: $m) {
+      gap: 2rem;
+      padding: 3rem 0;
+      min-height: auto;
+      flex-direction: column;
+    }
+  }
+  
+  .table__center {
+    grid-area: center;
+    // min-width: 16rem;
+    background-color: orange;
+    // border-radius: 1000px;
+    border-radius: 40px;
+    // min-width: 11rem;
+
+    @media (min-width: $m)  {
+      border-radius: 70px;
+      min-width: 30rem;
     }
   }
 </style>  

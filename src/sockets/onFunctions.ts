@@ -5,7 +5,7 @@ import type { UserList } from "@/types/UserType";
 import type { Message } from '@/types/MessageType';
 import type { VoteInfo } from '@/types/VoteType';
 import type { LeadId } from '@/types/GenericType';
-import { addCookie, getCookie, updateVoteResults } from '@/utils/utils';
+import { addCookie, getCookie, setUserPosition, updateVoteResults } from '@/utils/utils';
 
 export const setConnectionToSocket = async (connected: boolean = true): Promise<void> => {
   state.connected = connected;
@@ -25,6 +25,7 @@ export const updateUserList = async (userList: UserList): Promise<void> => {
   if (state.leadId === '') await getLeadId();
 
   state.userList = userList;
+  state.userListOrdered = setUserPosition();
 };
 
 

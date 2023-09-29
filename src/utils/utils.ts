@@ -4,7 +4,7 @@
 
 import { state } from "@/utils/state";
 
-import type { UserCookie } from "@/types/UserType";
+import type { User, UserCookie } from "@/types/UserType";
 import type { VoteResults } from "@/types/VoteType";
 
 
@@ -62,3 +62,189 @@ export const updateVoteResults = (): void => {
   state.voteResults = results;
 
 };
+
+export const orderUserList = (): User[] => {
+    const userListSorted = Object.values(state.userList).sort();
+         
+    const leadIndex = userListSorted.findIndex(user => user.userId === state.leadId);
+    const leadElt = userListSorted.find(user => user.userId === state.leadId);
+    userListSorted.splice(leadIndex, 1);
+        
+    if (leadElt) userListSorted.unshift(leadElt);
+
+    const userIndex = userListSorted.findIndex(user => user.userId === state.userId);
+    const userElt = userListSorted.find(user => user.userId === state.userId);
+    userListSorted.splice(userIndex, 1);
+
+    if (userElt) userListSorted.unshift(userElt);
+
+    return userListSorted;
+};
+
+// const usernameToElipsis = (): User[] => {
+//   const userList = orderUserList();
+
+//   userList.forEach((user) => {
+//      if (user.userName.length > 12) {
+//         if (!user.userName.includes(' ')) {
+//            user.userName = `${user.userName.slice(0, 12)}...`;
+//         } else {
+//            user.userName = `${user.userName.slice(0, window.innerWidth >= 767 ? 24 : 14)}...`;
+//         }
+//      } 
+//   });
+  
+//   return userList;
+// };
+
+export const setUserPosition = () => {
+  // const userList = usernameToElipsis();
+  const userList = fakeData;
+  const userListXxs: User[][] = [[], [], [], []];
+  const userListSm: User[][] = [[], [], [], []];
+  const userListLg: User[][] = [[], [], [], []];
+
+
+  // Xxs
+  userList.forEach((user, i) => {
+    if (([2]).includes(i + 1)) {
+       userListXxs[0].push(user);
+    }
+    else if (([1]).includes(i + 1)) {
+       userListXxs[3].push(user);
+    }
+    else {
+       if ((i + 1) % 2 === 0) userListXxs[2].push(user);
+       else userListXxs[1].push(user);
+    }
+ });
+
+  // Sm
+  userList.forEach((user, i) => {
+    if (([2, 6, 10]).includes(i + 1)) {
+       userListSm[0].push(user);
+    }
+    else if (([1, 5, 9]).includes(i + 1)) {
+       userListSm[3].push(user);
+    }
+    else {
+       if ((i + 1) % 2 === 0) userListSm[2].push(user);
+       else userListSm[1].push(user);
+    }
+ });
+
+  // Lg
+  userList.forEach((user, i) => {
+     if (([3, 7, 11]).includes(i + 1)) {
+      userListLg[1].push(user);
+     }
+     else if (([4, 8, 12]).includes(i + 1)) {
+        userListLg[2].push(user);
+     }
+     else {
+        if ((i + 1) % 2 === 0) userListLg[0].push(user);
+        else userListLg[3].push(user);
+     }
+  });
+
+  return {
+    xxs: userListXxs,
+    sm: userListSm,
+    lg: userListLg
+  };
+};
+
+
+export const fakeData = [
+  {
+    userName: 'Alice',
+    userId: 'gergerg',
+    connected: true,
+    roomId: 'PGkaLuiX6Y_fyL9oAANb'
+  },
+  {
+    userName: 'Paul',
+    userId: 'xcvxcv',
+    connected: true,
+    roomId: 'PGkaLuiX6Y_fyL9oAANb'
+  },
+  {
+    userName: 'Jonathan',
+    userId: 'zxczxc',
+    connected: true,
+    roomId: 'PGkaLuiX6Y_fyL9oAANb'
+  },
+  {
+    userName: 'Ava',
+    userId: 'bnmbnm',
+    connected: true,
+    roomId: 'PGkaLuiX6Y_fyL9oAANb'
+  },
+  {
+    userName: 'Evelyn',
+    userId: 'mnbmnb',
+    connected: true,
+    roomId: 'PGkaLuiX6Y_fyL9oAANb'
+  },
+  {
+    userName: 'Benjamin',
+    userId: 'rtyrty',
+    connected: true,
+    roomId: 'PGkaLuiX6Y_fyL9oAANb'
+  },
+  {
+    userName: 'Liam',
+    userId: 'qweqwe',
+    connected: true,
+    roomId: 'PGkaLuiX6Y_fyL9oAANb'
+  },
+  {
+    userName: 'Elizabeth',
+    userId: 'uoiuoi',
+    connected: true,
+    roomId: 'PGkaLuiX6Y_fyL9oAANb'
+  },
+  {
+    userName: 'Matthew',
+    userId: 'zxczxc',
+    connected: true,
+    roomId: 'PGkaLuiX6Y_fyL9oAANb'
+  },
+  {
+    userName: 'Alexander',
+    userId: 'hjghjg',
+    connected: true,
+    roomId: 'PGkaLuiX6Y_fyL9oAANb'
+  },
+  {
+    userName: 'Michael',
+    userId: 'vbmvbm',
+    connected: true,
+    roomId: 'PGkaLuiX6Y_fyL9oAANb'
+  },
+  {
+    userName: 'Charlotte',
+    userId: 'yutyut',
+    connected: true,
+    roomId: 'PGkaLuiX6Y_fyL9oAANb'
+  },
+  {
+    userName: 'Lucas',
+    userId: 'wewewe',
+    connected: true,
+    roomId: 'PGkaLuiX6Y_fyL9oAANb'
+  },
+  {
+    userName: 'Daniel',
+    userId: 'tyytyy',
+    connected: true,
+    roomId: 'PGkaLuiX6Y_fyL9oAANb'
+  },
+  {
+    userName: 'Sophia',
+    userId: 'poiopi',
+    connected: true,
+    roomId: 'PGkaLuiX6Y_fyL9oAANb'
+  }
+];
+

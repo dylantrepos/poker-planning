@@ -1,19 +1,19 @@
 <template>
   <main>
     <HeaderItem />
-    <div class="room-view__table-container">
-      <div class="room-view__info-text">
-        Heyy
-      </div>
-      <TableItem />
-      <!-- <div class="room-view__buttons-container">
-        <div class="room-view__button-close"></div>
-        <div class="room-view__button-vote">
-          <div class="room-view__button-vote-content"></div>
-        </div>
-        <div class="room-view__button-lead"></div>
-      </div> -->
+    <div class="room-view__info-text">
+      {{state.voteClose ? 'Vote closed ! Waiting for new game...' : 'Waiting for votes...'}}
     </div>
+    <TableItem />
+    <!-- <div class="room-view__buttons-container">
+      <div class="room-view__button-close"></div>
+      <div class="room-view__button-vote">
+        <div class="room-view__button-vote-content"></div>
+      </div>
+      <div class="room-view__button-lead"></div>
+    </div> -->
+    <!-- <div class="room-view__table-container">
+    </div> -->
 
     <div class="room-toRemove">
       <h3>
@@ -81,14 +81,17 @@
 
   .room-view__info-text {
     // height: 4rem;
-    padding: 5%;
-    background-color: black;
+    padding: 1rem;
+    background: linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(0, 0, 0, 0.473) 50%, rgba(0,0,0,0) 100%);
     display: flex;
     justify-content: center;
     align-items: center;
+    height: 3rem;
+    max-height: 3rem;
     
     @media (min-width: $m) {
-      height: 5rem;
+      height: 4rem;
+      max-height: 4rem;
       padding: 1rem;
     }
   }
