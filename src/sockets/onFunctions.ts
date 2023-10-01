@@ -1,5 +1,4 @@
 import { checkVoteOpen, getAllMessages, getAllVotes, getLeadId } from '@/utils/room';
-import { state } from "@/utils/state";
 
 import type { UserList } from "@/types/UserType";
 import type { Message } from '@/types/MessageType';
@@ -7,8 +6,15 @@ import type { VoteInfo } from '@/types/VoteType';
 import type { LeadId } from '@/types/GenericType';
 import { addCookie, getCookie, setUserPosition, updateVoteResults } from '@/utils/utils';
 
+import useUserStore from '@/store/useUserStore';
+import useGeneralStore from '@/store/useGeneralStore';
+import useRoomStore from '@/store/useRoomStore';
+
+
 export const setConnectionToSocket = async (connected: boolean = true): Promise<void> => {
-  state.connected = connected;
+  const { setUserConnectionStatus } = useUserStore();
+  const { setServerStatus } = useGeneralStore();
+  setUserConnectionStatus(true);
   
   if (connected) {
     await getAllMessages();
@@ -16,52 +22,61 @@ export const setConnectionToSocket = async (connected: boolean = true): Promise<
     await getLeadId();
     await checkVoteOpen();
   }  else {
-    state.serverLive = false;
+    setServerStatus(false);
   }
 };
 
 // Userlist
 export const updateUserList = async (userList: UserList): Promise<void> => {
-  if (state.leadId === '') await getLeadId();
+  const { leadId, setUserList, setUserListOrdered} = useRoomStore();
 
-  state.userList = userList;
-  state.userListOrdered = setUserPosition();
+  if (leadId === '') await getLeadId();
+
+  setUserList(userList);
+  setUserListOrdered(setUserPosition());
 };
 
 
 // Message
 export const messageReceived = ( message: Message ): void => {
-  if (state.messages) {
-    state.messages.push(message);
+  const { messages, addMessages } = useRoomStore();
+
+  if (messages) {
+    addMessages(message);
   }
 };
 
 
 // Vote
 export const updateVote = async (userVote: VoteInfo) => {
-  state.votes = userVote;
+  const { setVotes } = useRoomStore();
+  setVotes(userVote);
 };
 
 export const closeVote = async () => {
-  state.voteClose = true;
+  const { setVoteState } = useRoomStore();
+  
+  setVoteState(true);
 
   updateVoteResults();
 };
 
 export const openVote = async () => {
   const cookieData = getCookie();
+  const { resetVotes } = useRoomStore();
 
   addCookie('poker-planning', JSON.stringify({...cookieData, vote: ''}));
-  state.voteClose = false;
-  state.voteResults = {};
-  state.votes = {};
+  resetVotes();
 };
 
 export const updateLead = async (leadId: LeadId) => {
-  state.leadId = leadId;
+  const { setLeadId } = useRoomStore();
+  setLeadId(leadId);
 };
 
 export const handleError = (err: Error) => {
-  state.serverLive = false;
+  const { setServerStatus } = useGeneralStore();
+  setServerStatus(false);
+  
   console.error(`Error: connection impossible due to ${err.message}`);
 };

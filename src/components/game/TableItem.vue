@@ -13,11 +13,11 @@
         class="table__top"
       >
         <PlayerItemVue
-          v-for="user in (state.userListOrdered[screenSize][0])"
+          v-for="user in (roomStore.userListOrdered[screenSize][0])"
           v-bind:key="user.userId"
           :user="{ ...user }"
           :additionnal-classes="{ 
-            'three': state.userListOrdered[screenSize][0].length === 3 && !screenSizeLarge,
+            'three': roomStore.userListOrdered[screenSize][0].length === 3 && !screenSizeLarge,
           }"
           place="-top"
         />
@@ -27,11 +27,11 @@
         ref="leftDivElt"
       >
         <PlayerItemVue 
-          v-for="user in state.userListOrdered[screenSize][1]"
+          v-for="user in roomStore.userListOrdered[screenSize][1]"
           v-bind:key="user.userId"
           :user="{ ...user }"
           :additionnal-classes="{ 
-            'three': state.userListOrdered[screenSize][1].length === 3 && screenSizeLarge,
+            'three': roomStore.userListOrdered[screenSize][1].length === 3 && screenSizeLarge,
             'large': hasHigherElt,
           }"
           place="-left"
@@ -39,6 +39,7 @@
       </div>
       <div class="table__center">
         <div class="table__table-item">
+          <ActionsItemVue />
         </div>
       </div>
       <div 
@@ -46,11 +47,11 @@
         ref="rightDivElt"
       >
         <PlayerItemVue 
-          v-for="user in state.userListOrdered[screenSize][2]"
+          v-for="user in roomStore.userListOrdered[screenSize][2]"
           v-bind:key="user.userId"
           :user="{ ...user }"
           :additionnal-classes="{ 
-            'three': state.userListOrdered[screenSize][2].length === 3 && screenSizeLarge,
+            'three': roomStore.userListOrdered[screenSize][2].length === 3 && screenSizeLarge,
             'large': hasHigherElt
           }"
           place="-right"
@@ -58,11 +59,11 @@
       </div>
       <div class="table__bottom">
         <PlayerItemVue 
-          v-for="user in state.userListOrdered[screenSize][3]"
+          v-for="user in roomStore.userListOrdered[screenSize][3]"
           v-bind:key="user.userId"
           :user="{ ...user }"
           :additionnal-classes="{ 
-            'three': state.userListOrdered[screenSize][3].length === 3 && !screenSizeLarge,
+            'three': roomStore.userListOrdered[screenSize][3].length === 3 && !screenSizeLarge,
           }"
           place="-bottom"
         />
@@ -72,9 +73,12 @@
 </template>
 
 <script setup lang="ts">
-   import { state } from '@/utils/state';
    import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
+
    import PlayerItemVue from '@/components/game/PlayerItem.vue';
+   import ActionsItemVue from './ActionsItem.vue';
+
+   import useRoomStore from '@/store/useRoomStore';
 
    
    const screenSizeLarge = ref(window.innerWidth >= 767);
@@ -86,8 +90,10 @@
    const hasHigherElt = ref(false);
    const throttlePause = ref(false);
 
+   const roomStore = useRoomStore();
+
    watch(
-      () => state.userListOrdered,
+      () => roomStore.userListOrdered,
       () => {
          if (leftDivElt.value && rightDivElt.value && leftDivElt.value.children.length > 1) resizeHighestSideElt();
       }
@@ -177,17 +183,17 @@
     background-color: red;
 
     @media (min-width: $m) {
-      // grid-template-columns: minmax(8rem, auto) minmax(30rem, auto) minmax(8rem, auto);
-      // grid-template-columns: auto minmax(30rem, auto) auto;
       grid-template-columns: 8rem 1fr 8rem;
-      grid-template-rows: auto minmax(20rem, 1fr) auto;
+      grid-template-rows: auto minmax(22rem, 1fr) auto;
       max-width: unset;
       min-width: unset;
       padding: 0 2%;
       width: auto;
     }
 
+  
     @media (min-width: $l) {
+      grid-template-columns: 8rem minmax(65rem, 1fr) 8rem;
       padding: 0 5%;
     }
 
@@ -353,5 +359,10 @@
       border-radius: 70px;
       min-width: 30rem;
     }
+  }
+
+  .table__table-item {
+    // position: relative;
+    height: 100%;
   }
 </style>  

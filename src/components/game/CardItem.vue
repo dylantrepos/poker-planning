@@ -1,22 +1,24 @@
 <template>
   <div 
-    :class="['table__player-card', props.place]">
+    :class="['table__player-card', place]">
     <p>
-      {{ state.votes[props.user.userId] }}
+      {{ roomStore.votes[user.userId] }}
     </p>
   </div>
 </template>
 
 <script setup lang="ts">
    import type { User } from '@/types/UserType';
-   import { state } from '@/utils/state';
+   import useRoomStore from '@/store/useRoomStore';
+
+   const roomStore = useRoomStore();
 
    type Props = {
       user: User;
       place: '-top' | '-left' | '-right' | '-bottom';
    }
 
-   const props = defineProps<Props>();
+   defineProps<Props>();
 
 </script>
 

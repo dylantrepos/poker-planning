@@ -1,5 +1,5 @@
 <template>
-  <div v-if="props.loading">
+  <div v-if="loading">
     Loading...
   </div>
   <slot v-else></slot>
@@ -11,7 +11,7 @@
       loading: boolean
    }
 
-   const props = withDefaults(defineProps<Props>(), {
+   withDefaults(defineProps<Props>(), {
       loading: true
    });
 

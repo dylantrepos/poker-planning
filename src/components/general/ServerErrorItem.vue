@@ -1,5 +1,5 @@
 <template>
-  <slot v-if="state.serverLive"></slot>
+  <slot v-if="generalStore.isServerLive"></slot>
   <main 
     v-else
     class="container"
@@ -17,7 +17,8 @@
 </template>
 
 <script setup lang="ts">
-   import { state } from '@/utils/state';
+   import useGeneralStore from '@/store/useGeneralStore';
+   const generalStore = useGeneralStore();
 
 </script>
 

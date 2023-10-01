@@ -1,14 +1,14 @@
 <template>
   <h4>
-    Vote ({{ state.votes[state.userId] }})
+    Vote ({{ roomStore.votes[userStore.userId] }})
   </h4>
   <button 
     v-for="vote in voteAvailable" 
     v-bind:key="vote"
-    :disabled="state.voteClose"
-    @click="handleVote((vote === state.votes[state.userId] ? '' : vote) as Vote)"
+    :disabled="roomStore.isVoteClosed"
+    @click="handleVote((vote === roomStore.votes[userStore.userId] ? '' : vote) as Vote)"
     :style="{
-      'background': vote === state.votes[state.userId] ? 'green ' : 'transparent',
+      'background': vote === roomStore.votes[userStore.userId] ? 'green ' : 'transparent',
     }"
     class="button vote__button"
   >
@@ -19,9 +19,13 @@
 <script setup lang="ts">
    import { addCookie, getCookie, getPokerPossibilities } from '@/utils/utils';
    import { emitVote } from '@/sockets/emitsFunctions';
-   import { state } from '@/utils/state';
   
    import type { Vote } from '../../types/GenericType';
+   import useUserStore from '@/store/useUserStore';
+   import useRoomStore from '@/store/useRoomStore';
+
+   const userStore = useUserStore();
+   const roomStore = useRoomStore();
 
    const voteAvailable = getPokerPossibilities();
 

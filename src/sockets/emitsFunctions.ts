@@ -1,27 +1,26 @@
 import type { User } from "@/types/UserType";
-import { connectToSocket, socket } from "./sockets";
-import { state } from "@/utils/state";
+import { socket } from "./sockets";
 import type { MessageEmit } from "@/types/MessageType";
 import type { Vote } from "@/types/GenericType";
+import useRoomStore from "@/store/useRoomStore";
+import useUserStore from "@/store/useUserStore";
+
 
 /**
  * 
  * ROOM EVENTS
  * 
- */
+*/
 
 // JOIN ROOM
 export const emitJoinRoom = async (userInfo: User): Promise<void> => {
+  const { initRoom } = useRoomStore();
+  
   const { userId, roomId, userName } = userInfo;
   
-  state.messages = [];
-  state.roomId = roomId;
-  state.userId = userId;
-  state.userList = {};
-  state.userName = userName;
-  state.votes = {};
+  initRoom(roomId, userId, userName);
 
-  if (!state.connected) connectToSocket();
+  console.log('user : ', userInfo);
 
   socket.emit('room:join', userInfo);
 };
@@ -35,7 +34,8 @@ export const emitJoinRoom = async (userInfo: User): Promise<void> => {
 
 // SEND MESSAGE
 export const emitMessage = (message: string): void => {  
-  const { roomId, userId, userName } = state; 
+  const { roomId } = useRoomStore();
+  const { userId, userName } = useUserStore();
 
   const messageData: MessageEmit = {
     message,
@@ -56,9 +56,12 @@ export const emitMessage = (message: string): void => {
 
 // EMIT VOTE
 export const emitVote = (voteValue: Vote): void => {
+  const { roomId } = useRoomStore();
+  const { userId } = useUserStore();
+
   const vote = {
-    roomId: state.roomId,
-    userId: state.userId,
+    roomId,
+    userId,
     vote: voteValue
   };
   
@@ -67,12 +70,14 @@ export const emitVote = (voteValue: Vote): void => {
 
 // CLOSE VOTE
 export const emitCloseVote = (): void => {
-  socket.emit('vote:close', state.roomId);
+  const { roomId } = useRoomStore();
+  socket.emit('vote:close', roomId);
 };
 
 // OPEN VOTE
 export const emitOpenVote = (): void => {
-  socket.emit('vote:open', state.roomId);
+  const { roomId } = useRoomStore();
+  socket.emit('vote:open', roomId);
 };
 
 
@@ -84,10 +89,12 @@ export const emitOpenVote = (): void => {
 
 // EMIT NEW LEAD
 export const emitLead = (leadId: string): void => {
-  state.leadId = leadId;
+  const { roomId, setLeadId } = useRoomStore();
+  
+  setLeadId(leadId);
 
   socket.emit('lead:update', {
     leadId,
-    roomId: state.roomId,
+    roomId,
   });
 };

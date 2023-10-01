@@ -1,40 +1,43 @@
 <template>
   <main>
     <HeaderItem />
-    <div class="room-view__info-text">
-      {{state.voteClose ? 'Vote closed ! Waiting for new game...' : 'Waiting for votes...'}}
+    <div 
+      class="room-view__info-text"
+    >
+      <transition 
+        name="slide-fade" 
+        mode="out-in"
+      >
+        <p :key="generalStore.bannerMessage">
+          {{ generalStore.bannerMessage }}
+        </p>
+      </transition>
     </div>
-    <TableItem />
-    <!-- <div class="room-view__buttons-container">
-      <div class="room-view__button-close"></div>
-      <div class="room-view__button-vote">
-        <div class="room-view__button-vote-content"></div>
-      </div>
-      <div class="room-view__button-lead"></div>
-    </div> -->
-    <!-- <div class="room-view__table-container">
-    </div> -->
+    <TableItem 
+      ref="tableItem" 
+    />
 
+    
     <div class="room-toRemove">
       <h3>
-        Name : {{ state.userName }}  {{ state.userId === state.leadId ?  ' 👑' : ''}}
+        Name : {{ userStore.userName }}  {{ userStore.userId === roomStore.leadId ?  ' 👑' : ''}}
       </h3>
       <button
         class="button"
-        v-if="state.userId === state.leadId && !state.voteClose"
+        v-if="userStore.userId === roomStore.leadId && !roomStore.isVoteClosed"
         @click="handleCloseVote"
       >
         Close vote
       </button>
       <button
         class="button"
-        v-if="state.userId === state.leadId && state.voteClose"
+        v-if="userStore.userId === roomStore.leadId && roomStore.isVoteClosed"
         @click="handleOpenVote"
       >
         Open vote
       </button>
       <UserListItem />
-      <VotesResultItem v-if="state.voteClose" />
+      <VotesResultItem v-if="roomStore.isVoteClosed" />
       <MessageItem />
       <VoteItem />
       <ChatItem />
@@ -50,10 +53,16 @@
    import MessageItem from "@/components/game/MessageItem.vue";
    import VotesResultItem from "@/components/game/VotesResultItem.vue";
    import TableItem from "@/components/game/TableItem.vue";
-  
-   import { state } from '@/utils/state';
+   import HeaderItem from "@/components/general/HeaderItem.vue";
    import { emitCloseVote, emitOpenVote } from '@/sockets/emitsFunctions';
-   import HeaderItem from "../general/HeaderItem.vue";
+
+   import useGeneralStore from '@/store/useGeneralStore';
+   import useUserStore from "@/store/useUserStore";
+   import useRoomStore from "@/store/useRoomStore";
+
+   const generalStore = useGeneralStore();
+   const userStore = useUserStore();
+   const roomStore = useRoomStore();
 
    const handleCloseVote = () => {
       emitCloseVote();
@@ -103,7 +112,7 @@
     max-height: 8rem;
     padding: 5%;
     background-color: black;
-    position: relative;
+    position: fixed;
     display: flex;
     overflow: hidden;
     align-items: center;
@@ -111,8 +120,8 @@
     padding: 0 2rem;
     gap: 1rem;
 
+
     @media (min-width: $m) {
-      position: absolute;
       width: 15dvw;
       right: 2.5dvw;
       top: calc(50% + 5rem);
@@ -163,8 +172,27 @@
     }
   }
 
+
   .room-toRemove {
     position: absolute;
     top: 150dvh;
+  }
+
+  .slide-fade-enter-active {
+    transition: all .2s ease-in;
+  }
+
+  .slide-fade-leave-active {
+    transition: all .2s ease-out;
+  }
+
+  .slide-fade-enter-from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+
+  .slide-fade-leave-to {
+    transform: translateY(-20px);
+    opacity: 0;
   }
 </style>

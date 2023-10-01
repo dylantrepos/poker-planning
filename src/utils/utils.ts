@@ -2,8 +2,8 @@
  * COOKIE
 */
 
-import { state } from "@/utils/state";
-
+import useRoomStore from "@/store/useRoomStore";
+import useUserStore from "@/store/useUserStore";
 import type { User, UserCookie } from "@/types/UserType";
 import type { VoteResults } from "@/types/VoteType";
 
@@ -40,9 +40,10 @@ export const getColorPalette = (): string[] => [
 
 export const updateVoteResults = (): void => {
   const results: VoteResults = {};
+  const roomStore = useRoomStore();
 
-  for (const user of Object.values(state.userList)) {
-    const vote = state.votes[user.userId];
+  for (const user of Object.values(roomStore.userList)) {
+    const vote = roomStore.votes[user.userId];
 
     // Skip if vote is empty
     if (!vote || vote === '') break; 
@@ -59,21 +60,24 @@ export const updateVoteResults = (): void => {
     }
   }
 
-  state.voteResults = results;
+  roomStore.setVoteResults(results);
 
 };
 
 export const orderUserList = (): User[] => {
-    const userListSorted = Object.values(state.userList).sort();
+    const roomStore = useRoomStore();
+    const userStore = useUserStore();
+
+    const userListSorted = Object.values(roomStore.userList).sort();
          
-    const leadIndex = userListSorted.findIndex(user => user.userId === state.leadId);
-    const leadElt = userListSorted.find(user => user.userId === state.leadId);
+    const leadIndex = userListSorted.findIndex(user => user.userId === roomStore.leadId);
+    const leadElt = userListSorted.find(user => user.userId === roomStore.leadId);
     userListSorted.splice(leadIndex, 1);
         
     if (leadElt) userListSorted.unshift(leadElt);
 
-    const userIndex = userListSorted.findIndex(user => user.userId === state.userId);
-    const userElt = userListSorted.find(user => user.userId === state.userId);
+    const userIndex = userListSorted.findIndex(user => user.userId === userStore.userId);
+    const userElt = userListSorted.find(user => user.userId === userStore.userId);
     userListSorted.splice(userIndex, 1);
 
     if (userElt) userListSorted.unshift(userElt);
@@ -81,25 +85,25 @@ export const orderUserList = (): User[] => {
     return userListSorted;
 };
 
-// const usernameToElipsis = (): User[] => {
-//   const userList = orderUserList();
+const usernameToElipsis = (): User[] => {
+  const userList = orderUserList();
 
-//   userList.forEach((user) => {
-//      if (user.userName.length > 12) {
-//         if (!user.userName.includes(' ')) {
-//            user.userName = `${user.userName.slice(0, 12)}...`;
-//         } else {
-//            user.userName = `${user.userName.slice(0, window.innerWidth >= 767 ? 24 : 14)}...`;
-//         }
-//      } 
-//   });
+  userList.forEach((user) => {
+     if (user.userName.length > 12) {
+        if (!user.userName.includes(' ')) {
+           user.userName = `${user.userName.slice(0, 12)}...`;
+        } else {
+           user.userName = `${user.userName.slice(0, window.innerWidth >= 767 ? 24 : 14)}...`;
+        }
+     } 
+  });
   
-//   return userList;
-// };
+  return userList;
+};
 
 export const setUserPosition = () => {
-  // const userList = usernameToElipsis();
-  const userList = fakeData;
+  const userList = [...usernameToElipsis(), ...fakeData];
+  // const userList = fakeData;
   const userListXxs: User[][] = [[], [], [], []];
   const userListSm: User[][] = [[], [], [], []];
   const userListLg: User[][] = [[], [], [], []];
@@ -187,7 +191,7 @@ export const fakeData = [
     roomId: 'PGkaLuiX6Y_fyL9oAANb'
   },
   {
-    userName: 'Benjamin',
+    userName: 'Benjaminrezrzrzrez ezrzrz ',
     userId: 'rtyrty',
     connected: true,
     roomId: 'PGkaLuiX6Y_fyL9oAANb'
@@ -205,7 +209,7 @@ export const fakeData = [
     roomId: 'PGkaLuiX6Y_fyL9oAANb'
   },
   {
-    userName: 'Matthew',
+    userName: 'Matthew efzzefezf...',
     userId: 'zxczxc',
     connected: true,
     roomId: 'PGkaLuiX6Y_fyL9oAANb'

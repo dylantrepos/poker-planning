@@ -5,20 +5,18 @@ import type { VoteResults } from "./VoteType";
 
 
 export type State = {
-  connected: boolean;
   leadId: LeadId;
-  messages: Message[];
-  serverLive: boolean;
   roomId: RoomId;
-  roomExists: boolean;
   userId: UserId;
+  userName: UserName;
+  messages: Message[];
+  roomExists: boolean;
   userList: UserList;
   userListOrdered: {
     xxs: User[][],
     sm: User[][],
     lg: User[][]
   };
-  userName: UserName;
   voteClose: VoteState; 
   voteResults: VoteResults;
   votes: Record<string, string>;

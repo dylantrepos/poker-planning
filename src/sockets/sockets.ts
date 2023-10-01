@@ -1,12 +1,13 @@
 import { Socket, io } from 'socket.io-client';
 import { closeVote, handleError, messageReceived, openVote, setConnectionToSocket, updateLead, updateUserList, updateVote } from '@/sockets/onFunctions';
-import { state } from '@/utils/state';
 
 import type { UserList } from '@/types/UserType';
 import type { ClientToServerEvents, ServerToClientEvents } from '@/types/SocketType';
 import type { Message } from '@/types/MessageType';
 import type { VoteInfo } from '@/types/VoteType';
 import type { LeadId } from '@/types/GenericType';
+
+import useUserStore from '@/store/useUserStore';
 
 
 const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(import.meta.env.VITE_SERVER_ADDRESS, {
@@ -15,8 +16,10 @@ const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(import.met
 
 // Methods
 const connectToSocket = () => {
+  const { setUserConnectionStatus } = useUserStore();
+
+  setUserConnectionStatus(true);
   socket.connect();
-  state.connected = true;
 };
 
 // On events

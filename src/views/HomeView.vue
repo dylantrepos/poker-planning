@@ -39,15 +39,16 @@
    import { socket, connectToSocket } from '@/sockets/sockets';
    import { emitJoinRoom } from '@/sockets/emitsFunctions';
    import { addCookie } from "@/utils/utils";
-   import { state } from "@/utils/state";
 
    import type { User } from '@/types/UserType';
+   import useRoomStore from "@/store/useRoomStore";
   
    Chart.register(DoughnutController, ArcElement, Tooltip);
 
    const router = useRouter();
    const usernameInput = ref('');
    const userId = uuidv4();
+   const roomStore = useRoomStore();
 
    // Methods
    const redirectToGame = (): void => {
@@ -62,8 +63,7 @@
          };
   
          emitJoinRoom(userInfo);
-
-         state.leadId = userId;
+         roomStore.setLeadId(userId);
       
          addCookie('poker-planning', JSON.stringify(userInfo));
   

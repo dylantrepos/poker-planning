@@ -4,9 +4,10 @@ import RoomView from '@/views/RoomView.vue';
 import NotFoundView from '@/views/NotFoundView.vue';
 
 import { checkRoomExists, checkServerState } from '@/utils/room';
-import { state } from '@/utils/state';
 
 import type { RoomId } from '@/types/GenericType';
+import useGeneralStore from '@/store/useGeneralStore';
+import useRoomStore from '@/store/useRoomStore';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -24,7 +25,8 @@ const router = createRouter({
         try {
           await checkRoomExists(from.params.id as RoomId);
         } catch {
-          state.roomExists = false;
+          const roomStore = useRoomStore();
+          roomStore.roomExists = false;
         }
       }
     },
@@ -41,10 +43,12 @@ const router = createRouter({
 });
 
 router.beforeEach(async () =>  {
+  const generalStore = useGeneralStore();
+
   try {
     await checkServerState();
   } catch {
-    state.serverLive = false;
+    generalStore.setServerStatus(false);
   }
 });
 

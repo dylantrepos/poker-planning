@@ -9,6 +9,7 @@
     <button
       class="button header__button"
       @click="handleCopyURL"
+      ref="shareRoomBtn"
     >
       Share room
     </button>
@@ -17,14 +18,22 @@
 
 <script setup lang="ts">
    import { useRouter, useRoute } from 'vue-router';
-   import { state } from '../../utils/state';
   
    import type { RoomId } from '../../types/GenericType';
+   import { onMounted, ref } from 'vue';  
+   import useGeneralStore from '@/store/useGeneralStore';
+   import useRoomStore from '@/store/useRoomStore';
 
 
    const router = useRouter();
    const route = useRoute();
-   state.roomId = route.params.id as RoomId;
+   const shareRoomBtn = ref<HTMLDivElement>();
+
+   const generalStore = useGeneralStore();
+
+   const roomStore = useRoomStore();
+
+   roomStore.setRoomId(route.params.id as RoomId);
 
    // Methods 
    const redirectToHome = (): void => {
@@ -34,6 +43,20 @@
    const handleCopyURL = () => {
       navigator.clipboard.writeText(`${import.meta.env.VITE_CLIENT_ADDRESS}${route.fullPath}`);
    };
+
+   onMounted(() => {
+      shareRoomBtn.value?.addEventListener('mouseover', () => {
+         generalStore.setBannerMessage(
+            'Copy the link and share it to invite more players'
+         );
+      });
+      shareRoomBtn.value?.addEventListener('mouseout', () => {
+         generalStore.setBannerMessage(
+            roomStore.isVoteClosed ? 'Vote closed ! Waiting for new game...' : 'Waiting for votes...'
+         );
+      });
+   });
+
 </script>
 
 <style scoped lang="scss">

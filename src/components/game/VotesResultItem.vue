@@ -3,7 +3,7 @@
     Vote final
   </h4>
   <div 
-    v-if="Object.keys(state.voteResults).length === 0"
+    v-if="Object.keys(roomStore.voteResults).length === 0"
   >
     No vote !
   </div>
@@ -18,8 +18,10 @@
    import { Chart, registerables } from "chart.js";
    import ChartDataLabels from 'chartjs-plugin-datalabels';
   
-   import { state } from '@/utils/state';
    import { getColorPalette } from '@/utils/utils';
+   import useRoomStore from '@/store/useRoomStore';
+
+   const roomStore = useRoomStore();
 
    import type { ChartOptions, ChartData } from "chart.js";
 
@@ -32,12 +34,12 @@
             font: {
                size: 20,
             },
-            formatter: (_, context) => Object.keys(state.voteResults)[context.dataIndex],
+            formatter: (_, context) => Object.keys(roomStore.voteResults)[context.dataIndex],
          },
          tooltip: {
             bodySpacing: 5,
             callbacks: {
-               label: (value) =>  Object.values(state.voteResults)[value.dataIndex].users,
+               label: (value) =>  Object.values(roomStore.voteResults)[value.dataIndex].users,
             },
             caretPadding: 20,
             displayColors: false,
@@ -50,7 +52,7 @@
       datasets: [
          {
             backgroundColor: getColorPalette(),
-            data: Object.values(state.voteResults).map(e => e.vote),
+            data: Object.values(roomStore.voteResults).map(e => e.vote),
          },
       ],
    };

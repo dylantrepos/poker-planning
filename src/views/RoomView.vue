@@ -1,7 +1,7 @@
 <template>
   <RoomNotExistsItem>
     <LoadingItem :loading="loading">
-      <RoomItem v-if="state.connected" />
+      <RoomItem v-if="userStore.isUserConnected" />
       <JoinRoomItem v-else />
     </LoadingItem>
   </RoomNotExistsItem>
@@ -16,22 +16,27 @@
    import RoomItem from "@/components/room/RoomItem.vue";
    import RoomNotExistsItem from "@/components/room/RoomNotExistsItem.vue";
   
-   import { state } from '@/utils/state';
    import { connectToSocket } from '@/sockets/sockets';
    import { getCookie } from '@/utils/utils';
    import { emitJoinRoom, emitVote } from '@/sockets/emitsFunctions';
    
    import type { RoomId } from '@/types/GenericType';
-  
+
+   import useUserStore from '@/store/useUserStore';
+   import useRoomStore from "@/store/useRoomStore";
+
+   
    // Variables
+   const userStore = useUserStore();
+   const roomStore = useRoomStore();
    const loading = ref(true);
    const route = useRoute();
-   state.roomId = route.params.id as RoomId;
+   roomStore.setRoomId(route.params.id as RoomId);
 
    // Life cycle
    onBeforeMount( async () => {
-      if (state.roomExists && getCookie().roomId === state.roomId) {
-         if (!state.connected) handleJoinRoom();
+      if (roomStore.roomExists && getCookie().roomId === roomStore.roomId) {
+         if (!userStore.isUserConnected) handleJoinRoom();
       }
       
       loading.value = false;

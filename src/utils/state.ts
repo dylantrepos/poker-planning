@@ -2,20 +2,21 @@ import { reactive } from 'vue';
 import type { State } from '../types/State';
 
 export const state = reactive<State>({
-  connected: false,
-  leadId: '',
-  messages: [],
-  roomExists: false,
-  roomId: '',
-  serverLive: true,
   userId: '',
+  userName: '',
+  
+  roomExists: false,
+  
+  roomId: '',
+  leadId: '',
   userList: {},
   userListOrdered: {
     xxs: [],
     sm: [],
     lg: []
   },
-  userName: '',
+
+  messages: [],
   voteClose: false,
   voteResults: {},
   votes: {},

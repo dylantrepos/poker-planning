@@ -1,5 +1,5 @@
 <template>
-  <slot v-if="state.roomExists"></slot>
+  <slot v-if="roomStore.roomExists"></slot>
   <main 
     v-else
     class="container"
@@ -20,8 +20,10 @@
 </template>
 
 <script setup lang="ts">
-   import { state } from "@/utils/state";
+   import useRoomStore from "@/store/useRoomStore";
    import { useRouter } from "vue-router";
+
+   const roomStore = useRoomStore();
 
    const router = useRouter();
 </script>

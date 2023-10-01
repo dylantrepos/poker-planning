@@ -28,13 +28,17 @@
    import { ref } from 'vue';
    import { v4 as uuidv4 } from 'uuid';
 
-   import { state } from '@/utils/state';
    import { addCookie } from '@/utils/utils';
    import { emitJoinRoom } from '@/sockets/emitsFunctions';
 
    import type { User } from '../../types/UserType';
 
+   import useUserStore from '@/store/useUserStore';
+   import useRoomStore from '@/store/useRoomStore';
+
    const usernameInput = ref('');
+   const userStore = useUserStore();
+   const roomStore = useRoomStore();
    
 
    // Methods 
@@ -44,7 +48,7 @@
       const userId = uuidv4();
     
       const userInfo: User = {
-         roomId: state.roomId,
+         roomId: roomStore.roomId,
          userId,
          userName: usernameInput.value,
          connected: true,
@@ -54,9 +58,7 @@
       addCookie('poker-planning2', userId);
     
       await emitJoinRoom(userInfo);
-
-      state.connected = true;
-    
+      userStore.setUserConnectionStatus(true);
    };
 </script>
 

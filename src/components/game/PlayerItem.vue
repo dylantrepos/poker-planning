@@ -2,28 +2,32 @@
   <div 
     class="table__player"
     :class="{
-      '-three': props.additionnalClasses?.three,
-      '-large': props.additionnalClasses?.large,
-      '-current': props.user.userId === state.userId
+      '-three': additionnalClasses?.three,
+      '-large': additionnalClasses?.large,
+      '-current': user.userId === userStore.userId
     }"
   >
     <CardItem
-      :user="props.user"
-      :place="props.place"
+      :user="user"
+      :place="place"
     />
-    <p v-if="props.user.userId === state.leadId">
+    <p v-if="user.userId === roomStore.leadId">
       👑
     </p>
     <p class="table__user-name">
-      {{ props.user.userName }}
+      {{ user.userName }}
     </p>
   </div>
 </template>
 
 <script setup lang="ts">
    import type { User } from '@/types/UserType';
-   import { state } from '@/utils/state';
    import CardItem from '@/components/game/CardItem.vue';
+   import useUserStore from '@/store/useUserStore';
+   import useRoomStore from '@/store/useRoomStore';
+
+   const userStore = useUserStore();
+   const roomStore = useRoomStore();
 
    type Props = {
       user: User;
@@ -34,11 +38,12 @@
       place: '-top' | '-left' | '-right' | '-bottom';
    }
 
-   const props = defineProps<Props>();
+   defineProps<Props>();
 </script>
 
 <style lang="scss">
   @import '../../assets/variables'; 
+
 
   .table__player {
     width: 100%;
