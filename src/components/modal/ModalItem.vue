@@ -47,10 +47,18 @@
     top: 0;
     z-index: 500;
     width: 100vw;
-    height: 100dvh;
-    background: rgba(0, 0, 0, 0.2);
+    min-width: 20rem;
+    height: calc(100dvh - var(--header-height));
+    top: calc(var(--header-height));
+    padding: 0;
+    padding-bottom: var(--header-height);;
+    backdrop-filter: blur(5px);
     display: grid;
     place-items: center;
+
+    @media (min-width: $xxs) {
+      min-width: 23rem;
+    }
   }
 
   .modal-enter-from,

@@ -7,10 +7,10 @@ import useUserStore from "@/store/useUserStore";
 
 
 /**
- * 
+ **
  * ROOM EVENTS
- * 
-*/
+ **
+ */
 
 // JOIN ROOM
 export const emitJoinRoom = async (userInfo: User): Promise<void> => {
@@ -20,16 +20,14 @@ export const emitJoinRoom = async (userInfo: User): Promise<void> => {
   
   initRoom(roomId, userId, userName);
 
-  console.log('user : ', userInfo);
-
   socket.emit('room:join', userInfo);
 };
 
 
 /**
- * 
+ ** 
  * MESSAGE EVENTS
- * 
+ ** 
  */
 
 // SEND MESSAGE
@@ -49,9 +47,9 @@ export const emitMessage = (message: string): void => {
 
 
 /**
- * 
+ ** 
  * VOTE EVENTS
- * 
+ ** 
  */
 
 // EMIT VOTE
@@ -82,9 +80,9 @@ export const emitOpenVote = (): void => {
 
 
 /**
- * 
+ ** 
  * LEAD EVENTS
- * 
+ ** 
  */
 
 // EMIT NEW LEAD

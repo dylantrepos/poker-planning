@@ -1,15 +1,18 @@
 <template>
   <div 
     :class="['table__player-card', place]">
-    <p>
+    <Infinity v-if="roomStore.votes[user.userId] === 'infinity'" />
+    <Coffee  v-else-if="roomStore.votes[user.userId] === 'coffee'" />
+    <p v-else>
       {{ roomStore.votes[user.userId] }}
     </p>
   </div>
 </template>
 
 <script setup lang="ts">
-   import type { User } from '@/types/UserType';
+   import { Coffee, Infinity } from 'lucide-vue-next';
    import useRoomStore from '@/store/useRoomStore';
+   import type { User } from '@/types/UserType';
 
    const roomStore = useRoomStore();
 

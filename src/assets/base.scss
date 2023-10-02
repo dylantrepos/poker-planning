@@ -40,10 +40,18 @@ p {
     background var(--transition-duration) ease-in-out,
     color var(--transition-duration) ease-in-out;
   width: fit-content;
+  
+  svg {
+    transition: stroke var(--transition-duration) ease-in-out;
+  }
 
   &:hover {
     background: var(--button-background-color-hover);
     color: var(--button-text-color-hover);
+
+    svg {
+      stroke: black;
+    }
   }
 }
 

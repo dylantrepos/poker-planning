@@ -1,5 +1,3 @@
-import { setUserPosition, updateVoteResults } from '@/utils/utils';
-
 import type { LeadId, RoomId, UserId, Vote, VoteState } from '@/types/GenericType';
 import type { Message } from '@/types/MessageType';
 import type { UserList } from '@/types/UserType';
@@ -7,34 +5,40 @@ import useGeneralStore from '@/store/useGeneralStore';
 import useRoomStore from '@/store/useRoomStore';
 
 /**
+ * *
+ * Contains all the requests made to the server.
+ * *
+ */
+
+/**
  * Check if server is live.
  */
 export const checkServerState = async (): Promise<void> => {
+  const { setServerStatus } = useGeneralStore();
+
   const tryConnectionRequest = fetch(import.meta.env.VITE_SERVER_ADDRESS);
   const connectionStatus = (await tryConnectionRequest).status;
   const isServerLive = connectionStatus >= 200 && connectionStatus < 300 ? true : false;
 
-  const generalStore = useGeneralStore();
-  generalStore.setServerStatus(isServerLive);
+  setServerStatus(isServerLive);
 };
 
 /**
  * Retreive list of current user in room `roomId`.
  */
-export const getUserList = async (): Promise<void> => {
-  const { roomId, setUserList, setUserListOrdered} = useRoomStore();
+export const getUserListFromServer = async (): Promise<void> => {
+  const { roomId, setUserList} = useRoomStore();
 
   const listUserRequest = await fetch(`${import.meta.env.VITE_SERVER_ADDRESS}/user-list/${roomId}`);
   const listUserResponse: Awaited<UserList> = (await listUserRequest.json()).list;
 
   setUserList(listUserResponse);
-  setUserListOrdered(setUserPosition());
 };
 
 /**
  * Retreive all messages from room `roomId`.
  */
-export const getAllMessages = async (): Promise<void> => {
+export const getAllMessagesFromServer = async (): Promise<void> => {
   const { roomId, setMessages } = useRoomStore();
   let messages: Message[] = [];
 
@@ -52,7 +56,7 @@ export const getAllMessages = async (): Promise<void> => {
 /**
  * Retreive all votes from room `roomId`.
  */
-export const getAllVotes = async (): Promise<void> => {
+export const getAllVotesFromServer = async (): Promise<void> => {
   const { roomId, setVotes } = useRoomStore();
   let votes: Record<UserId, Vote> = {};
 
@@ -70,7 +74,7 @@ export const getAllVotes = async (): Promise<void> => {
 /**
  * Retreive the ID of the lead user.
  */
-export const getLeadId = async (): Promise<void> => {
+export const getLeadIdFromServer = async (): Promise<void> => {
   const { roomId, setLeadId } = useRoomStore();
   let leadId: LeadId = '';
 
@@ -108,20 +112,22 @@ export const checkRoomExists = async (id: RoomId): Promise<boolean> => {
 /**
  * Check if vote is open for `roomId`.
  */
-export const checkVoteOpen = async (): Promise<void> => {
-  const { roomId, setVoteState } = useRoomStore();
-  let voteClose: VoteState = false; 
+export const checkVoteIsOpen = async (): Promise<void> => {
+  const { roomId, setIsVoteClosed, updateVoteResults } = useRoomStore();
 
   try {
     const stateVoteRequest = await fetch(`${import.meta.env.VITE_SERVER_ADDRESS}/vote-state/${roomId}`);
-    voteClose = (await stateVoteRequest.json()).close;
+    let voteClose: VoteState = (await stateVoteRequest.json()).close;
 
-    if (voteClose) updateVoteResults();
+    if (voteClose) {
+      updateVoteResults();
+      setIsVoteClosed();
+    }
+
   } catch (e) {
     console.warn(`Warning : Fail to check if vote is open from server.`);
 
     await checkServerState();
   }
 
-  setVoteState(voteClose);
 };

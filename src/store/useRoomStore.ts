@@ -4,6 +4,9 @@ import type { VoteResults } from "@/types/VoteType";
 import { defineStore } from "pinia";
 import useUserStore from "./useUserStore";
 import { connectToSocket } from "@/sockets/sockets";
+import { addCookie, fakeData, getCookie } from "@/utils/utils";
+import { getLeadIdFromServer } from "@/utils/room";
+import { getUserListPositionned } from '../utils/utils';
 
 type UserListOrdered = {
   xxs: User[][],
@@ -23,8 +26,13 @@ interface IRoomState {
   voteResults: VoteResults;
   votes: Votes;
   messages: Message[],
-  
 }
+
+const defaultUserListOrdered = {
+  xxs: [],
+  sm: [],
+  lg: []
+};
 
 export default defineStore("room-store", {
   state: (): IRoomState => ({ 
@@ -32,11 +40,7 @@ export default defineStore("room-store", {
     roomId: '',
     leadId: '',
     userList: {},
-    userListOrdered: {
-      xxs: [],
-      sm: [],
-      lg: []
-    },
+    userListOrdered: defaultUserListOrdered,
     isVoteClosed: false,
     voteResults: {},
     votes: {},
@@ -46,18 +50,33 @@ export default defineStore("room-store", {
     setRoomExists() { this.roomExists = true; },
     setRoomId(roomId: string) { this.roomId = roomId; },
     setLeadId(leadId: string) { this.leadId = leadId; },
-    setUserList(userList: UserList) { this.userList = userList; },
     setUserListOrdered(userList: UserListOrdered) { this.userListOrdered = userList; },
-    setVoteState(isClosed: boolean) { this.isVoteClosed = isClosed; },
+    setIsVoteClosed(isClosed: boolean = true) { 
+      if (!isClosed) this.resetVotes();
+      else this.updateVoteResults();
+      console.log('vote : ', isClosed);
+      this.isVoteClosed = isClosed; 
+    },
     setVoteResults(voteResults: VoteResults) { this.voteResults = voteResults; },
     setVotes(votes: Votes) { this.votes = votes; },
+    setMessages(messages: Message[]) { this.messages = messages; },
+    async setUserList(userList: UserList) { 
+
+      if (this.leadId === '') await getLeadIdFromServer();
+      this.userList = userList; 
+      this.updateUserPosition();
+    },
+
     resetVotes() {
-      this.isVoteClosed = false;
+      const cookieData = getCookie();
+      addCookie('poker-planning', JSON.stringify({...cookieData, vote: ''}));
+
       this.voteResults = {};
       this.votes = {};
     },
-    setMessages(messages: Message[]) { this.messages = messages; },
-    addMessages(messages: Message) { this.messages.push(messages); },
+    addMessages(message: Message) { 
+      if (this.messages) this.messages.push(message); 
+    },
     initRoom(roomId: string, userId: string, userName: string) {
       const userStore = useUserStore();
       
@@ -70,7 +89,71 @@ export default defineStore("room-store", {
       userStore.setUserId(userId);
       userStore.setUserName(userName);
       if (!userStore.isUserConnected) connectToSocket();
-    }
+    },
+    updateVoteResults() {
+      const results: VoteResults = {};
+    
+      for (const user of Object.values(this.userList)) {
+        const vote = this.votes[user.userId];
+    
+        // Skip if vote is empty
+        if (!vote || vote === '') break; 
+        
+        if (results[vote]) {
+          results[vote].vote++;
+          results[vote].users.push(user.userName);
+        }
+        else { 
+          results[vote] = {
+            vote: 1,
+            users: [user.userName]
+          };
+        }
+      }
+    
+      this.setVoteResults(results);
+    },
+    updateUserPosition() {
+      const userList = [
+        ...this.getUserListSorted, 
+        ...fakeData.slice(0, 3)
+      ];
+      const userListPositionned = getUserListPositionned(userList);
+
+    
+      this.setUserListOrdered(userListPositionned);
+    },
   },
-  getters: {}
+  getters: {
+    getUserListSorted(): User[] {
+      const userStore = useUserStore();
+  
+      const userListSorted = Object.values(this.userList).sort();
+           
+      const leadIndex = userListSorted.findIndex(user => user.userId === this.leadId);
+      const leadElt = userListSorted.find(user => user.userId === this.leadId);
+      userListSorted.splice(leadIndex, 1);
+          
+      if (leadElt) userListSorted.unshift(leadElt);
+  
+      const userIndex = userListSorted.findIndex(user => user.userId === userStore.userId);
+      const userElt = userListSorted.find(user => user.userId === userStore.userId);
+      userListSorted.splice(userIndex, 1);
+  
+      if (userElt) userListSorted.unshift(userElt);
+
+      // Set name to acceptable width
+      userListSorted.forEach((user: User) => {
+        if (user.userName.length > 12) {
+           if (!user.userName.includes(' ')) {
+              user.userName = `${user.userName.slice(0, 12)}...`;
+           } else {
+              user.userName = `${user.userName.slice(0, window.innerWidth >= 767 ? 24 : 14)}...`;
+           }
+        } 
+     });
+  
+      return userListSorted;
+    },
+  }
 });

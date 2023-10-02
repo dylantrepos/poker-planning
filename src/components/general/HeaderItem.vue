@@ -11,6 +11,9 @@
       @click="handleCopyURL"
       ref="shareRoomBtn"
     >
+      <Copy 
+        :size="18"
+      />
       Share room
     </button>
   </header>
@@ -23,7 +26,7 @@
    import { onMounted, ref } from 'vue';  
    import useGeneralStore from '@/store/useGeneralStore';
    import useRoomStore from '@/store/useRoomStore';
-
+   import { Copy } from 'lucide-vue-next';
 
    const router = useRouter();
    const route = useRoute();
@@ -80,8 +83,20 @@
 }
 
 .header__button {
-  width: 150px;
+  width: auto;
   font-size: .8rem;
-  padding: .5rem 2rem;
+  padding: .5rem 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: .5rem;
+  
+  @media (min-width: $xs) {
+    font-size: .9rem;
+  }
+}
+
+.header__copy-icon {
+  font-size: 12px;
 }
 </style>

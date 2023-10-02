@@ -1,5 +1,4 @@
 import { Socket, io } from 'socket.io-client';
-import { closeVote, handleError, messageReceived, openVote, setConnectionToSocket, updateLead, updateUserList, updateVote } from '@/sockets/onFunctions';
 
 import type { UserList } from '@/types/UserType';
 import type { ClientToServerEvents, ServerToClientEvents } from '@/types/SocketType';
@@ -8,6 +7,8 @@ import type { VoteInfo } from '@/types/VoteType';
 import type { LeadId } from '@/types/GenericType';
 
 import useUserStore from '@/store/useUserStore';
+import useRoomStore from '@/store/useRoomStore';
+import useGeneralStore from '@/store/useGeneralStore';
 
 
 const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(import.meta.env.VITE_SERVER_ADDRESS, {
@@ -16,29 +17,37 @@ const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(import.met
 
 // Methods
 const connectToSocket = () => {
-  const { setUserConnectionStatus } = useUserStore();
+  useUserStore().setUserConnectionStatus(true);
 
-  setUserConnectionStatus(true);
   socket.connect();
 };
 
 // On events
-socket.on("connect", () => setConnectionToSocket());
+socket.on("connect", () => 
+  useGeneralStore().setConnectionToSocket());
 
-socket.on("disconnect", () => setConnectionToSocket(false));
+socket.on("disconnect", () => 
+  useGeneralStore().setConnectionToSocket(false));
 
-socket.on(`userList:update`, ( userList: UserList ) => updateUserList(userList));
+socket.on(`userList:update`, ( userList: UserList ) => 
+  useRoomStore().setUserList(userList));
 
-socket.on(`message:received`, ( message: Message ) => messageReceived(message));  
+socket.on(`message:received`, ( message: Message ) => 
+  useRoomStore().addMessages(message));  
 
-socket.on('vote:received', ( voteInfo: VoteInfo ) => updateVote(voteInfo));
+socket.on('vote:received', ( voteInfo: VoteInfo ) => 
+  useRoomStore().setVotes(voteInfo));
 
-socket.on('vote:close', () => closeVote());
+socket.on('vote:close', () => 
+  useRoomStore().setIsVoteClosed());
 
-socket.on('vote:open', () => openVote());
+socket.on('vote:open', () => 
+  useRoomStore().setIsVoteClosed(false));
 
-socket.on('lead:update', ( leadId: LeadId ) => updateLead(leadId));
+socket.on('lead:update', ( leadId: LeadId ) => 
+  useRoomStore().setLeadId(leadId));
 
-socket.on("connect_error", (err: Error) => handleError(err));
+socket.on("connect_error", (err: Error) => 
+  useGeneralStore().setError(err));
 
 export { socket, connectToSocket };

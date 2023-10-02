@@ -67,7 +67,7 @@
    const handleCloseVote = () => {
       emitCloseVote();
    };
-
+    
    const handleOpenVote = () => {
       emitOpenVote();
    };
@@ -97,6 +97,7 @@
     align-items: center;
     height: 3rem;
     max-height: 3rem;
+    margin-bottom: 1.5rem;
     
     @media (min-width: $m) {
       height: 4rem;

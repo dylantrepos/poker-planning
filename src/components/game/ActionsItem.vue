@@ -12,6 +12,9 @@
       class="room-view__actions-vote"
       ref="voteBtn"
       @click="openModalVote"
+      :class="{
+        '-closed': roomStore.isVoteClosed
+      }"
     >
       <div class="room-view__actions-vote-cards">
         <div class="room-view__actions-vote-card -center"></div>
@@ -56,7 +59,7 @@
          generalStore.setBannerMessage(roomStore.isVoteClosed ? 'Vote closed ! Waiting for new game...' : 'Waiting for votes...');
       });
       voteBtn.value?.addEventListener('mouseover', () => {
-         generalStore.setBannerMessage('Choose your card and get ready to play');
+         generalStore.setBannerMessage(roomStore.isVoteClosed ? 'You can\'t Choose your card for the moment' : 'Choose your card and get ready to play');
       });
       voteBtn.value?.addEventListener('mouseout', () => {
          generalStore.setBannerMessage(roomStore.isVoteClosed ? 'Vote closed ! Waiting for new game...' : 'Waiting for votes...');
@@ -76,6 +79,8 @@
   @import '../../assets/variables'; 
   
   .room-view__actions {
+    min-width: 23rem;
+    
     position: fixed;
     left: 0;
     bottom: 0;
@@ -205,6 +210,14 @@
       width: auto;
     }
 
+    &.-closed {
+      cursor: no-drop;
+
+      .room-view__actions-vote-card {
+        background: linear-gradient(163deg, #3b3b3b 0%, #5c5c5c 97.35%);
+      }
+    }
+
     @media (min-width: $xs) {
       height: 13rem;
       width: 13rem;
@@ -264,6 +277,7 @@
       }
     }
   }
+
   .border-animation {
     position: absolute;
     width: 0;

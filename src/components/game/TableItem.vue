@@ -187,13 +187,13 @@
       grid-template-rows: auto minmax(22rem, 1fr) auto;
       max-width: unset;
       min-width: unset;
-      padding: 0 2%;
+      padding: 0 1%;
       width: auto;
     }
 
   
     @media (min-width: $l) {
-      grid-template-columns: 8rem minmax(65rem, 1fr) 8rem;
+      grid-template-columns: 8rem minmax(45rem, 1fr) 8rem;
       padding: 0 5%;
     }
 

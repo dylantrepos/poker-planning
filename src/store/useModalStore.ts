@@ -3,6 +3,7 @@ import { defineStore } from "pinia";
 import { extend } from '@vue/shared';
 import ModalVoteItemVue from "@/components/modal/ModalVoteItem.vue";
 import { shallowRef } from "vue";
+import useRoomStore from "./useRoomStore";
 
 const component = extend({});
 
@@ -34,12 +35,14 @@ export default defineStore("modal-store", {
       this.modalState = { component, props: props};
     },
     openVoteModal(info: string) {
-      this.openModal({
-        component: shallowRef(ModalVoteItemVue), 
-        props: {
-          text: info
-        }
-      });
+      if (!useRoomStore().isVoteClosed) {
+        this.openModal({
+          component: shallowRef(ModalVoteItemVue), 
+          props: {
+            text: info
+          }
+        });
+      }
     },
     closeModal() {
       this.modalState = basicState;
