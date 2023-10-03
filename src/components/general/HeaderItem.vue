@@ -2,7 +2,7 @@
   <header class="header__container">
     <div 
       class="header__title"
-      @click="redirectToHome"
+      @click="router.push('/')"
     >
       Poker planning
     </div>
@@ -11,9 +11,7 @@
       @click="handleCopyURL"
       ref="shareRoomBtn"
     >
-      <Copy 
-        :size="18"
-      />
+      <Copy :size="18" />
       Share room
     </button>
   </header>
@@ -21,43 +19,35 @@
 
 <script setup lang="ts">
    import { useRouter, useRoute } from 'vue-router';
-  
-   import type { RoomId } from '../../types/GenericType';
-   import { onMounted, ref } from 'vue';  
-   import useGeneralStore from '@/store/useGeneralStore';
-   import useRoomStore from '@/store/useRoomStore';
+   import { onMounted, ref, onUnmounted } from 'vue';  
    import { Copy } from 'lucide-vue-next';
+  
+   import useRoomStore from '@/store/useRoomStore';
+   import { setMessageDefault, setMessageShareRoom } from '@/utils/bannerMessages';
+   
+   import type { RoomId } from '@/types/GenericType';
 
    const router = useRouter();
    const route = useRoute();
-   const shareRoomBtn = ref<HTMLDivElement>();
-
-   const generalStore = useGeneralStore();
-
    const roomStore = useRoomStore();
+   const shareRoomBtn = ref<HTMLDivElement>();
 
    roomStore.setRoomId(route.params.id as RoomId);
 
    // Methods 
-   const redirectToHome = (): void => {
-      router.push('/');
-   };
-
    const handleCopyURL = () => {
       navigator.clipboard.writeText(`${import.meta.env.VITE_CLIENT_ADDRESS}${route.fullPath}`);
    };
 
+   // Life cycle
    onMounted(() => {
-      shareRoomBtn.value?.addEventListener('mouseover', () => {
-         generalStore.setBannerMessage(
-            'Copy the link and share it to invite more players'
-         );
-      });
-      shareRoomBtn.value?.addEventListener('mouseout', () => {
-         generalStore.setBannerMessage(
-            roomStore.isVoteClosed ? 'Vote closed ! Waiting for new game...' : 'Waiting for votes...'
-         );
-      });
+      shareRoomBtn.value?.addEventListener('mouseover', setMessageShareRoom);
+      shareRoomBtn.value?.addEventListener('mouseout', setMessageDefault);
+   });
+    
+   onUnmounted(() => {
+      shareRoomBtn.value?.removeEventListener('mouseover', setMessageShareRoom);
+      shareRoomBtn.value?.removeEventListener('mouseout', setMessageDefault);
    });
 
 </script>
@@ -90,6 +80,10 @@
   justify-content: center;
   align-items: center;
   gap: .5rem;
+
+  > * { 
+    pointer-events: none;
+  }
   
   @media (min-width: $xs) {
     font-size: .9rem;

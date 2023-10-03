@@ -79,7 +79,7 @@
    import ActionsItemVue from './ActionsItem.vue';
 
    import useRoomStore from '@/store/useRoomStore';
-
+   import useGeneralStore from '@/store/useGeneralStore';
    
    const screenSizeLarge = ref(window.innerWidth >= 767);
    const screenSize = ref<'xxs' | 'sm' | 'lg'>('sm');
@@ -91,6 +91,7 @@
    const throttlePause = ref(false);
 
    const roomStore = useRoomStore();
+   const generalStore = useGeneralStore();
 
    watch(
       () => roomStore.userListOrdered,
@@ -125,6 +126,8 @@
       else if (window.innerWidth < 767) screenSize.value = 'sm';
       else screenSize.value = 'lg';
 
+      generalStore.updateScreenWidth();
+
       tableLargerThanScreen.value = (tableDivElt.value?.offsetWidth ?? 0) > window.innerWidth;
    }; 
 
@@ -143,7 +146,7 @@
    });
     
    onBeforeUnmount(() => {
-      window.removeEventListener('resize', () => getSizeWindow());
+      window.removeEventListener('resize', () => throttle);
    });
 
 
@@ -184,7 +187,7 @@
 
     @media (min-width: $m) {
       grid-template-columns: 8rem 1fr 8rem;
-      grid-template-rows: auto minmax(22rem, 1fr) auto;
+      grid-template-rows: auto minmax(25rem, 1fr) auto;
       max-width: unset;
       min-width: unset;
       padding: 0 1%;
@@ -193,7 +196,7 @@
 
   
     @media (min-width: $l) {
-      grid-template-columns: 8rem minmax(45rem, 1fr) 8rem;
+      // grid-template-columns: 8rem minmax(45rem, 1fr) 8rem;
       padding: 0 5%;
     }
 
@@ -357,12 +360,19 @@
 
     @media (min-width: $m)  {
       border-radius: 70px;
-      min-width: 30rem;
+      min-width: 31rem;
+    }
+    
+    @media (min-width: $l)  {
+      border-radius: 70px;
+      min-width: 40rem;
     }
   }
 
   .table__table-item {
-    // position: relative;
     height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 </style>  

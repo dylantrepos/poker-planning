@@ -3,10 +3,12 @@
     class="room-view__actions"
   >
     <div 
+      v-if="roomStore.leadId === userStore.userId"
       class="room-view__actions-reveal" 
       ref="revealBtn"
+      @click="!roomStore.isVoteClosed ? openModalConfirmResult() : handleRestartGame()"
     >
-      Reveal
+      {{ roomStore.isVoteClosed ? 'Restart' : 'Reveal' }}
     </div>
     <div 
       class="room-view__actions-vote"
@@ -23,53 +25,61 @@
       </div>
     </div>
     <div 
+      v-if="roomStore.leadId === userStore.userId"
       class="room-view__actions-lead"
       ref="leadBtn"
     >
-      Lead
+      Share
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-   import { onMounted, ref } from 'vue';
+   import { onMounted, onUnmounted, ref } from 'vue';
    
    import useModalStore from '@/store/useModalStore';
-   import useGeneralStore from '@/store/useGeneralStore';
    import useRoomStore from '@/store/useRoomStore';
+   import useUserStore from '@/store/useUserStore';
+   import { setMessageReveal, setMessageVote, setMessageLead, setMessageDefault } from '../../utils/bannerMessages';
+   import { emitOpenVote } from '@/sockets/emitsFunctions';
    
    const modalStore = useModalStore();
-   const generalStore = useGeneralStore();
    const roomStore = useRoomStore();
+   const userStore = useUserStore();
 
    const openModalVote = () => {
       modalStore.openVoteModal('Props have been successfully passed!');
    };
 
+   const openModalConfirmResult = () => {
+      modalStore.openResultConfirmModal();
+   };
+
+   const handleRestartGame = () => {
+      useRoomStore().setIsVoteClosed(false);
+      emitOpenVote();
+   };
 
    const revealBtn = ref<HTMLDivElement>();
    const voteBtn = ref<HTMLDivElement>();
    const leadBtn = ref<HTMLDivElement>();
 
    onMounted(() => {
-      revealBtn.value?.addEventListener('mouseover', () => {
-         generalStore.setBannerMessage('Reveal all the cards and get the score');
-      });
-      revealBtn.value?.addEventListener('mouseout', () => {
-         generalStore.setBannerMessage(roomStore.isVoteClosed ? 'Vote closed ! Waiting for new game...' : 'Waiting for votes...');
-      });
-      voteBtn.value?.addEventListener('mouseover', () => {
-         generalStore.setBannerMessage(roomStore.isVoteClosed ? 'You can\'t Choose your card for the moment' : 'Choose your card and get ready to play');
-      });
-      voteBtn.value?.addEventListener('mouseout', () => {
-         generalStore.setBannerMessage(roomStore.isVoteClosed ? 'Vote closed ! Waiting for new game...' : 'Waiting for votes...');
-      });
-      leadBtn.value?.addEventListener('mouseover', () => {
-         generalStore.setBannerMessage('Give your lead status to another player');
-      });
-      leadBtn.value?.addEventListener('mouseout', () => {
-         generalStore.setBannerMessage(roomStore.isVoteClosed ? 'Vote closed ! Waiting for new game...' : 'Waiting for votes...');
-      });
+      revealBtn.value?.addEventListener('mouseover', setMessageReveal);
+      voteBtn.value?.addEventListener('mouseover', setMessageVote);
+      leadBtn.value?.addEventListener('mouseover', setMessageLead);
+      [revealBtn.value, voteBtn.value, leadBtn.value].forEach((elt => (
+         elt?.addEventListener('mouseout', setMessageDefault)
+      )));
+   });
+
+   onUnmounted(() => {
+      revealBtn.value?.removeEventListener('mouseover', setMessageReveal);
+      voteBtn.value?.removeEventListener('mouseover', setMessageVote);
+      leadBtn.value?.removeEventListener('mouseover', setMessageLead);
+      [revealBtn.value, voteBtn.value, leadBtn.value].forEach((elt => (
+         elt?.removeEventListener('mouseout', setMessageDefault)
+      )));
    });
 
 
@@ -113,7 +123,6 @@
       flex-direction: row;
       width: auto;
       height: 12rem;
-      margin-top: 5rem;
       bottom: unset;
       left: 50%;
       transform: translateX(-50%);

@@ -1,29 +1,41 @@
 <template>
-  <h4>
-    Vote final
-  </h4>
   <div 
     v-if="Object.keys(roomStore.voteResults).length === 0"
   >
     No vote !
   </div>
-  <PieChart v-else
-            :chartData="chartData"
-            :plugins="[ChartDataLabels]"
-            :options="plugin" />
+  <PieChart 
+    v-else
+    :chartData="chartData"
+    :plugins="[ChartDataLabels]"
+    :options="plugin" 
+    class="vote-result__pie"
+  />
 </template>
 
 <script setup lang="ts">
    import { PieChart } from 'vue-chart-3';
    import { Chart, registerables } from "chart.js";
    import ChartDataLabels from 'chartjs-plugin-datalabels';
-  
+   
    import { getColorPalette } from '@/utils/utils';
    import useRoomStore from '@/store/useRoomStore';
 
    const roomStore = useRoomStore();
 
    import type { ChartOptions, ChartData } from "chart.js";
+   import { onBeforeMount, onBeforeUnmount } from 'vue';
+
+
+   onBeforeMount(() => {
+      console.log('bef good build res');
+      console.log(roomStore.votes);
+      console.log(roomStore.voteResults);
+   });
+
+   onBeforeUnmount(() => {
+      console.log('aft good build');
+   });
 
    Chart.register(...registerables);
 
@@ -58,3 +70,13 @@
    };
 
 </script>
+
+
+<style lang="scss">
+  @import '../../assets/variables'; 
+  
+  .vote-result__pie {
+    max-height: 10rem;
+    margin-bottom: 1rem;
+  }
+</style>

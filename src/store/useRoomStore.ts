@@ -7,6 +7,7 @@ import { connectToSocket } from "@/sockets/sockets";
 import { addCookie, fakeData, getCookie } from "@/utils/utils";
 import { getLeadIdFromServer } from "@/utils/room";
 import { getUserListPositionned } from '../utils/utils';
+import useModalStore from "./useModalStore";
 
 type UserListOrdered = {
   xxs: User[][],
@@ -22,6 +23,7 @@ interface IRoomState {
   leadId: string;
   userList: UserList;
   userListOrdered: UserListOrdered;
+  userListNoVote: User[];
   isVoteClosed: boolean; 
   voteResults: VoteResults;
   votes: Votes;
@@ -41,6 +43,7 @@ export default defineStore("room-store", {
     leadId: '',
     userList: {},
     userListOrdered: defaultUserListOrdered,
+    userListNoVote: [],
     isVoteClosed: false,
     voteResults: {},
     votes: {},
@@ -53,17 +56,24 @@ export default defineStore("room-store", {
     setUserListOrdered(userList: UserListOrdered) { this.userListOrdered = userList; },
     setIsVoteClosed(isClosed: boolean = true) { 
       if (!isClosed) this.resetVotes();
-      else this.updateVoteResults();
-      console.log('vote : ', isClosed);
+      else {
+        this.updateVoteResults();
+        useModalStore().openResultModal();
+      }
+
       this.isVoteClosed = isClosed; 
     },
     setVoteResults(voteResults: VoteResults) { this.voteResults = voteResults; },
-    setVotes(votes: Votes) { this.votes = votes; },
+    setVotes(votes: Votes) { 
+      this.votes = votes; 
+      this.updateUserListNoVote();
+    },
     setMessages(messages: Message[]) { this.messages = messages; },
     async setUserList(userList: UserList) { 
 
       if (this.leadId === '') await getLeadIdFromServer();
       this.userList = userList; 
+      this.updateUserListNoVote();
       this.updateUserPosition();
     },
 
@@ -71,8 +81,8 @@ export default defineStore("room-store", {
       const cookieData = getCookie();
       addCookie('poker-planning', JSON.stringify({...cookieData, vote: ''}));
 
-      this.voteResults = {};
       this.votes = {};
+      this.updateUserListNoVote();
     },
     addMessages(message: Message) { 
       if (this.messages) this.messages.push(message); 
@@ -123,6 +133,11 @@ export default defineStore("room-store", {
     
       this.setUserListOrdered(userListPositionned);
     },
+    updateUserListNoVote() {
+      console.log('b ef : ', this.userListNoVote);
+      this.userListNoVote = Object.values(this.userList).filter((user: User) => (!this.votes[user.userId] ?? false));
+      console.log('aff : ', Object.values(this.userList).filter((user: User) => (!this.votes[user.userId] ?? false)));
+    }
   },
   getters: {
     getUserListSorted(): User[] {

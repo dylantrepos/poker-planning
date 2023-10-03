@@ -2,6 +2,8 @@ import { defineStore } from "pinia";
 // eslint-disable-next-line
 import { extend } from '@vue/shared';
 import ModalVoteItemVue from "@/components/modal/ModalVoteItem.vue";
+import ModalResultConfirmItemVue from "@/components/modal/ModalResultConfirmItem.vue";
+import ModalResultItemVue from "@/components/modal/ModalResultItem.vue";
 import { shallowRef } from "vue";
 import useRoomStore from "./useRoomStore";
 
@@ -43,6 +45,16 @@ export default defineStore("modal-store", {
           }
         });
       }
+    },
+    openResultConfirmModal() {
+      this.openModal({
+        component: shallowRef(ModalResultConfirmItemVue), 
+      });
+    },
+    openResultModal() {
+      this.openModal({
+        component: shallowRef(ModalResultItemVue), 
+      });
     },
     closeModal() {
       this.modalState = basicState;

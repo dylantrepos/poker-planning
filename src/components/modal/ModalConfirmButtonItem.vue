@@ -1,16 +1,18 @@
 <template>
   <button
     class="button modal__confirm-button"
-    @click="store.closeModal"
+    
   >
-    Confirm vote
+    {{ text }}
   </button>
 </template>
 
 <script setup lang="ts">
-   import useModalStore from '@/store/useModalStore';
+   type Props = {
+      text: string;
+   }
 
-   const store = useModalStore();
+   defineProps<Props>();
 </script>
 
 <style scoped lang="scss">

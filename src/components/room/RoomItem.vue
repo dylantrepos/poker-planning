@@ -13,11 +13,17 @@
         </p>
       </transition>
     </div>
-    <TableItem 
-      ref="tableItem" 
-    />
+    <VotesResultItem v-if="roomStore.isVoteClosed" />
+    <!-- <button
+      class="button"
+      v-if="roomStore.isVoteClosed"
+      @click="useModalStore().openResultModal"
+    >
+      Show results
+    </button> -->
 
-    
+    <TableItem ref="tableItem" />
+
     <div class="room-toRemove">
       <h3>
         Name : {{ userStore.userName }}  {{ userStore.userId === roomStore.leadId ?  ' 👑' : ''}}
@@ -59,6 +65,7 @@
    import useGeneralStore from '@/store/useGeneralStore';
    import useUserStore from "@/store/useUserStore";
    import useRoomStore from "@/store/useRoomStore";
+   //  import useModalStore from "@/store/useModalStore";
 
    const generalStore = useGeneralStore();
    const userStore = useUserStore();
@@ -97,7 +104,7 @@
     align-items: center;
     height: 3rem;
     max-height: 3rem;
-    margin-bottom: 1.5rem;
+    // margin-bottom: 1.5rem;
     
     @media (min-width: $m) {
       height: 4rem;

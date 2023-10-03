@@ -1,32 +1,23 @@
 <template>
-  <div class="modal-vote__container">
+  <div class="modal-result__container">
     <ModalCloseButton />
-    <h2 class="modal-vote__title">
-      Time to votes !
+    <h2 class="modal-result__title">
+      Vote result
     </h2>
-    <p class="modal-vote__description">
-      Pick a card and wait for the results
-    </p>
-    <div class="modal-vote__cards-container">
-      <button 
-        v-for="vote in voteAvailable" 
-        v-bind:key="vote"
-        :disabled="roomStore.isVoteClosed"
-        @click="handleChangeVote(vote as Vote)"
-        class="modal-vote__cards-button"
-        :class="{
-          '-chosen': vote === currVote
-          // '-chosen': vote === roomStore.votes[userStore.userId]
-        }"
-      >
-        <Infinity v-if="vote === 'infinity'" />
-        <Coffee  v-else-if="vote === 'coffee'" />
-        <span v-else>{{ vote }}</span>
-      </button>
+    <div 
+      v-if="Object.keys(roomStore.voteResults).length === 0"
+    >
+      No vote !
     </div>
+    <PieChart 
+      v-else
+      :chartData="chartData"
+      :plugins="[ChartDataLabels]"
+      :options="plugin" 
+    />
     <ModalConfirmButton 
-      text="Confirm vote"
-      @click="handleVote" 
+      text="Close"
+      @click="store.closeModal" 
     />
   </div>
 </template>
@@ -34,45 +25,69 @@
 <script setup lang="ts">
    import ModalCloseButton from '@/components/modal/ModalCloseButtonItem.vue';
    import ModalConfirmButton from '@/components/modal/ModalConfirmButtonItem.vue';
-   import { Coffee, Infinity } from 'lucide-vue-next';
    import useModalStore from '@/store/useModalStore';
-
-   import { addCookie, getCookie, getPokerPossibilities } from '@/utils/utils';
-   import { emitVote } from '@/sockets/emitsFunctions';
-   
-   import useUserStore from '@/store/useUserStore';
    import useRoomStore from '@/store/useRoomStore';
-   import type { Vote } from '@/types/GenericType';
-   import { ref } from 'vue';
-   
-   const userStore = useUserStore();
-   const roomStore = useRoomStore();
+   import { onBeforeMount, onBeforeUnmount } from 'vue';
+   import { PieChart } from 'vue-chart-3';
+   import { Chart, registerables } from "chart.js";
+   import ChartDataLabels from 'chartjs-plugin-datalabels';
+  
+   import { getColorPalette } from '@/utils/utils';
+
+   import type { ChartOptions, ChartData } from "chart.js";
+
    const store = useModalStore();
+   const roomStore = useRoomStore();
+   
 
-   const currVote = ref<Vote>(roomStore.votes[userStore.userId] as Vote ?? '');
+   onBeforeMount(() => {
+      console.log('bef build res');
+      console.log(roomStore.votes);
+      console.log(roomStore.voteResults);
+   });
 
-   const voteAvailable = getPokerPossibilities();
+   onBeforeUnmount(() => {
+      console.log('aft build res');
+   });
 
-   const handleChangeVote = (vote: Vote): void => {
-      currVote.value = currVote.value === vote ? '' : vote;
+   
+   Chart.register(...registerables);
+
+   const plugin: ChartOptions<"pie">  = {
+      plugins: {
+         datalabels: {
+            color: '#ffffff',
+            font: {
+               size: 20,
+            },
+            formatter: (_, context) => Object.keys(roomStore.voteResults)[context.dataIndex],
+         },
+         tooltip: {
+            bodySpacing: 5,
+            callbacks: {
+               label: (value) =>  Object.values(roomStore.voteResults)[value.dataIndex].users,
+            },
+            caretPadding: 20,
+            displayColors: false,
+            padding: 10,
+         }
+      }
    };
 
-   const handleVote = (): void => {
-      const cookieData = getCookie();
-      console.log('cc ', currVote.value);
-      console.log('cc ', roomStore.userListNoVote);
-      emitVote(currVote.value);
-
-      addCookie('poker-planning', JSON.stringify({...cookieData, vote: currVote.value}));
-
-      store.closeModal();
+   const chartData: ChartData<'pie'> = {
+      datasets: [
+         {
+            backgroundColor: getColorPalette(),
+            data: Object.values(roomStore.voteResults).map(e => e.vote),
+         },
+      ],
    };
 </script>
 
 <style scoped lang="scss">
   @import '../../assets/variables.scss'; 
 
-  .modal-vote__container {
+  .modal-result__container {
     background: linear-gradient(145deg, rgba(0, 0, 0, 0.938), rgba(0, 0, 0, 0.388));
     padding: 2rem 1rem;
     position: relative;
@@ -93,7 +108,7 @@
     }
   }
 
-  .modal-vote__title {
+  .modal-result__title {
     font-size: 1.2rem;
     font-weight: 500;
     
@@ -102,7 +117,7 @@
     }
   }
 
-  .modal-vote__description {
+  .modal-result__description {
     font-size: 1rem;
     font-weight: 200;
     margin-top: 1rem;
@@ -112,12 +127,10 @@
     }
   }
 
-  .modal-vote__cards-container {
-    display: grid;
-    grid-template-columns: repeat(4, auto);
-    grid-auto-rows: 1fr;
-    grid-auto-flow: row;
-    justify-items: center;
+  .modal-result__cards-container {
+    display: flex;
+    flex-direction: column;
+ 
     gap: 1rem;
     margin: 1rem 0;
 
@@ -135,7 +148,7 @@
     }
   }
 
-  .modal-vote__cards-button {
+  .modal-result__cards-button {
     background: linear-gradient(180deg, #FFF 0%, #D4D4D4 100%);
     border: 1px solid #FFF;
     height: 5rem;

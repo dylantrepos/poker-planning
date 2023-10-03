@@ -1,32 +1,31 @@
 <template>
-  <div class="modal-vote__container">
+  <div class="modal-result__container">
     <ModalCloseButton />
-    <h2 class="modal-vote__title">
-      Time to votes !
+    <h2 class="modal-result__title">
+      Vote result
     </h2>
-    <p class="modal-vote__description">
-      Pick a card and wait for the results
+    <p class="modal-result__description">
+      Are you sure you want to show the result ?
     </p>
-    <div class="modal-vote__cards-container">
-      <button 
-        v-for="vote in voteAvailable" 
-        v-bind:key="vote"
-        :disabled="roomStore.isVoteClosed"
-        @click="handleChangeVote(vote as Vote)"
-        class="modal-vote__cards-button"
-        :class="{
-          '-chosen': vote === currVote
-          // '-chosen': vote === roomStore.votes[userStore.userId]
-        }"
-      >
-        <Infinity v-if="vote === 'infinity'" />
-        <Coffee  v-else-if="vote === 'coffee'" />
-        <span v-else>{{ vote }}</span>
-      </button>
+    <div 
+      class="modal-result__cards-container"
+      v-if="Object.keys(roomStore.userListNoVote).length > 0"
+    >
+      <p class="modal-result__description">
+        Player without vote : 
+      </p>
+      <ul>
+        <li 
+          v-for="user in roomStore.userListNoVote"
+          v-bind:key="user.userId"
+        >
+          {{  user.userName }}
+        </li>
+      </ul>
     </div>
     <ModalConfirmButton 
-      text="Confirm vote"
-      @click="handleVote" 
+      text="Close the vote"
+      @click="handleConfirm" 
     />
   </div>
 </template>
@@ -34,45 +33,21 @@
 <script setup lang="ts">
    import ModalCloseButton from '@/components/modal/ModalCloseButtonItem.vue';
    import ModalConfirmButton from '@/components/modal/ModalConfirmButtonItem.vue';
-   import { Coffee, Infinity } from 'lucide-vue-next';
-   import useModalStore from '@/store/useModalStore';
-
-   import { addCookie, getCookie, getPokerPossibilities } from '@/utils/utils';
-   import { emitVote } from '@/sockets/emitsFunctions';
-   
-   import useUserStore from '@/store/useUserStore';
+   import { emitCloseVote } from '@/sockets/emitsFunctions';
    import useRoomStore from '@/store/useRoomStore';
-   import type { Vote } from '@/types/GenericType';
-   import { ref } from 'vue';
-   
-   const userStore = useUserStore();
+
    const roomStore = useRoomStore();
-   const store = useModalStore();
 
-   const currVote = ref<Vote>(roomStore.votes[userStore.userId] as Vote ?? '');
-
-   const voteAvailable = getPokerPossibilities();
-
-   const handleChangeVote = (vote: Vote): void => {
-      currVote.value = currVote.value === vote ? '' : vote;
+   const handleConfirm = () => {
+      emitCloseVote();
    };
 
-   const handleVote = (): void => {
-      const cookieData = getCookie();
-      console.log('cc ', currVote.value);
-      console.log('cc ', roomStore.userListNoVote);
-      emitVote(currVote.value);
-
-      addCookie('poker-planning', JSON.stringify({...cookieData, vote: currVote.value}));
-
-      store.closeModal();
-   };
 </script>
 
 <style scoped lang="scss">
   @import '../../assets/variables.scss'; 
 
-  .modal-vote__container {
+  .modal-result__container {
     background: linear-gradient(145deg, rgba(0, 0, 0, 0.938), rgba(0, 0, 0, 0.388));
     padding: 2rem 1rem;
     position: relative;
@@ -93,7 +68,7 @@
     }
   }
 
-  .modal-vote__title {
+  .modal-result__title {
     font-size: 1.2rem;
     font-weight: 500;
     
@@ -102,7 +77,7 @@
     }
   }
 
-  .modal-vote__description {
+  .modal-result__description {
     font-size: 1rem;
     font-weight: 200;
     margin-top: 1rem;
@@ -112,12 +87,10 @@
     }
   }
 
-  .modal-vote__cards-container {
-    display: grid;
-    grid-template-columns: repeat(4, auto);
-    grid-auto-rows: 1fr;
-    grid-auto-flow: row;
-    justify-items: center;
+  .modal-result__cards-container {
+    display: flex;
+    flex-direction: column;
+ 
     gap: 1rem;
     margin: 1rem 0;
 
@@ -135,7 +108,7 @@
     }
   }
 
-  .modal-vote__cards-button {
+  .modal-result__cards-button {
     background: linear-gradient(180deg, #FFF 0%, #D4D4D4 100%);
     border: 1px solid #FFF;
     height: 5rem;
