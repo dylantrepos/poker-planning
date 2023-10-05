@@ -1,4 +1,4 @@
-import { checkVoteIsOpen, getAllMessagesFromServer, getAllVotesFromServer, getLeadIdFromServer } from "@/utils/room";
+import { checkVoteIsOpen, getAllMessagesFromServer, getAllVotesFromServer } from "@/utils/room";
 import { defineStore } from "pinia";
 import useUserStore from "./useUserStore";
 
@@ -43,7 +43,6 @@ export default defineStore("general-store", {
       
       await getAllMessagesFromServer();
       await getAllVotesFromServer();
-      await getLeadIdFromServer();
       await checkVoteIsOpen();
     },
     setError(err: Error) {

@@ -1,9 +1,6 @@
 <template>
   <div 
-    class="modal-result__container"
-    :class="{
-      '-pie': Object.keys(roomStore.voteResults).length > 0 && counter === 0
-    }"
+    class="modal-result__container -pie"
   >
     <ModalCloseButton />
     <h2 class="modal-result__title">
@@ -13,7 +10,7 @@
       name="counter" 
       mode="out-in"
       appear 
-      v-if="Object.keys(roomStore.voteResults).length > 0 && counter > 0"
+      v-if="counter > 0"
     >
       <p 
         :key="counter"
@@ -22,26 +19,18 @@
         {{ counter }}
       </p>
     </transition>
-    <div 
-      v-if="Object.keys(roomStore.voteResults).length === 0"
-      class="modal-result__result-vote"
-    >
-      No vote !
-    </div>
     <PieChart 
-      v-if="Object.keys(roomStore.voteResults).length > 0 && counter === 0"
+      v-if="counter === 0"
       :chartData="chartData"
       :plugins="[ChartDataLabels]"
       :options="plugin" 
       class="modal-result__result-pie"
     />
     <ModalConfirmButton 
-      v-if="(Object.keys(roomStore.voteResults).length > 0  && counter === 0) || Object.keys(roomStore.voteResults).length === 0 "
+      v-if="counter === 0"
       text="Close"
       @click="store.closeModal()" 
-      :class="{
-        'modal-result__close-button': Object.keys(roomStore.voteResults).length > 0 
-      }"
+      class="modal-result__close-button"
     />
   </div>
 </template>
@@ -136,17 +125,11 @@
     }
 
     @media (min-width: $m) {
-      max-width: 25rem;
-
-      &.-pie {
-        max-width: 35rem;
-      }
+      max-width: 35rem;
     }
 
     @media (min-width: $l) {
-      &.-pie {
-        max-width: 45rem;
-      }
+      max-width: 45rem;
     }
   }
 

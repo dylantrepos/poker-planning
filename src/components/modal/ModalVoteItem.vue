@@ -32,9 +32,6 @@
       text="Confirm vote"
       @click="handleVote" 
       :disabled="initialVote === currVote" 
-      :class="{
-        '-disabled': initialVote === currVote
-      }"
     />
   </div>
 </template>
@@ -134,7 +131,6 @@
   .modal-vote__cards-container {
     gap: 1rem ;
     padding: 1rem 0;
-
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -188,7 +184,6 @@
         
         * {
           color: #1dca02;
-          // stroke: #1dca02;
         }
   
         &.-chosen { 
@@ -203,7 +198,6 @@
       
       * {
         color: white;
-        // stroke: white;
       }
     }
 

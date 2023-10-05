@@ -1,10 +1,10 @@
-import type { Order, RoomId, UserId, UserName, Vote } from "./GenericType";
+import type { MessageContent, Order, RoomId, UserId, UserName, Vote } from "./GenericType";
 
 /**
  * Message
  */
 export type Message = {
-  message: string;
+  message: MessageContent;
   order: Order;
   roomId: RoomId;
   userId: UserId;
@@ -12,7 +12,7 @@ export type Message = {
   vote: Vote;
 }
 export type MessageEmit = {
-  message: string;
+  message: MessageContent;
   roomId: RoomId; 
   userId: UserId; 
   userName: UserName;

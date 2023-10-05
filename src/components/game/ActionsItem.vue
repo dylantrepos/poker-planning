@@ -24,11 +24,11 @@
       </div>
     </div>
     <div 
-      class="room-view__actions-lead"
-      ref="leadBtn"
-      @click="handleOpenModalOptions"
+      class="room-view__actions-settings"
+      ref="settingsBtn"
+      @click="handleOpenModalSettings"
     >
-      Options
+      Settings
     </div>
   </div>
 </template>
@@ -38,7 +38,7 @@
    
    import useModalStore from '@/store/useModalStore';
    import useRoomStore from '@/store/useRoomStore';
-   import { setMessageReveal, setMessageVote, setMessageOptions, setMessageDefault } from '../../utils/bannerMessages';
+   import { setMessageReveal, setMessageVote, setMessageSettings, setMessageDefault } from '../../utils/bannerMessages';
    import { emitOpenVote } from '@/sockets/emitsFunctions';
    import useGeneralStore from '@/store/useGeneralStore';
    
@@ -50,8 +50,8 @@
       modalStore.openVoteModal();
    };
    
-   const handleOpenModalOptions = () => {
-      modalStore.openOptionsModal();
+   const handleOpenModalSettings = () => {
+      modalStore.openSettingsModal();
    };
 
    const handleOpenModalConfirmResult = () => {
@@ -65,15 +65,15 @@
 
    const revealBtn = ref<HTMLDivElement>();
    const voteBtn = ref<HTMLDivElement>();
-   const leadBtn = ref<HTMLDivElement>();
+   const settingsBtn = ref<HTMLDivElement>();
 
    onMounted(() => {
      
       if (generalStore.screenWidth > 768) {
          voteBtn.value?.addEventListener('mouseover', setMessageVote);
          revealBtn.value?.addEventListener('mouseover', setMessageReveal);
-         leadBtn.value?.addEventListener('mouseover', setMessageOptions);
-         [revealBtn.value, voteBtn.value, leadBtn.value].forEach((elt => (
+         settingsBtn.value?.addEventListener('mouseover', setMessageSettings);
+         [revealBtn.value, voteBtn.value, settingsBtn.value].forEach((elt => (
             elt?.addEventListener('mouseout', setMessageDefault)
          )));
       } else {
@@ -84,8 +84,8 @@
    onUnmounted(() => {
       revealBtn.value?.removeEventListener('mouseover', setMessageReveal);
       voteBtn.value?.removeEventListener('mouseover', setMessageVote);
-      leadBtn.value?.removeEventListener('mouseover', setMessageOptions);
-      [revealBtn.value, voteBtn.value, leadBtn.value].forEach((elt => (
+      settingsBtn.value?.removeEventListener('mouseover', setMessageSettings);
+      [revealBtn.value, voteBtn.value, settingsBtn.value].forEach((elt => (
          elt?.removeEventListener('mouseout', setMessageDefault)
       )));
    });
@@ -142,7 +142,7 @@
     }
   }
 
-  .room-view__actions-reveal, .room-view__actions-lead {
+  .room-view__actions-reveal, .room-view__actions-settings {
     height: 4rem;
     width: 4rem;
     margin-top: .5rem;

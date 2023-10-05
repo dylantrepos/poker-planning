@@ -44,15 +44,6 @@
         @dylantrepos
       </p>
     </a>
-
-    <!-- <a 
-      class="home-view_author"
-      href="https://github.com/dylantrepos"
-      target="_blank"
-    > -->
-    <!-- <Github :size="18" /> -->
-    <!-- <p>@dylantrepos</p> -->
-    <!-- </a> -->
   </main>
 </template>
 
@@ -68,7 +59,6 @@
    import { addCookie } from "@/utils/utils";
 
    import type { User } from '@/types/UserType';
-   import useRoomStore from "@/store/useRoomStore";
    import useModalStore from '@/store/useModalStore';
   
    Chart.register(DoughnutController, ArcElement, Tooltip);
@@ -76,7 +66,6 @@
    const router = useRouter();
    const usernameInput = ref('');
    const userId = uuidv4();
-   const roomStore = useRoomStore();
    const modalStore = useModalStore();
 
    onMounted(() => {
@@ -99,7 +88,6 @@
          };
   
          emitJoinRoom(userInfo);
-         roomStore.setLeadId(userId);
       
          addCookie('poker-planning', JSON.stringify(userInfo));
   

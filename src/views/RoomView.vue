@@ -2,7 +2,7 @@
   <RoomNotExistsItem>
     <LoadingItem :loading="loading">
       <RoomItem v-if="userStore.isUserConnected" />
-      <JoinRoomItem v-else />
+      <RoomJoinItem v-else />
     </LoadingItem>
   </RoomNotExistsItem>
 </template>
@@ -12,7 +12,7 @@
    import { useRoute } from "vue-router";
 
    import LoadingItem from "@/components/general/LoadingItem.vue";
-   import JoinRoomItem from "@/components/room/JoinRoomItem.vue";
+   import RoomJoinItem from "@/components/room/RoomJoinItem.vue";
    import RoomItem from "@/components/room/RoomItem.vue";
    import RoomNotExistsItem from "@/components/room/RoomNotExistsItem.vue";
   
@@ -31,6 +31,7 @@
    const roomStore = useRoomStore();
    const loading = ref(true);
    const route = useRoute();
+   
    roomStore.setRoomId(route.params.id as RoomId);
 
    // Life cycle

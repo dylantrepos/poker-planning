@@ -5,7 +5,11 @@
       Vote result
     </h2>
     <p class="modal-result__description">
-      Are you sure you want to show the result ?
+      {{
+        Object.keys(roomStore.votes).length === 0 
+          ? 'At least one vote is needed to close the vote'
+          : 'Are you sure you want to show the result ?'
+      }}
     </p>
     <div 
       class="modal-result__cards-container"
@@ -32,6 +36,7 @@
     <ModalConfirmButton 
       text="Close the vote"
       @click="handleConfirm" 
+      :disabled="Object.keys(roomStore.votes).length === 0"
     />
   </div>
 </template>

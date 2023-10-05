@@ -1,16 +1,10 @@
-import type { User } from "@/types/UserType";
 import { socket } from "./sockets";
-import type { MessageEmit } from "@/types/MessageType";
-import type { Vote } from "@/types/GenericType";
+
 import useRoomStore from "@/store/useRoomStore";
 import useUserStore from "@/store/useUserStore";
 
-
-/**
- **
- * ROOM EVENTS
- **
- */
+import type { User } from "@/types/UserType";
+import type { Vote } from "@/types/GenericType";
 
 // JOIN ROOM
 export const emitJoinRoom = async (userInfo: User): Promise<void> => {
@@ -22,35 +16,6 @@ export const emitJoinRoom = async (userInfo: User): Promise<void> => {
 
   socket.emit('room:join', userInfo);
 };
-
-
-/**
- ** 
- * MESSAGE EVENTS
- ** 
- */
-
-// SEND MESSAGE
-export const emitMessage = (message: string): void => {  
-  const { roomId } = useRoomStore();
-  const { userId, userName } = useUserStore();
-
-  const messageData: MessageEmit = {
-    message,
-    roomId, 
-    userId, 
-    userName,
-};
-
-  socket.emit('message:create', messageData);
-};
-
-
-/**
- ** 
- * VOTE EVENTS
- ** 
- */
 
 // EMIT VOTE
 export const emitVote = (voteValue: Vote): void => {
@@ -76,23 +41,4 @@ export const emitCloseVote = (): void => {
 export const emitOpenVote = (): void => {
   const { roomId } = useRoomStore();
   socket.emit('vote:open', roomId);
-};
-
-
-/**
- ** 
- * LEAD EVENTS
- ** 
- */
-
-// EMIT NEW LEAD
-export const emitLead = (leadId: string): void => {
-  const { roomId, setLeadId } = useRoomStore();
-  
-  setLeadId(leadId);
-
-  socket.emit('lead:update', {
-    leadId,
-    roomId,
-  });
 };

@@ -5,7 +5,6 @@ import { defineStore } from "pinia";
 import useUserStore from "./useUserStore";
 import { connectToSocket } from "@/sockets/sockets";
 import { addCookie, fakeData, getCookie } from "@/utils/utils";
-import { getLeadIdFromServer } from "@/utils/room";
 import { getUserListPositionned } from '../utils/utils';
 import useModalStore from "./useModalStore";
 
@@ -20,7 +19,6 @@ type Votes = Record<string, string>;
 interface IRoomState {
   roomExists: boolean;
   roomId: string;
-  leadId: string;
   userList: UserList;
   userListOrdered: UserListOrdered;
   userListNoVote: User[];
@@ -40,7 +38,6 @@ export default defineStore("room-store", {
   state: (): IRoomState => ({ 
     roomExists: false,
     roomId: '',
-    leadId: '',
     userList: {},
     userListOrdered: defaultUserListOrdered,
     userListNoVote: [],
@@ -52,7 +49,6 @@ export default defineStore("room-store", {
   actions: {
     setRoomExists() { this.roomExists = true; },
     setRoomId(roomId: string) { this.roomId = roomId; },
-    setLeadId(leadId: string) { this.leadId = leadId; },
     setUserListOrdered(userList: UserListOrdered) { this.userListOrdered = userList; },
     setIsVoteClosed(isClosed: boolean = true) { 
       if (!isClosed) this.resetVotes();
@@ -72,7 +68,6 @@ export default defineStore("room-store", {
     setMessages(messages: Message[]) { this.messages = messages; },
     async setUserList(userList: UserList) { 
 
-      if (this.leadId === '') await getLeadIdFromServer();
       this.userList = userList; 
       this.updateUserListNoVote();
       this.updateUserPosition();
@@ -145,13 +140,7 @@ export default defineStore("room-store", {
       const userStore = useUserStore();
   
       const userListSorted = Object.values(this.userList).sort();
-           
-      const leadIndex = userListSorted.findIndex(user => user.userId === this.leadId);
-      const leadElt = userListSorted.find(user => user.userId === this.leadId);
-      userListSorted.splice(leadIndex, 1);
           
-      if (leadElt) userListSorted.unshift(leadElt);
-  
       const userIndex = userListSorted.findIndex(user => user.userId === userStore.userId);
       const userElt = userListSorted.find(user => user.userId === userStore.userId);
       userListSorted.splice(userIndex, 1);

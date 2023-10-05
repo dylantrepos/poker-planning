@@ -6,6 +6,7 @@ module.exports = {
   },
   'extends': [
       'eslint:recommended',
+      "plugin:@typescript-eslint/recommended",
       'plugin:vue/vue3-essential',
   ],
   'parserOptions': {
@@ -18,6 +19,8 @@ module.exports = {
       '@typescript-eslint',
   ],
   'rules': {
+      'no-unused-vars': 'off',
+      '@typescript-eslint/no-unused-vars': ['error'],
       'vue/multi-word-component-names': 'off',
       'vue/object-curly-spacing': [2, 'always',],
       'vue/html-closing-bracket-spacing': [2, {
@@ -41,10 +44,10 @@ module.exports = {
               'max': 1,
           },
       },],
-      "vue/script-indent": ["error", 3, {
-        "baseIndent": 1,
-        "switchCase": 1,
-        "ignores": []
+      'vue/script-indent': ['error', 3, {
+        'baseIndent': 1,
+        'switchCase': 1,
+        'ignores': []
     }],
       'space-before-blocks': ['error', 'always'],
       'keyword-spacing': [

@@ -1,14 +1,6 @@
 <template>
-  <div 
-    v-if="Object.keys(roomStore.voteResults).length === 0  || showResult && Object.keys(roomStore.voteResults).length === 0"
-    class="vote-result__no-vote"
-  >
-    <p>
-      No vote !
-    </p>
-  </div>
   <PieChart 
-    v-else-if="showResult && Object.keys(roomStore.voteResults).length > 0"
+    v-if="showResult"
     :chartData="chartData"
     :plugins="[ChartDataLabels]"
     :options="plugin" 

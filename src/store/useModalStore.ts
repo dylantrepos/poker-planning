@@ -4,7 +4,7 @@ import { extend } from '@vue/shared';
 import ModalVoteItemVue from "@/components/modal/ModalVoteItem.vue";
 import ModalResultConfirmItemVue from "@/components/modal/ModalResultConfirmItem.vue";
 import ModalResultItemVue from "@/components/modal/ModalResultItem.vue";
-import ModalOptionsItemVue from "@/components/modal/ModalOptionsItem.vue";
+import ModalSettingsItemVue from "@/components/modal/ModalSettingsItem.vue";
 import { shallowRef } from "vue";
 import useRoomStore from "./useRoomStore";
 
@@ -54,9 +54,9 @@ export default defineStore("modal-store", {
         component: shallowRef(ModalResultItemVue), 
       });
     },
-    openOptionsModal() {
+    openSettingsModal() {
       this.openModal({
-        component: shallowRef(ModalOptionsItemVue), 
+        component: shallowRef(ModalSettingsItemVue), 
       });
     },
     closeModal() {

@@ -1,4 +1,4 @@
-import type { LeadId, RoomId, UserId, Vote, VoteState } from '@/types/GenericType';
+import type { RoomId, UserId, Vote, VoteState } from '@/types/GenericType';
 import type { Message } from '@/types/MessageType';
 import type { UserList } from '@/types/UserType';
 import useGeneralStore from '@/store/useGeneralStore';
@@ -69,24 +69,6 @@ export const getAllVotesFromServer = async (): Promise<void> => {
   }
 
   setVotes(votes);
-};
-
-/**
- * Retreive the ID of the lead user.
- */
-export const getLeadIdFromServer = async (): Promise<void> => {
-  const { roomId, setLeadId } = useRoomStore();
-  let leadId: LeadId = '';
-
-  try {
-    const getLeadIdRequest = await fetch(`${import.meta.env.VITE_SERVER_ADDRESS}/lead/${roomId}`);
-    leadId = (await getLeadIdRequest.json()).leadId;
-  } catch (e) {
-    console.warn(`Warning : Fail to get lead from server.`);
-    await checkServerState();
-  }
-
-  setLeadId(leadId);
 };
 
 /**

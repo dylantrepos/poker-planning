@@ -22,20 +22,19 @@
     width: auto;
     font-size: 1rem;
     padding: .5rem 1.5rem;
-    display: flex;
+    display: flex; 
     justify-content: center;
     align-items: center;
     gap: .5rem;
-    // margin-top: 2.5rem;
     margin-top: 1.5rem;
-    // margin-bottom: 1rem;
     transition: all .2s ease-in-out;
 
-    &:hover:not(.-disabled) {
+    &:hover:not(:disabled) {
       color: black;
+      background: white;
     }
 
-    &.-disabled {
+    &:disabled {
       border-color: grey;
       color: grey;
       cursor: no-drop;

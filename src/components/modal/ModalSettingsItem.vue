@@ -1,17 +1,17 @@
 <template>
-  <div class="modal-vote__container">
+  <div class="modal-settings__container">
     <ModalCloseButton />
-    <h2 class="modal-vote__title">
-      Options
+    <h2 class="modal-settings__title">
+      Settings
     </h2>
-    <p class="modal-vote__description">
+    <p class="modal-settings__description">
       Comming soon ...
     </p>
-    <div class="modal-vote__cards-container">
+    <div class="modal-settings__cards-container">
      
     </div>
     <ModalConfirmButton 
-      text="Save options"
+      text="Save settings"
       @click="handleSave" 
     />
   </div>
@@ -32,7 +32,7 @@
 <style scoped lang="scss">
   @import '../../assets/variables.scss'; 
 
-  .modal-vote__container {
+  .modal-settings__container {
     background: linear-gradient(145deg, rgba(0, 0, 0, 0.938), rgba(0, 0, 0, 0.388));
     padding: 2rem 1rem;
     position: relative;
@@ -53,7 +53,7 @@
     }
   }
 
-  .modal-vote__title {
+  .modal-settings__title {
     font-size: 1.2rem;
     font-weight: 500;
     
@@ -62,7 +62,7 @@
     }
   }
 
-  .modal-vote__description {
+  .modal-settings__description {
     font-size: 1rem;
     font-weight: 200;
     margin-top: 1rem;
@@ -72,7 +72,7 @@
     }
   }
 
-  .modal-vote__cards-container {
+  .modal-settings__cards-container {
     display: grid;
     grid-template-columns: repeat(4, auto);
     grid-auto-rows: 1fr;
@@ -95,7 +95,7 @@
     }
   }
 
-  .modal-vote__cards-button {
+  .modal-settings__cards-button {
     background: linear-gradient(180deg, #FFF 0%, #D4D4D4 100%);
     border: 1px solid #FFF;
     height: 5rem;

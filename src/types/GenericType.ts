@@ -1,9 +1,8 @@
 import type { RoomData } from "./RoomType";
 
 export type Connected = boolean;
-export type LeadId = string;
+export type MessageContent = string;
 export type Order = string;
-export type Role = 'user' | 'lead';
 export type Room = Record<RoomId, RoomData>;
 export type RoomId = string;
 export type UserId = string;

@@ -53,11 +53,11 @@ export const setMessageVote = () => {
 
 };
 
-export const setMessageOptions = () => {
+export const setMessageSettings = () => {
   const generalStore = useGeneralStore();
 
   generalStore.setBannerMessage(
-    'Access to options menu'
+    'Access to settings menu'
   );
   if (generalStore.screenWidth < 768) clearMessage();
 };
