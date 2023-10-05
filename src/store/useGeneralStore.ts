@@ -17,7 +17,9 @@ export default defineStore("general-store", {
     screenSize: 'xs',
   }),
   actions: {
-    setServerStatus(isLive: boolean) { this.isServerLive = isLive; },
+    setServerStatus(isLive: boolean) { 
+      this.isServerLive = isLive; 
+    },
     setBannerMessage(message: string) {
       this.bannerMessage = message;
     },

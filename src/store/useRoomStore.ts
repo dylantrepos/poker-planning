@@ -57,7 +57,6 @@ export default defineStore("room-store", {
     setIsVoteClosed(isClosed: boolean = true) { 
       if (!isClosed) this.resetVotes();
       else {
-        this.updateVoteResults();
         useModalStore().openResultModal();
       }
 
@@ -66,7 +65,9 @@ export default defineStore("room-store", {
     setVoteResults(voteResults: VoteResults) { this.voteResults = voteResults; },
     setVotes(votes: Votes) { 
       this.votes = votes; 
+
       this.updateUserListNoVote();
+      this.updateVoteResults();
     },
     setMessages(messages: Message[]) { this.messages = messages; },
     async setUserList(userList: UserList) { 
@@ -83,6 +84,7 @@ export default defineStore("room-store", {
 
       this.votes = {};
       this.updateUserListNoVote();
+      this.updateVoteResults();
     },
     addMessages(message: Message) { 
       if (this.messages) this.messages.push(message); 
@@ -105,38 +107,37 @@ export default defineStore("room-store", {
     
       for (const user of Object.values(this.userList)) {
         const vote = this.votes[user.userId];
-    
-        // Skip if vote is empty
-        if (!vote || vote === '') break; 
+
+        if (vote) {
+          if (results[vote]) {
+            results[vote].vote++;
+            results[vote].users.push(user.userName);
+          }
+          else { 
+            results[vote] = {
+              vote: 1,
+              users: [user.userName]
+            };
+          }
+        }
         
-        if (results[vote]) {
-          results[vote].vote++;
-          results[vote].users.push(user.userName);
-        }
-        else { 
-          results[vote] = {
-            vote: 1,
-            users: [user.userName]
-          };
-        }
       }
-    
+      
       this.setVoteResults(results);
     },
     updateUserPosition() {
       const userList = [
         ...this.getUserListSorted, 
-        ...fakeData.slice(0, 3)
+        // ...fakeData.slice(0, 3)
       ];
+      console.log('fake : ', fakeData);
       const userListPositionned = getUserListPositionned(userList);
 
     
       this.setUserListOrdered(userListPositionned);
     },
     updateUserListNoVote() {
-      console.log('b ef : ', this.userListNoVote);
       this.userListNoVote = Object.values(this.userList).filter((user: User) => (!this.votes[user.userId] ?? false));
-      console.log('aff : ', Object.values(this.userList).filter((user: User) => (!this.votes[user.userId] ?? false)));
     }
   },
   getters: {

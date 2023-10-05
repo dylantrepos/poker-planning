@@ -4,6 +4,7 @@ import { extend } from '@vue/shared';
 import ModalVoteItemVue from "@/components/modal/ModalVoteItem.vue";
 import ModalResultConfirmItemVue from "@/components/modal/ModalResultConfirmItem.vue";
 import ModalResultItemVue from "@/components/modal/ModalResultItem.vue";
+import ModalOptionsItemVue from "@/components/modal/ModalOptionsItem.vue";
 import { shallowRef } from "vue";
 import useRoomStore from "./useRoomStore";
 
@@ -36,13 +37,10 @@ export default defineStore("modal-store", {
 
       this.modalState = { component, props: props};
     },
-    openVoteModal(info: string) {
+    openVoteModal() {
       if (!useRoomStore().isVoteClosed) {
         this.openModal({
           component: shallowRef(ModalVoteItemVue), 
-          props: {
-            text: info
-          }
         });
       }
     },
@@ -54,6 +52,11 @@ export default defineStore("modal-store", {
     openResultModal() {
       this.openModal({
         component: shallowRef(ModalResultItemVue), 
+      });
+    },
+    openOptionsModal() {
+      this.openModal({
+        component: shallowRef(ModalOptionsItemVue), 
       });
     },
     closeModal() {

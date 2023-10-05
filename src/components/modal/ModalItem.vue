@@ -1,6 +1,9 @@
 <template>
   <Teleport to="body">
-    <Transition name="modal">
+    <Transition 
+      name="modal"
+      appear
+    >
       <div
         class="modal__container"
         aria-modal="true"
@@ -12,6 +15,7 @@
         <component 
           :is="store.modalState?.component" 
           v-bind="store.modalState?.props"
+          s
         />
       </div>
     </Transition>
@@ -68,6 +72,7 @@
 
   .modal-enter-active,
   .modal-leave-active {
+
     transition: 0.25s ease all;
   }
 

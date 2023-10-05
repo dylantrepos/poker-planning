@@ -18,7 +18,14 @@
 
 <script setup lang="ts">
    import useGeneralStore from '@/store/useGeneralStore';
+   import { checkServerState } from '@/utils/room';
+   import { onUpdated } from 'vue';
+   
    const generalStore = useGeneralStore();
+
+   onUpdated(() => {
+      checkServerState();
+   });
 
 </script>
 

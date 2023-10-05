@@ -22,6 +22,12 @@ const connectToSocket = () => {
   socket.connect();
 };
 
+const disconnectFromSocket = () => {
+  useUserStore().setUserConnectionStatus(false);
+  
+  socket.disconnect();
+};
+
 // On events
 socket.on("connect", () => 
   useGeneralStore().setConnectionToSocket());
@@ -50,4 +56,4 @@ socket.on('lead:update', ( leadId: LeadId ) =>
 socket.on("connect_error", (err: Error) => 
   useGeneralStore().setError(err));
 
-export { socket, connectToSocket };
+export { socket, connectToSocket, disconnectFromSocket };

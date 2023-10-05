@@ -1,16 +1,21 @@
 <template>
   <div 
     :class="['table__player-card', place]">
-    <Infinity v-if="roomStore.votes[user.userId] === 'infinity'" />
-    <Coffee  v-else-if="roomStore.votes[user.userId] === 'coffee'" />
-    <p v-else>
+    <!-- <Infinity v-if="roomStore.votes[user.userId] === 'infinity'" />
+    <Coffee  v-else-if="roomStore.votes[user.userId] === 'coffee'" /> -->
+    <p 
+      :class="{
+        '-infinity': roomStore.votes[user.userId] === '∞',
+        '-coffee': roomStore.votes[user.userId] === '☕️'
+      }"
+    >
       {{ roomStore.votes[user.userId] }}
     </p>
   </div>
 </template>
 
 <script setup lang="ts">
-   import { Coffee, Infinity } from 'lucide-vue-next';
+  //  import { Coffee, Infinity } from 'lucide-vue-next';
    import useRoomStore from '@/store/useRoomStore';
    import type { User } from '@/types/UserType';
 
@@ -76,5 +81,18 @@
         top: unset;
       }
     }
+
+    .-infinity {
+      font-size: 1.8rem;
+    }
+
+    .-coffee {
+      font-size: 1rem;
+      
+      @media (min-width: $xs) {
+        font-size: 1.3rem;
+      }
+    }
   }
+
 </style>  

@@ -1,14 +1,31 @@
 import useGeneralStore from "@/store/useGeneralStore";
 import useRoomStore from "@/store/useRoomStore";
 
+let setTimer: ReturnType<typeof setTimeout>;
+
+const clearMessage = () => {
+    if (setTimer) {
+      clearTimeout(setTimer);
+    }
+    
+    setTimer = setTimeout(() => {
+      setMessageDefault();
+    }, 3000);
+};
+
 export const setMessageShareRoom = () => {
-  useGeneralStore().setBannerMessage(
+  const generalStore = useGeneralStore();
+
+  generalStore.setBannerMessage(
     'Copy the link and share it to invite more players'
   );
+
 };
 
 export const setMessageReveal = () => {
-  useGeneralStore().setBannerMessage(
+  const generalStore = useGeneralStore();
+
+  generalStore.setBannerMessage(
     useRoomStore().isVoteClosed 
       ? 'Start a new game' 
       : 'Reveal all the cards and get the score'
@@ -16,23 +33,48 @@ export const setMessageReveal = () => {
 };
 
 export const setMessageVote = () => {
-  useGeneralStore().setBannerMessage(
-    useRoomStore().isVoteClosed 
-    ? 'You can\'t Choose your card for the moment' 
-    : 'Choose your card and get ready to play'
-  );
+  const generalStore = useGeneralStore();
+  const roomStore = useRoomStore();
+
+  if (generalStore.screenWidth > 768) {
+    generalStore.setBannerMessage(
+      useRoomStore().isVoteClosed 
+      ? 'You can\'t choose your card for the moment' 
+      : 'Choose your card and get ready to play'
+    );
+  } else {
+    if (roomStore.isVoteClosed) {
+      generalStore.setBannerMessage(
+        'You can\'t choose your card for the moment' 
+      );
+      clearMessage();
+    }
+  }
+
 };
 
-export const setMessageLead = () => {
-  useGeneralStore().setBannerMessage(
-    'Give your lead status to another player'
+export const setMessageOptions = () => {
+  const generalStore = useGeneralStore();
+
+  generalStore.setBannerMessage(
+    'Access to options menu'
   );
+  if (generalStore.screenWidth < 768) clearMessage();
+};
+
+export const setMessageCopySuccess = () => {
+  const generalStore = useGeneralStore();
+
+  generalStore.setBannerMessage(
+    'The link has been successfuly copy to clipboard'
+  );
+  if (generalStore.screenWidth < 768) clearMessage();
 };
 
 export const setMessageDefault = () => {
   useGeneralStore().setBannerMessage(
     useRoomStore().isVoteClosed 
-    ? 'Vote closed ! Waiting for new game...' 
+    ? 'Vote closed ! Waiting for new round...' 
     : 'Waiting for votes...'
   );
 };

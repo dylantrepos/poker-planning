@@ -1,23 +1,47 @@
 <template>
-  <div class="modal-result__container">
+  <div 
+    class="modal-result__container"
+    :class="{
+      '-pie': Object.keys(roomStore.voteResults).length > 0 && counter === 0
+    }"
+  >
     <ModalCloseButton />
     <h2 class="modal-result__title">
       Vote result
     </h2>
+    <transition 
+      name="counter" 
+      mode="out-in"
+      appear 
+      v-if="Object.keys(roomStore.voteResults).length > 0 && counter > 0"
+    >
+      <p 
+        :key="counter"
+        class="modal-result__counter"
+      >
+        {{ counter }}
+      </p>
+    </transition>
     <div 
       v-if="Object.keys(roomStore.voteResults).length === 0"
+      class="modal-result__result-vote"
     >
       No vote !
     </div>
     <PieChart 
-      v-else
+      v-if="Object.keys(roomStore.voteResults).length > 0 && counter === 0"
       :chartData="chartData"
       :plugins="[ChartDataLabels]"
       :options="plugin" 
+      class="modal-result__result-pie"
     />
     <ModalConfirmButton 
+      v-if="(Object.keys(roomStore.voteResults).length > 0  && counter === 0) || Object.keys(roomStore.voteResults).length === 0 "
       text="Close"
-      @click="store.closeModal" 
+      @click="store.closeModal()" 
+      :class="{
+        'modal-result__close-button': Object.keys(roomStore.voteResults).length > 0 
+      }"
     />
   </div>
 </template>
@@ -27,7 +51,6 @@
    import ModalConfirmButton from '@/components/modal/ModalConfirmButtonItem.vue';
    import useModalStore from '@/store/useModalStore';
    import useRoomStore from '@/store/useRoomStore';
-   import { onBeforeMount, onBeforeUnmount } from 'vue';
    import { PieChart } from 'vue-chart-3';
    import { Chart, registerables } from "chart.js";
    import ChartDataLabels from 'chartjs-plugin-datalabels';
@@ -35,19 +58,23 @@
    import { getColorPalette } from '@/utils/utils';
 
    import type { ChartOptions, ChartData } from "chart.js";
+   import { onMounted, ref } from 'vue';
 
    const store = useModalStore();
    const roomStore = useRoomStore();
-   
+   const counter = ref(3);
 
-   onBeforeMount(() => {
-      console.log('bef build res');
-      console.log(roomStore.votes);
-      console.log(roomStore.voteResults);
-   });
+   const startCounter = () => {
+      if (counter.value > 0) {
+         setTimeout(() => {
+            counter.value = counter.value - 1;
+            startCounter();
+         }, 1000);
+      }
+   };
 
-   onBeforeUnmount(() => {
-      console.log('aft build res');
+   onMounted(() => {
+      startCounter();
    });
 
    
@@ -91,20 +118,35 @@
     background: linear-gradient(145deg, rgba(0, 0, 0, 0.938), rgba(0, 0, 0, 0.388));
     padding: 2rem 1rem;
     position: relative;
-    
+    width: 90vw;
+    max-width: 25rem;
     border-radius: 1rem;
     
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
-
+    
     > * {
       color: #fff;
     }
-
+    
     @media (min-width: $xxs) {
       padding: 2rem;
+    }
+
+    @media (min-width: $m) {
+      max-width: 25rem;
+
+      &.-pie {
+        max-width: 35rem;
+      }
+    }
+
+    @media (min-width: $l) {
+      &.-pie {
+        max-width: 45rem;
+      }
     }
   }
 
@@ -127,74 +169,49 @@
     }
   }
 
-  .modal-result__cards-container {
-    display: flex;
-    flex-direction: column;
- 
-    gap: 1rem;
-    margin: 1rem 0;
-
-    @media (min-width: $xxs) {
-      margin: 2rem 0;
-    }
-
-    @media (min-width: $xs) {
-      margin: 2rem;
-    }
-    
-    @media (min-width: $m) {
-      margin: 3rem 2rem;
-      grid-template-columns: repeat(5, auto);
-    }
+  .modal-result__result-vote {
+    margin-top: 1.5rem;
   }
 
-  .modal-result__cards-button {
-    background: linear-gradient(180deg, #FFF 0%, #D4D4D4 100%);
-    border: 1px solid #FFF;
-    height: 5rem;
-    width: 3rem;
-    border-radius: .4rem;
-    font-size: 1rem;
-    font-weight: 500;
-    pointer-events: all;
-    cursor: pointer;
-    transition: all .2s ease-in-out;
-
-    * {
-      color: black;
-      font-weight: 500;
-      stroke: black;
-    }
-
-    @media (min-width: $xxs) {
-      font-size: 1.3rem;
-      height: 6rem;
-      width: 4rem;
-    }
-    
-    @media (min-width: $m) {
-      &:hover {
-        border: 2px solid #1dca02;
-        
-        * {
-          color: #1dca02;
-          stroke: #1dca02;
-        }
+  .modal-result__result-pie {
+    margin-top: 1.5rem;
+  }
   
-        &.-chosen { 
-          border-color: red;
-        }
-      }
+  .modal-result__counter {
+    margin-top: 1.5rem;
+    font-size: 4rem;
+    font-weight: 600;
+  }
+
+  .counter-enter-active {
+    transition: all .2s ease-in;
+  }
+
+  .counter-leave-active {
+    transition: all .2s ease-out;
+  }
+
+  .counter-enter-from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+
+  .counter-leave-to {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+
+  .modal-result__close-button {
+    opacity: 0;
+    animation: closeButtonEnter .5s ease-in forwards .5s;
+  }
+
+  @keyframes closeButtonEnter {
+    0% {
+      opacity: 0;
     }
-
-
-    &.-chosen {
-      background: linear-gradient(180deg, #1dca02 0%, #1f5e12 100%);
-      
-      * {
-        color: white;
-        stroke: white;
-      }
+    100% {
+      opacity: 1;
     }
   }
 </style>

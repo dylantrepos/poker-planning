@@ -26,9 +26,22 @@
     justify-content: center;
     align-items: center;
     gap: .5rem;
+    // margin-top: 2.5rem;
+    margin-top: 1.5rem;
+    // margin-bottom: 1rem;
+    transition: all .2s ease-in-out;
 
-    &:hover {
+    &:hover:not(.-disabled) {
       color: black;
+    }
+
+    &.-disabled {
+      border-color: grey;
+      color: grey;
+      cursor: no-drop;
+      &:hover {
+        background: transparent;
+      }
     }
   }
 </style>

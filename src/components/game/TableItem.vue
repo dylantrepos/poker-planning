@@ -2,7 +2,8 @@
   <div 
     class="table"
     :class="{
-      '-large': tableLargerThanScreen
+      '-large': tableLargerThanScreen,
+      '-result': roomStore.isVoteClosed
     }"
   >
     <div 
@@ -158,10 +159,20 @@
   .table {
     display: flex;
     justify-content: center;
+    margin-bottom: 7rem;
     
+    @media (min-width: $xs) {
+      margin-bottom: 7rem;
+    }
+
     @media (min-width: $m) {
       width: 100vw;
       margin-top: 2rem;
+      margin-bottom: 0;
+
+      &.-result {
+        margin-bottom: 5rem;
+      }
 
       &.-large {
         justify-content: unset;
@@ -184,6 +195,7 @@
     max-width: 30rem;
     min-width: 20rem;
     background-color: red;
+    transition: all var(--transition-duration) ease-in-out;
 
     @media (min-width: $m) {
       grid-template-columns: 8rem 1fr 8rem;
@@ -357,6 +369,8 @@
     // border-radius: 1000px;
     border-radius: 40px;
     // min-width: 11rem;
+    transition: all var(--transition-duration) ease-in-out;
+
 
     @media (min-width: $m)  {
       border-radius: 70px;

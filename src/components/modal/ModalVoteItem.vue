@@ -5,7 +5,7 @@
       Time to votes !
     </h2>
     <p class="modal-vote__description">
-      Pick a card and wait for the results
+      Pick a card and wait for the result
     </p>
     <div class="modal-vote__cards-container">
       <button 
@@ -15,18 +15,26 @@
         @click="handleChangeVote(vote as Vote)"
         class="modal-vote__cards-button"
         :class="{
-          '-chosen': vote === currVote
-          // '-chosen': vote === roomStore.votes[userStore.userId]
+          '-chosen': vote === currVote,
         }"
       >
-        <Infinity v-if="vote === 'infinity'" />
-        <Coffee  v-else-if="vote === 'coffee'" />
-        <span v-else>{{ vote }}</span>
+        <!-- <Infinity v-if="vote === 'infinity'" />
+        <Coffee  v-else-if="vote === 'coffee'" /> -->
+        <span
+          :class="{
+            '-infinity': vote === '∞',
+            '-coffee': vote === '☕️'
+          }"
+        >{{ vote }}</span>
       </button>
     </div>
     <ModalConfirmButton 
       text="Confirm vote"
       @click="handleVote" 
+      :disabled="initialVote === currVote" 
+      :class="{
+        '-disabled': initialVote === currVote
+      }"
     />
   </div>
 </template>
@@ -34,7 +42,7 @@
 <script setup lang="ts">
    import ModalCloseButton from '@/components/modal/ModalCloseButtonItem.vue';
    import ModalConfirmButton from '@/components/modal/ModalConfirmButtonItem.vue';
-   import { Coffee, Infinity } from 'lucide-vue-next';
+   //  import { Coffee, Infinity } from 'lucide-vue-next';
    import useModalStore from '@/store/useModalStore';
 
    import { addCookie, getCookie, getPokerPossibilities } from '@/utils/utils';
@@ -50,6 +58,7 @@
    const store = useModalStore();
 
    const currVote = ref<Vote>(roomStore.votes[userStore.userId] as Vote ?? '');
+   const initialVote = ref<Vote>(roomStore.votes[userStore.userId] as Vote ?? '');
 
    const voteAvailable = getPokerPossibilities();
 
@@ -59,8 +68,6 @@
 
    const handleVote = (): void => {
       const cookieData = getCookie();
-      console.log('cc ', currVote.value);
-      console.log('cc ', roomStore.userListNoVote);
       emitVote(currVote.value);
 
       addCookie('poker-planning', JSON.stringify({...cookieData, vote: currVote.value}));
@@ -83,13 +90,25 @@
     flex-direction: column;
     align-items: center;
     text-align: center;
+    width: 95vw;
+    max-width: 35rem;
 
     > * {
       color: #fff;
     }
 
-    @media (min-width: $xxs) {
-      padding: 2rem;
+    @media (min-width: $m) {
+      max-width: 40rem;
+    }
+
+    @media (min-width: $l) {
+      max-width: 45rem;
+
+      .modal-vote__cards-container {
+        width: 100%;
+        grid-auto-flow: row;
+        grid-template-columns: repeat(auto-fill, 5rem);
+      }
     }
   }
 
@@ -113,25 +132,29 @@
   }
 
   .modal-vote__cards-container {
-    display: grid;
-    grid-template-columns: repeat(4, auto);
-    grid-auto-rows: 1fr;
-    grid-auto-flow: row;
-    justify-items: center;
-    gap: 1rem;
-    margin: 1rem 0;
+    gap: 1rem ;
+    padding: 1rem 0;
 
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+
+    width: 100%;
+    
     @media (min-width: $xxs) {
-      margin: 2rem 0;
+      padding: 2rem 0 .5rem;
     }
 
     @media (min-width: $xs) {
-      margin: 2rem;
+      padding: 2rem 2rem .5rem;
     }
     
     @media (min-width: $m) {
-      margin: 3rem 2rem;
-      grid-template-columns: repeat(5, auto);
+      padding: 2rem 1rem 1rem;
+    }
+
+    @media (min-width: $l) {
+      padding: 2rem 2rem 1rem;
     }
   }
 
@@ -159,13 +182,13 @@
       width: 4rem;
     }
     
-    @media (min-width: $m) {
-      &:hover {
+    &:hover {
+      @media (min-width: $m) {
         border: 2px solid #1dca02;
         
         * {
           color: #1dca02;
-          stroke: #1dca02;
+          // stroke: #1dca02;
         }
   
         &.-chosen { 
@@ -180,8 +203,16 @@
       
       * {
         color: white;
-        stroke: white;
+        // stroke: white;
       }
+    }
+
+    .-infinity {
+      font-size: 2.2rem;
+    }
+
+    .-coffee {
+      font-size: 2rem;
     }
   }
 </style>

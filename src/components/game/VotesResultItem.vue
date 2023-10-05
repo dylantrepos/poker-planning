@@ -1,11 +1,14 @@
 <template>
   <div 
-    v-if="Object.keys(roomStore.voteResults).length === 0"
+    v-if="Object.keys(roomStore.voteResults).length === 0  || showResult && Object.keys(roomStore.voteResults).length === 0"
+    class="vote-result__no-vote"
   >
-    No vote !
+    <p>
+      No vote !
+    </p>
   </div>
   <PieChart 
-    v-else
+    v-else-if="showResult && Object.keys(roomStore.voteResults).length > 0"
     :chartData="chartData"
     :plugins="[ChartDataLabels]"
     :options="plugin" 
@@ -21,21 +24,16 @@
    import { getColorPalette } from '@/utils/utils';
    import useRoomStore from '@/store/useRoomStore';
 
-   const roomStore = useRoomStore();
-
    import type { ChartOptions, ChartData } from "chart.js";
-   import { onBeforeMount, onBeforeUnmount } from 'vue';
+   import { ref } from 'vue';
 
+   const roomStore = useRoomStore();
+   const showResult = ref(false);
 
-   onBeforeMount(() => {
-      console.log('bef good build res');
-      console.log(roomStore.votes);
-      console.log(roomStore.voteResults);
-   });
+   setTimeout(() => {
+      showResult.value = true;
+   }, 3000);
 
-   onBeforeUnmount(() => {
-      console.log('aft good build');
-   });
 
    Chart.register(...registerables);
 
@@ -77,6 +75,12 @@
   
   .vote-result__pie {
     max-height: 10rem;
+    margin-bottom: 1rem;
+  }
+
+  .vote-result__no-vote {
+    display: flex;
+    justify-content: center;
     margin-bottom: 1rem;
   }
 </style>

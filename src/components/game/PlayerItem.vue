@@ -11,12 +11,13 @@
       :user="user"
       :place="place"
     />
-    <p v-if="user.userId === roomStore.leadId">
-      👑
-    </p>
     <p class="table__user-name">
       {{ user.userName }}
     </p>
+    <div 
+      v-if="user.userId === userStore.userId"
+      class="table__user-card-light"
+    ></div>
   </div>
 </template>
 
@@ -24,10 +25,8 @@
    import type { User } from '@/types/UserType';
    import CardItem from '@/components/game/CardItem.vue';
    import useUserStore from '@/store/useUserStore';
-   import useRoomStore from '@/store/useRoomStore';
 
    const userStore = useUserStore();
-   const roomStore = useRoomStore();
 
    type Props = {
       user: User;
@@ -60,6 +59,9 @@
       .table__user-name {
         font-weight: 500;
       }
+
+      box-shadow: 0px -15px 27px -8px white;
+      animation: current-smoke 5s ease-in-out infinite reverse;
     }
 
     &.-large {
@@ -74,6 +76,24 @@
       &.-large {
         height: 5rem;
       }
+    }
+  }
+
+  @keyframes current-smoke {
+    0% {
+      box-shadow: 0px -15px 50px -8px white;
+    }
+    25% {
+      box-shadow: -5px -15px 50px -8px white;
+    }
+    50% {
+      box-shadow: 5px -20px 50px -8px white;
+    }
+    75% {
+      box-shadow: 0px -15px 50px -8px white;
+    }
+    100% {
+      box-shadow: 0px -15px 50px -8px white;
     }
   }
   
@@ -134,5 +154,13 @@
         left: unset;
       }
     }
+  }
+
+  .table__user-card-light {
+    // position: absolute;
+    // top: -.5rem;
+    // width: 5rem;
+    // height: .5rem;
+    // background-color: white;
   }
 </style>  

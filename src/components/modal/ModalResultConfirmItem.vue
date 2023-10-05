@@ -11,15 +11,21 @@
       class="modal-result__cards-container"
       v-if="Object.keys(roomStore.userListNoVote).length > 0"
     >
-      <p class="modal-result__description">
-        Player without vote : 
+      <p class="modal-result__userList-title">
+        Player(s) without vote : 
       </p>
-      <ul>
+      <ul class="modal-result__userList">
         <li 
           v-for="user in roomStore.userListNoVote"
           v-bind:key="user.userId"
         >
           {{  user.userName }}
+          <span 
+            class="modal-result__currentUser"
+            v-if="user.userId === userStore.userId"
+          >
+            &nbsp;- You
+          </span>
         </li>
       </ul>
     </div>
@@ -35,8 +41,10 @@
    import ModalConfirmButton from '@/components/modal/ModalConfirmButtonItem.vue';
    import { emitCloseVote } from '@/sockets/emitsFunctions';
    import useRoomStore from '@/store/useRoomStore';
+   import useUserStore from '@/store/useUserStore';
 
    const roomStore = useRoomStore();
+   const userStore = useUserStore();
 
    const handleConfirm = () => {
       emitCloseVote();
@@ -79,7 +87,19 @@
 
   .modal-result__description {
     font-size: 1rem;
-    font-weight: 200;
+    font-weight: 300;
+    margin-top: 1rem;
+    // max-width: 15rem;
+    
+    @media (min-width: $m) {
+      font-size: 1.2rem;
+      font-weight: 200;
+    }
+  }
+  
+  .modal-result__userList-title {
+    font-size: 1rem;
+    font-weight: 400;
     margin-top: 1rem;
     
     @media (min-width: $m) {
@@ -87,74 +107,14 @@
     }
   }
 
-  .modal-result__cards-container {
-    display: flex;
-    flex-direction: column;
- 
-    gap: 1rem;
-    margin: 1rem 0;
-
-    @media (min-width: $xxs) {
-      margin: 2rem 0;
-    }
-
-    @media (min-width: $xs) {
-      margin: 2rem;
-    }
-    
-    @media (min-width: $m) {
-      margin: 3rem 2rem;
-      grid-template-columns: repeat(5, auto);
+  .modal-result__userList {
+    > li:first-of-type {
+      margin-top: 1rem;
     }
   }
-
-  .modal-result__cards-button {
-    background: linear-gradient(180deg, #FFF 0%, #D4D4D4 100%);
-    border: 1px solid #FFF;
-    height: 5rem;
-    width: 3rem;
-    border-radius: .4rem;
-    font-size: 1rem;
-    font-weight: 500;
-    pointer-events: all;
-    cursor: pointer;
-    transition: all .2s ease-in-out;
-
-    * {
-      color: black;
-      font-weight: 500;
-      stroke: black;
-    }
-
-    @media (min-width: $xxs) {
-      font-size: 1.3rem;
-      height: 6rem;
-      width: 4rem;
-    }
-    
-    @media (min-width: $m) {
-      &:hover {
-        border: 2px solid #1dca02;
-        
-        * {
-          color: #1dca02;
-          stroke: #1dca02;
-        }
   
-        &.-chosen { 
-          border-color: red;
-        }
-      }
-    }
-
-
-    &.-chosen {
-      background: linear-gradient(180deg, #1dca02 0%, #1f5e12 100%);
-      
-      * {
-        color: white;
-        stroke: white;
-      }
-    }
+  .modal-result__currentUser {
+    font-weight: 100;
+    font-size: .8rem;
   }
 </style>

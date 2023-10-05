@@ -4,8 +4,8 @@ body {
   background: linear-gradient(113deg, var(--background-color-one), var(--background-color-two));
   background-attachment: fixed;
   background-repeat: no-repeat;
-  height: 100dvh;
-  min-height: 100dvh;
+  // height: 100dvh;
+  // min-height: 100dvh;
   min-width: 360px;
   width: 100dvw;
 }
@@ -24,6 +24,12 @@ body {
 p {
   font-size: 1rem;
   font-weight: 200;
+}
+
+main {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
 }
 
 .button {
@@ -46,11 +52,13 @@ p {
   }
 
   &:hover {
-    background: var(--button-background-color-hover);
-    color: var(--button-text-color-hover);
-
-    svg {
-      stroke: black;
+    @media (min-width: $m) { 
+      background: var(--button-background-color-hover);
+      color: var(--button-text-color-hover);
+  
+      svg {
+        stroke: black;
+      }
     }
   }
 }

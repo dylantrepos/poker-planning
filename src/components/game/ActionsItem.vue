@@ -3,17 +3,16 @@
     class="room-view__actions"
   >
     <div 
-      v-if="roomStore.leadId === userStore.userId"
       class="room-view__actions-reveal" 
       ref="revealBtn"
-      @click="!roomStore.isVoteClosed ? openModalConfirmResult() : handleRestartGame()"
+      @click="!roomStore.isVoteClosed ? handleOpenModalConfirmResult() : handleRestartGame()"
     >
       {{ roomStore.isVoteClosed ? 'Restart' : 'Reveal' }}
     </div>
     <div 
       class="room-view__actions-vote"
       ref="voteBtn"
-      @click="openModalVote"
+      @click="handleOpenModalVote"
       :class="{
         '-closed': roomStore.isVoteClosed
       }"
@@ -25,11 +24,11 @@
       </div>
     </div>
     <div 
-      v-if="roomStore.leadId === userStore.userId"
       class="room-view__actions-lead"
       ref="leadBtn"
+      @click="handleOpenModalOptions"
     >
-      Share
+      Options
     </div>
   </div>
 </template>
@@ -39,19 +38,23 @@
    
    import useModalStore from '@/store/useModalStore';
    import useRoomStore from '@/store/useRoomStore';
-   import useUserStore from '@/store/useUserStore';
-   import { setMessageReveal, setMessageVote, setMessageLead, setMessageDefault } from '../../utils/bannerMessages';
+   import { setMessageReveal, setMessageVote, setMessageOptions, setMessageDefault } from '../../utils/bannerMessages';
    import { emitOpenVote } from '@/sockets/emitsFunctions';
+   import useGeneralStore from '@/store/useGeneralStore';
    
    const modalStore = useModalStore();
    const roomStore = useRoomStore();
-   const userStore = useUserStore();
+   const generalStore = useGeneralStore();
 
-   const openModalVote = () => {
-      modalStore.openVoteModal('Props have been successfully passed!');
+   const handleOpenModalVote = () => {
+      modalStore.openVoteModal();
+   };
+   
+   const handleOpenModalOptions = () => {
+      modalStore.openOptionsModal();
    };
 
-   const openModalConfirmResult = () => {
+   const handleOpenModalConfirmResult = () => {
       modalStore.openResultConfirmModal();
    };
 
@@ -65,18 +68,23 @@
    const leadBtn = ref<HTMLDivElement>();
 
    onMounted(() => {
-      revealBtn.value?.addEventListener('mouseover', setMessageReveal);
-      voteBtn.value?.addEventListener('mouseover', setMessageVote);
-      leadBtn.value?.addEventListener('mouseover', setMessageLead);
-      [revealBtn.value, voteBtn.value, leadBtn.value].forEach((elt => (
-         elt?.addEventListener('mouseout', setMessageDefault)
-      )));
+     
+      if (generalStore.screenWidth > 768) {
+         voteBtn.value?.addEventListener('mouseover', setMessageVote);
+         revealBtn.value?.addEventListener('mouseover', setMessageReveal);
+         leadBtn.value?.addEventListener('mouseover', setMessageOptions);
+         [revealBtn.value, voteBtn.value, leadBtn.value].forEach((elt => (
+            elt?.addEventListener('mouseout', setMessageDefault)
+         )));
+      } else {
+         voteBtn.value?.addEventListener('click', setMessageVote);
+      }
    });
 
    onUnmounted(() => {
       revealBtn.value?.removeEventListener('mouseover', setMessageReveal);
       voteBtn.value?.removeEventListener('mouseover', setMessageVote);
-      leadBtn.value?.removeEventListener('mouseover', setMessageLead);
+      leadBtn.value?.removeEventListener('mouseover', setMessageOptions);
       [revealBtn.value, voteBtn.value, leadBtn.value].forEach((elt => (
          elt?.removeEventListener('mouseout', setMessageDefault)
       )));
@@ -261,7 +269,7 @@
         width: auto;
       }
 
-      &:hover {
+      &:hover:not(.-closed) {
         box-shadow: 
             0 0 .2rem #fff,
             0 0 .2rem #ffffff77,

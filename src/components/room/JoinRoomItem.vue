@@ -15,7 +15,8 @@
         type="text"
         placeholder="Your name"
         class="text-input"
-        v-model="usernameInput" 
+        v-model.trim="usernameInput"
+        required
       />
       <button class="button">
         Join the room
@@ -66,11 +67,11 @@
 <style lang="scss">
   .join-room__container {
     height: 100dvh;
+    justify-content: center
   }
 
   .join-room_title {
     text-align: center;
-    margin-top: 10rem;
   }
 
   .join-room_form {

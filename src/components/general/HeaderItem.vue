@@ -8,10 +8,17 @@
     </div>
     <button
       class="button header__button"
+      :class="{
+        '-animate': Object.keys((roomStore.userList)).length === 1 && allowAnim,
+        '-copy': copySuccess
+      }"
       @click="handleCopyURL"
       ref="shareRoomBtn"
     >
-      <Copy :size="18" />
+      <CopyCheck :size="18"
+                 v-if="copySuccess" />
+      <Copy :size="18"
+            v-else />
       Share room
     </button>
   </header>
@@ -20,10 +27,11 @@
 <script setup lang="ts">
    import { useRouter, useRoute } from 'vue-router';
    import { onMounted, ref, onUnmounted } from 'vue';  
-   import { Copy } from 'lucide-vue-next';
+   import { Copy, CopyCheck } from 'lucide-vue-next';
   
    import useRoomStore from '@/store/useRoomStore';
    import { setMessageDefault, setMessageShareRoom } from '@/utils/bannerMessages';
+   import { setMessageCopySuccess } from '../../utils/bannerMessages';
    
    import type { RoomId } from '@/types/GenericType';
 
@@ -31,18 +39,40 @@
    const route = useRoute();
    const roomStore = useRoomStore();
    const shareRoomBtn = ref<HTMLDivElement>();
+   const allowAnim = ref(true);
+   const copySuccess = ref(false);
 
    roomStore.setRoomId(route.params.id as RoomId);
 
    // Methods 
    const handleCopyURL = () => {
+      copySuccess.value = true;
+
+      setMessageCopySuccess();
+
+      setTimeout(() => {
+         copySuccess.value = false;
+         setMessageDefault();
+      }, 2000);
+
       navigator.clipboard.writeText(`${import.meta.env.VITE_CLIENT_ADDRESS}${route.fullPath}`);
+
+   };
+
+   const disallowAnim = () => {
+      allowAnim.value = false;
+      shareRoomBtn.value?.removeEventListener('mouseover', disallowAnim);
+   };
+
+   const setMessage = () => {
+      if (!copySuccess.value) setMessageDefault();
    };
 
    // Life cycle
    onMounted(() => {
       shareRoomBtn.value?.addEventListener('mouseover', setMessageShareRoom);
-      shareRoomBtn.value?.addEventListener('mouseout', setMessageDefault);
+      shareRoomBtn.value?.addEventListener('mouseout', setMessage);
+      shareRoomBtn.value?.addEventListener('mouseover', disallowAnim);
    });
     
    onUnmounted(() => {
@@ -61,15 +91,21 @@
   justify-content: space-between;
   align-items: center;
   padding: 0 1rem;
+  width: 100%;
   
   @media (min-width: $xs) {
-    margin: 0 2rem;  
+    padding: 0 2rem;  
+  }
+
+  @media (min-width: $xl) {
+    padding: 0 4rem;  
   }
 }
 
 .header__title {
   color: red;
   font-weight: 500;
+  cursor: pointer;
 }
 
 .header__button {
@@ -81,12 +117,50 @@
   align-items: center;
   gap: .5rem;
 
+  &.-animate {
+    animation: share-button-anim 3s ease-in-out infinite;
+  }
+
+  &.-copy {
+    // border-color: green;
+
+    background: green;
+    color: white;
+
+    svg {
+      stroke: white;
+    }
+  }
+
   > * { 
     pointer-events: none;
   }
   
   @media (min-width: $xs) {
     font-size: .9rem;
+  }
+}
+
+@keyframes share-button-anim {
+  0%, 100%, 30%, 80% {
+    // transform: scale(1);
+    box-shadow: 
+    0 0 .2rem #ffffff00,
+            0 0 .2rem #ffffff00,     
+            0 0 2rem #bb13fe00,
+            0 0 0.8rem #bb13fe00,
+            0 0 2.8rem #bb13fe00,
+            inset 0 0 1.3rem #bb13fe00; ;
+  }
+  50%, 60% {
+    // transform: scale(1.1);
+    box-shadow: 
+            0 0 .2rem #fff,
+            0 0 .2rem #fff,
+            0 0 2rem #efefef,
+            0 0 0.8rem #efefef,
+            0 0 2.8rem #efefef,
+            inset 0 0 1.3rem #efefef;
   }
 }
 

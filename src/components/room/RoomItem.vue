@@ -1,30 +1,13 @@
 <template>
   <main>
     <HeaderItem />
-    <div 
-      class="room-view__info-text"
-    >
-      <transition 
-        name="slide-fade" 
-        mode="out-in"
-      >
-        <p :key="generalStore.bannerMessage">
-          {{ generalStore.bannerMessage }}
-        </p>
-      </transition>
-    </div>
+    <RoomBannerItem />
+    
     <VotesResultItem v-if="roomStore.isVoteClosed" />
-    <!-- <button
-      class="button"
-      v-if="roomStore.isVoteClosed"
-      @click="useModalStore().openResultModal"
-    >
-      Show results
-    </button> -->
 
     <TableItem ref="tableItem" />
 
-    <div class="room-toRemove">
+    <!-- <div class="room-toRemove">
       <h3>
         Name : {{ userStore.userName }}  {{ userStore.userId === roomStore.leadId ?  ' 👑' : ''}}
       </h3>
@@ -46,38 +29,36 @@
       <VotesResultItem v-if="roomStore.isVoteClosed" />
       <MessageItem />
       <VoteItem />
-      <ChatItem />
-    </div>
+      <ChatItem /> -->
+    <!-- </div> -->
   </main>
 </template>
 
 <script setup lang="ts">
   
-   import UserListItem from "@/components/game/UserListItem.vue";
-   import ChatItem from '@/components/game/ChatItem.vue';
-   import VoteItem from "@/components/game/VoteItem.vue";
-   import MessageItem from "@/components/game/MessageItem.vue";
+  //  import UserListItem from "@/components/game/UserListItem.vue";
+  //  import ChatItem from '@/components/game/ChatItem.vue';
+  //  import VoteItem from "@/components/game/VoteItem.vue";
+  //  import MessageItem from "@/components/game/MessageItem.vue";
    import VotesResultItem from "@/components/game/VotesResultItem.vue";
    import TableItem from "@/components/game/TableItem.vue";
    import HeaderItem from "@/components/general/HeaderItem.vue";
-   import { emitCloseVote, emitOpenVote } from '@/sockets/emitsFunctions';
+   //  import { emitCloseVote, emitOpenVote } from '@/sockets/emitsFunctions';
 
-   import useGeneralStore from '@/store/useGeneralStore';
-   import useUserStore from "@/store/useUserStore";
+   //  import useUserStore from "@/store/useUserStore";
    import useRoomStore from "@/store/useRoomStore";
-   //  import useModalStore from "@/store/useModalStore";
+   import RoomBannerItem from "./RoomBannerItem.vue";
 
-   const generalStore = useGeneralStore();
-   const userStore = useUserStore();
+   //  const userStore = useUserStore();
    const roomStore = useRoomStore();
 
-   const handleCloseVote = () => {
-      emitCloseVote();
-   };
+  //  const handleCloseVote = () => {
+  //     emitCloseVote();
+  //  };
     
-   const handleOpenVote = () => {
-      emitOpenVote();
-   };
+  //  const handleOpenVote = () => {
+  //     emitOpenVote();
+  //  };
 </script>
 
 

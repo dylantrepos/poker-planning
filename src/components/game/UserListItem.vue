@@ -15,7 +15,6 @@
       </b>: 
       <i>{{ user.userId ?? 'error' }} 
         ({{  user.userId === roomStore.leadId ?  'lead' : 'user' }}
-        {{ user.userId === roomStore.leadId ?  '👑' : ''}})
       </i> 
       | {{ 
         roomStore.isVoteClosed 
