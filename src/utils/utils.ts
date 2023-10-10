@@ -1,4 +1,4 @@
-import type { User, UserCookie } from "@/types/UserType";
+import type { CardBackground, TableBackground, User, UserCookie, UserCookieSettings } from "@/types/UserType";
 
 /**
  ** 
@@ -6,7 +6,7 @@ import type { User, UserCookie } from "@/types/UserType";
  ** 
  */
 
-export const addCookie = (cname: string, cvalue: string, exdays: number = 7) => {
+export const addCookie = (cname: string, cvalue: string, exdays = 7) => {
     const date = new Date();
     date.setTime(date.getTime() + (exdays*24*60*60*1000));
     const expires = "expires=" + date.toUTCString();
@@ -20,9 +20,11 @@ export const getCookieString = (cname: string): string | null =>
   ?.split("=")[1] ?? null;
 
 export const getCookie = (): UserCookie => JSON.parse(getCookieString('poker-planning') || '{}');
+
+export const getCookieSettings = (): UserCookieSettings => JSON.parse(getCookieString('poker-planning-settings') || '{}');
   
 export const removeCookie = (cname: string) => {
-  document.cookie = cname + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+  document.cookie = cname + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/;';
 };
 
 /**
@@ -99,6 +101,14 @@ export const getUserListPositionned = (userList: User[]) => {
       lg: userListLg
     };
 };
+
+export const tableBackgroundColors: TableBackground[] = [
+  'green', 'red', 'blue'
+];
+
+export const cardBackgroundColors: CardBackground[] = [
+  'stripe-purple', 'black'
+];
 
 // Fake users made for tests (to remove later)
 export const fakeData = [

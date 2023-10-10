@@ -7,6 +7,7 @@
       Poker planning
     </div>
     <button
+      v-if="!light"
       class="button header__button"
       :class="{
         '-animate': Object.keys((roomStore.userList)).length === 1 && allowAnim,
@@ -41,6 +42,12 @@
    const shareRoomBtn = ref<HTMLDivElement>();
    const allowAnim = ref(true);
    const copySuccess = ref(false);
+
+   type Props = {
+      light?: boolean
+   };
+
+   defineProps<Props>();
 
    roomStore.setRoomId(route.params.id as RoomId);
 
@@ -92,6 +99,11 @@
   align-items: center;
   padding: 0 1rem;
   width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  backdrop-filter: blur(4px);
+  z-index: 1;
   
   @media (min-width: $xs) {
     padding: 0 2rem;  
@@ -122,13 +134,15 @@
   }
 
   &.-copy {
-    // border-color: green;
+    border-color: var(--button-copy);
+    color: var(--button-copy);
 
-    background: green;
-    color: white;
+    &:hover {
+      background: transparent;
+    }
 
     svg {
-      stroke: white;
+      stroke: var(--button-copy);
     }
   }
 

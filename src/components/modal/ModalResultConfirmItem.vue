@@ -2,11 +2,11 @@
   <div class="modal-result__container">
     <ModalCloseButton />
     <h2 class="modal-result__title">
-      Vote result
+      Vote results
     </h2>
     <p class="modal-result__description">
       {{
-        Object.keys(roomStore.votes).length === 0 
+        Object.keys(roomStore.voteResults).length === 0 
           ? 'At least one vote is needed to close the vote'
           : 'Are you sure you want to show the result ?'
       }}
@@ -18,25 +18,23 @@
       <p class="modal-result__userList-title">
         Player(s) without vote : 
       </p>
-      <ul class="modal-result__userList">
+      <ul>
         <li 
-          v-for="user in roomStore.userListNoVote"
+          v-for="user in roomStore.userListNoVote.filter(userElt => userElt.connected)"
           v-bind:key="user.userId"
+          class="modal-result__user"
+          :class="{
+            '-current': user.userId === userStore.userId
+          }"
         >
-          {{  user.userName }}
-          <span 
-            class="modal-result__currentUser"
-            v-if="user.userId === userStore.userId"
-          >
-            &nbsp;- You
-          </span>
+          {{ user.userName }}
         </li>
       </ul>
     </div>
     <ModalConfirmButton 
       text="Close the vote"
       @click="handleConfirm" 
-      :disabled="Object.keys(roomStore.votes).length === 0"
+      :disabled="Object.keys(roomStore.voteResults).length === 0"
     />
   </div>
 </template>
@@ -105,7 +103,7 @@
   .modal-result__userList-title {
     font-size: 1rem;
     font-weight: 400;
-    margin-top: 1rem;
+    margin: 1rem 0;
     
     @media (min-width: $m) {
       font-size: 1.2rem;
@@ -113,13 +111,15 @@
   }
 
   .modal-result__userList {
-    > li:first-of-type {
-      margin-top: 1rem;
+    &.-current::after {
+      content: 'ㅤ(You)';
+      font-size: .8rem;
+      font-weight: 100;
     }
+
   }
-  
-  .modal-result__currentUser {
-    font-weight: 100;
-    font-size: .8rem;
+
+  .modal-result__cards-container {
+    margin: 1rem 0;
   }
 </style>

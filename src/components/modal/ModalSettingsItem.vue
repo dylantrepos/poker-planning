@@ -5,15 +5,56 @@
       Settings
     </h2>
     <p class="modal-settings__description">
-      Comming soon ...
+      Custom your game as you want
     </p>
-    <div class="modal-settings__cards-container">
-     
-    </div>
-    <ModalConfirmButton 
-      text="Save settings"
-      @click="handleSave" 
-    />
+    <form 
+      ref="formElt"
+      class="modal-settings__form"
+      @submit.prevent="handleSave"
+    >
+      <div 
+        class="modal-settings__item"
+      >
+        <p>
+          Table background
+        </p>
+        <div class="modal-settings__item-choices -table-background">
+          <input 
+            v-for="color in tableBackgroundColors"
+            v-bind:key="color"
+            type="radio"
+            :value="color"
+            name="table-background" 
+            :class="[`-${color}`]"
+            v-model="tableBgChoice"
+            :checked="tableBgChoiceBase ===  color"
+          />
+        </div>
+      </div>
+      <div 
+        class="modal-settings__item"
+      >
+        <p>
+          Card background
+        </p>
+        <div class="modal-settings__item-choices -card-background">
+          <input 
+            v-for="color in cardBackgroundColors"
+            v-bind:key="color"
+            type="radio"
+            :value="color"
+            name="card-background" 
+            :class="[`-${color}`]"
+            v-model="cardBgChoice"
+            :checked="cardBgChoiceBase ===  color"
+          />
+        </div>
+      </div>
+      <ModalConfirmButton 
+        text="Save settings"
+        class="modal-settings__form-submit"
+      />
+    </form>
   </div>
 </template>
 
@@ -21,11 +62,29 @@
    import ModalCloseButton from '@/components/modal/ModalCloseButtonItem.vue';
    import ModalConfirmButton from '@/components/modal/ModalConfirmButtonItem.vue';
    import useModalStore from '@/store/useModalStore';
+   import useGeneralStore from '@/store/useGeneralStore';
+   import { tableBackgroundColors, cardBackgroundColors } from '@/utils/utils';
 
-   const store = useModalStore();
+   import { ref } from 'vue';
+
+   const modalStore = useModalStore();
+   const generalStore = useGeneralStore();
+   const formElt = ref();
+   const tableBgChoice = ref();
+   const cardBgChoice = ref();
+   const tableBgChoiceBase = ref(generalStore.settings.tableBackground);
+   const cardBgChoiceBase = ref(generalStore.settings.cardBackground);
 
    const handleSave = (): void => {
-      store.closeModal();
+      modalStore.closeModal();
+
+      if (tableBgChoice.value && tableBgChoice.value !== tableBgChoiceBase.value) {
+         generalStore.setTableBackground(tableBgChoice.value);
+      }
+
+      if (cardBgChoice.value && cardBgChoice.value !== cardBgChoiceBase.value) {
+         generalStore.setCardBackground(cardBgChoice.value);
+      }
    };
 </script>
 
@@ -38,18 +97,24 @@
     position: relative;
     
     border-radius: 1rem;
+    width: 20rem;
     
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
-
+    
     > * {
       color: #fff;
     }
-
+    
     @media (min-width: $xxs) {
       padding: 2rem;
+      min-width: 24rem;
+    }
+
+    @media (min-width: $xs) {
+      min-width: 30rem;
     }
   }
 
@@ -72,76 +137,97 @@
     }
   }
 
-  .modal-settings__cards-container {
-    display: grid;
-    grid-template-columns: repeat(4, auto);
-    grid-auto-rows: 1fr;
-    grid-auto-flow: row;
-    justify-items: center;
-    gap: 1rem;
-    margin: 1rem 0;
-
-    @media (min-width: $xxs) {
-      margin: 2rem 0;
-    }
-
-    @media (min-width: $xs) {
-      margin: 2rem;
-    }
+  .modal-settings__item {
+    margin-top: 1rem;
     
-    @media (min-width: $m) {
-      margin: 3rem 2rem;
-      grid-template-columns: repeat(5, auto);
-    }
   }
 
-  .modal-settings__cards-button {
-    background: linear-gradient(180deg, #FFF 0%, #D4D4D4 100%);
-    border: 1px solid #FFF;
-    height: 5rem;
-    width: 3rem;
-    border-radius: .4rem;
-    font-size: 1rem;
-    font-weight: 500;
-    pointer-events: all;
-    cursor: pointer;
-    transition: all .2s ease-in-out;
+  .modal-settings__item-choices {
+    display: flex;
+    gap: 2rem;
+    padding-top: 1rem;
+  }
 
-    * {
-      color: black;
-      font-weight: 500;
-      stroke: black;
-    }
+  .modal-settings__form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 
-    @media (min-width: $xxs) {
-      font-size: 1.3rem;
-      height: 6rem;
-      width: 4rem;
-    }
-    
-    @media (min-width: $m) {
-      &:hover {
-        border: 2px solid #1dca02;
-        
-        * {
-          color: #1dca02;
-          stroke: #1dca02;
-        }
-  
-        &.-chosen { 
-          border-color: red;
-        }
+  .modal-settings__form-submit {
+    margin-top: 3rem;
+  }
+
+  .modal-settings__item-choices {
+    input {
+      height: 60px;
+      width: 60px;
+      position: relative;
+      cursor: pointer;
+
+      &::before {
+        content: '';
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        position: absolute;
+        height: calc(100%);
+        width: calc(100%);
+        border: 2px solid rgba(255, 255, 255, 0);
+        background-color: transparent;
+        border-radius: 14px;
+        z-index: 2;
+        transition: all .15s ease-in-out;
       }
-    }
-
-
-    &.-chosen {
-      background: linear-gradient(180deg, #1dca02 0%, #1f5e12 100%);
       
-      * {
-        color: white;
-        stroke: white;
+      &:checked {
+        &::before {
+          height: calc(100% + 5px);
+          width: calc(100% + 5px);
+          border: 2px solid white;
+        }
+      }
+
+      &::after {
+        content: '';
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        border-radius: 10px;
       }
     }
   }
+
+  .-table-background input{
+    &.-green::after {
+      background: var(--table-background-green);
+    }
+    
+    &.-red::after {
+      background: var(--table-background-red);
+    }
+    
+    &.-blue::after {
+      background: var(--table-background-blue);
+    }
+  }
+
+  .-card-background input {
+
+    &::after {
+      background-size: cover !important;
+      background-position: center !important;
+      background-repeat: no-repeat !important;
+    }
+
+    &.-stripe-purple::after {
+      background: var(--card-background-stripe-purple);
+    }
+    
+    &.-black::after {
+      background: var(--card-background-black);
+    }
+  }
+
+
 </style>

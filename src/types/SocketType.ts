@@ -11,7 +11,7 @@ export interface ServerToClientEvents {
 }
 
 export interface ClientToServerEvents {
-  'room:join': (userInfo: User) => void;
+  'room:join': (userInfo: Omit<User, 'connected'>) => void;
   'vote:create': (vote: VoteInfo) => void;
   'vote:close': (roomId: RoomId) => void;
   'vote:open': (roomId: RoomId) => void;

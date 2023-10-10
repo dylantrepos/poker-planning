@@ -2,48 +2,38 @@
   <main  
     class="container"
   >
-    <h1 class="home-view_title">
-      Poker planning
+    <HeaderItem :light="true" />
+    <h1 class="home-view__title">
+      Create a room
     </h1>
-    <p class="home-view_text">
-      To start a game, <br>
-      enter your name and share the link with other players
+    <p class="home-view__text">
+      Enter your name <br>
+      and share the link with other players
     </p>
     <form 
       @submit.prevent="redirectToGame"
-      class="home-view_form"
+      class="home-view__form"
     >
-      <input 
-        v-model.trim="usernameInput"
-        class="text-input"
-        type="text"
-        placeholder="Your name" 
-        required
-      />
+      <div class="home-view__form-input"
+      >
+        <input 
+          v-model.trim="usernameInput"
+          class="text-input"
+          type="text"
+          placeholder="Your name"
+          :maxlength="maxLength" 
+          required
+        />
+        <p>
+          {{ maxLength - usernameInput.length }}
+        </p>
+      </div>
       <button class="button">
         Create a room
       </button>
     </form>
 
-    <a 
-      class="home-view_author"
-      href="https://github.com/dylantrepos"
-      target="_blank"
-      :class="{
-        '-hovered': true,
-      }"
-    >
-      <Github 
-        :size="5"
-        class="home-view_author-icon" 
-      />
-      <p
-        class="home-view_author-name" 
-        
-      >
-        @dylantrepos
-      </p>
-    </a>
+    <GitItemVue />
   </main>
 </template>
 
@@ -52,14 +42,15 @@
    import { useRouter } from "vue-router";
    import { v4 as uuidv4 } from 'uuid';
    import { Chart, DoughnutController, ArcElement, Tooltip } from 'chart.js';
-   import { Github } from 'lucide-vue-next' ;
    
+   import HeaderItem from "@/components/general/HeaderItem.vue";
    import { socket, connectToSocket, disconnectFromSocket } from '@/sockets/sockets';
    import { emitJoinRoom } from '@/sockets/emitsFunctions';
    import { addCookie } from "@/utils/utils";
 
    import type { User } from '@/types/UserType';
    import useModalStore from '@/store/useModalStore';
+   import GitItemVue from '@/components/general/GitItem.vue';
   
    Chart.register(DoughnutController, ArcElement, Tooltip);
 
@@ -67,12 +58,16 @@
    const usernameInput = ref('');
    const userId = uuidv4();
    const modalStore = useModalStore();
+   const maxLength = 25;
 
    onMounted(() => {
       if (socket.connected) {
          disconnectFromSocket();
       }
+
       modalStore.closeModal();
+
+      // document.addEventListener('acti')
    });
 
    // Methods
@@ -80,8 +75,7 @@
       connectToSocket();
 
       socket.on('connect', async () => {
-         const userInfo: User = {
-            connected: true,
+         const userInfo: Omit<User, 'connected'> = {
             roomId: socket.id,
             userId: userId,
             userName: usernameInput.value,
@@ -101,110 +95,78 @@
 <style lang="scss">
   @import '../assets/variables'; 
   
-  .home-view_title {
-    margin-bottom: 2rem;
-    font-weight: 500;
+  .home-view__title {
+    font-size: 2rem;
+    font-weight: 300;
+    margin-bottom: 1rem;
+    
+    @media (min-width: $xs) {
+      font-size: 3rem;
+    }
+    
+    @media (min-width: $m) {
+      margin-bottom: 2.5rem;
+    }
   }
 
-  .home-view_text {
-    margin: .8rem 2rem;
+  .home-view__text {
+    margin: 0 2rem;
     text-align: center;
   }
 
-  .home-view_form {
+  .home-view__form {
     display: flex;
     flex-direction: column;
     align-items: center;
     width: 100%;
     gap: 1.5rem;
-    margin-top: 3rem;
-  }
+    margin-top: 2rem;
 
-  .home-view_author {
-    position: absolute;
-    display: flex;
-    align-items: center;
-    bottom: 1.5rem;
-    height: 4rem;
-    width: auto;
-    gap: 0.5rem;
-    text-decoration: none;
-    
-    @media (min-width: $m) {
-      flex-direction: column;
-      position: absolute;
-      bottom: 2.5rem;
-      height: 2rem;
-      width: 10rem;
-
-      &:hover {
-        .home-view_author-icon {
-          bottom: 50%;
-          transform: translate(-50%, 50%) rotate3d(1, 0, 0, 0deg);
-          pointer-events: all;
-        }
-        
-        .home-view_author-name {
-          top: -1.5rem;
-          transform: translate(-50%, -50%) rotate3d(1, 0, 0, 90deg);
-        }
+    :focus {
+      .home-view__form-input p {
+        background-color: red;
       }
     }
   }
 
-  .home-view_author-icon {
+  .home-view__form-input {
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
-    width: 2rem;
-    height: 2rem;
-    border: 1px solid white;
-    border-radius: 100px;
-    padding: 0.4rem;
-    
-    @media (min-width: $xs) {
-      width: 2.5rem;
-      height: 2.5rem;
-      padding: 0.6rem;
+    position: relative;
+    overflow: hidden;
+
+    input {
+      &:focus {
+        
+        @media (min-width: $xs) {
+          & + p {
+            opacity: 1;
+            right: 0;
+          }
+        }
+      }
     }
 
-    @media (min-width: $m) {
+    p {
       position: absolute;
-      left: 50%;
+      right: 0;
       width: 3rem;
-      height: 3rem;
-      border: 1px solid white;
-      border-radius: 100px;
-      padding: 0.6rem;
-      transition: all .5s ease-in-out;
-      left: 50%;
-      bottom: -3rem;
-      transform: translateX(-50%) rotate3d(1, 0, 0, 90deg);
-      pointer-events: none;
-    }
-  }
-
-  .home-view_author-name {
-    height: auto;
-    text-decoration: none;
-    font-size: .8rem;
-    
-    @media (min-width: $xs) {
+      height: 100%;
+      opacity: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #8080805e;
       font-size: 1rem;
-    }
-    
-    @media (min-width: $m) {
-      font-size: 1rem;
-      position: absolute;
+      border-top-right-radius: 5px;
+      border-top-left-radius: 5px;
+      transition: all var(--transition-duration) ease-in-out;
       
-      transition: all .5s ease-in-out;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
-      pointer-events: none;
-
-      
+      @media (min-width: $xs) {
+        opacity: 0;
+        right: -3rem;
+      }
     }
   }
 </style>

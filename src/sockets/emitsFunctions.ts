@@ -5,14 +5,22 @@ import useUserStore from "@/store/useUserStore";
 
 import type { User } from "@/types/UserType";
 import type { Vote } from "@/types/GenericType";
+import { getCookieSettings } from "@/utils/utils";
+import useGeneralStore from "@/store/useGeneralStore";
 
 // JOIN ROOM
-export const emitJoinRoom = async (userInfo: User): Promise<void> => {
+export const emitJoinRoom = async (userInfo: Omit<User, 'connected'>): Promise<void> => {
   const { initRoom } = useRoomStore();
+  const generalStore = useGeneralStore();
   
   const { userId, roomId, userName } = userInfo;
   
   initRoom(roomId, userId, userName);
+
+  const params = getCookieSettings();
+
+  generalStore.setTableBackground(params?.tableBackground);
+  generalStore.setCardBackground(params?.cardBackground);
 
   socket.emit('room:join', userInfo);
 };

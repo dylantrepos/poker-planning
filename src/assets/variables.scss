@@ -7,6 +7,10 @@
   // Header
   --header-height: 5rem;
 
+  // Banner
+  --banner-height: 4rem;
+  --banner-header-height: calc(var(--banner-height) + var(--header-height));
+
   // Transition
   --transition-duration: .4s;
   
@@ -16,7 +20,17 @@
   --button-border-color: #fff;
   --button-text-color: #fff;
   --button-text-color-hover: #000;
+  --button-copy: #52bc08;
   
+  // Table
+  --table-background-green: radial-gradient(circle at bottom, rgb(27, 117, 5) 0%, rgb(24, 105, 4) 60%, rgb(27, 115, 5) 80%, rgb(30, 141, 2) 100%);
+  --table-background-red: radial-gradient(circle at bottom, rgb(117, 5, 5) 0%, rgb(105, 4, 4) 60%, rgb(115, 5, 5) 80%, rgb(141, 2, 2) 100%);
+  --table-background-blue: radial-gradient(circle at bottom, rgb(5, 11, 117) 0%, rgb(6, 4, 105) 60%, rgb(5, 14, 115) 80%, rgb(2, 4, 141) 100%);
+
+  // Card 
+  --card-background-stripe-purple: repeating-linear-gradient(45deg, #402da4, #007bff 10px, #5f1fc2 10px, #07109f 20px);
+  --card-background-black: linear-gradient(45deg, black, grey);
+  --card-background-classic-blue: url('/src/assets/images/card-classic-blue-background.jpg');
 }
 
 // Screen

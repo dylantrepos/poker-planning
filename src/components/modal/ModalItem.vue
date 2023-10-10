@@ -9,7 +9,7 @@
         aria-modal="true"
         role="dialog"
         tabindex="-1"
-        @click.self="store.closeModal"
+        @click.self="closeModal"
         v-if="store.modalState?.component"
       >
         <component 
@@ -24,12 +24,22 @@
 
 <script setup lang="ts">
    import useModalStore from '@/store/useModalStore';
+   import useRoomStore from '@/store/useRoomStore';
    import { onMounted, onUnmounted } from 'vue';
   
    const store = useModalStore();
+   const roomStore = useRoomStore();
 
    const keydownListener = (event: KeyboardEvent) => {
-      if (event.key === "Escape") store.closeModal();
+      if (event.key === "Escape") {
+         store.closeModal();
+         if (roomStore.isVoteClosed) roomStore.setShowCard(true);
+      }
+   };
+      
+   const closeModal = () => {
+      store.closeModal();
+      if (roomStore.isVoteClosed) roomStore.setShowCard(true);
    };
 
    onMounted(() => {

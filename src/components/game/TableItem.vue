@@ -6,6 +6,7 @@
       '-result': roomStore.isVoteClosed
     }"
   >
+    <VotesResultItem v-if="roomStore.isVoteClosed" />
     <div 
       class="table__container"
       ref="tableDivElt"
@@ -38,7 +39,12 @@
           place="-left"
         />
       </div>
-      <div class="table__center">
+      <div 
+        class="table__center"
+        :style="{
+          background: `var(--table-background-${generalStore.settings.tableBackground})`
+        }"
+      >
         <div class="table__table-item">
           <ActionsItemVue />
         </div>
@@ -81,6 +87,7 @@
 
    import useRoomStore from '@/store/useRoomStore';
    import useGeneralStore from '@/store/useGeneralStore';
+   import VotesResultItem from './VotesResultItem.vue';
    
    const screenSizeLarge = ref(window.innerWidth >= 767);
    const screenSize = ref<'xxs' | 'sm' | 'lg'>('sm');
@@ -109,7 +116,7 @@
    };
 
    // Throttle
-   const throttle = (callback: Function, time: number) => {
+   const throttle = (callback: () => void, time: number) => {
       if (throttlePause.value) return;
 
       throttlePause.value = true;
@@ -158,8 +165,11 @@
 
   .table {
     display: flex;
+    flex-direction: column;
+    align-items: center;
     justify-content: center;
     margin-bottom: 7rem;
+    min-height: calc(100dvh - var(--banner-header-height) - 112px);
     
     @media (min-width: $xs) {
       margin-bottom: 7rem;
@@ -167,7 +177,7 @@
 
     @media (min-width: $m) {
       width: 100vw;
-      margin-top: 2rem;
+      min-height: calc(100dvh - var(--banner-header-height));
       margin-bottom: 0;
 
       &.-result {
@@ -194,8 +204,12 @@
     width: calc(100vw - 1rem);
     max-width: 30rem;
     min-width: 20rem;
-    background-color: red;
+    // background-color: red;
     transition: all var(--transition-duration) ease-in-out;
+    
+    // @media (min-width: $xs) {
+    //   grid-template-columns: 8rem 1fr 8rem;
+    // }
 
     @media (min-width: $m) {
       grid-template-columns: 8rem 1fr 8rem;
@@ -213,7 +227,7 @@
     }
 
     > * {
-      border: 1px solid yellow;
+      // border: 1px solid yellow;
     }
   }
 
@@ -267,6 +281,12 @@
         }
       }
     }
+
+    padding-bottom: .5rem !important;
+    
+    @media (min-width: $m) {
+      padding-bottom: 1rem !important;
+    }
   }
 
   .table__bottom {
@@ -314,14 +334,22 @@
         }
       }
     }
+
+    padding-top: .5rem !important;
+    
+    @media (min-width: $m) {
+      padding-top: 1rem !important;
+    }
   }
   
   .table__left {
     grid-area: left;
+    padding-right: 1rem !important;
   }
 
   .table__right {
     grid-area: right;
+    padding-left: 1rem !important;
   }
 
   .table__top, .table__bottom, .table__left, .table__right {
@@ -333,10 +361,11 @@
   .table__top, .table__bottom {
     justify-content: center;
     min-height: 3.5rem;
-
+    
     @media (min-width: $m) {
       padding: 0 5rem;
       flex-direction: row;
+      min-height: 4.5rem;
     }    
     
     @media (min-width: $l) {
@@ -365,16 +394,58 @@
   .table__center {
     grid-area: center;
     // min-width: 16rem;
-    background-color: orange;
-    // border-radius: 1000px;
-    border-radius: 40px;
-    // min-width: 11rem;
-    transition: all var(--transition-duration) ease-in-out;
+    
+    background-color: rgb(29, 133, 3);
+    background: var(--table-background-green);
+    background-size: cover;
+    
+    // background: url('../../assets/images/poker-background-3.jpg');
+    // outline: 10px solid #693603;
+    box-shadow: inset 0px 5px 23px 2px rgba(0, 0, 0, 0.4705882353);
+    position: relative;
+    border: 4px solid #000000af;
 
+    &::before {
+      content: '';
+      position: absolute;
+      z-index: -1;
+      height: calc(100% + 2rem);
+      width: calc(100% + 2rem);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow: inset 0px 0px 11px 2px rgb(0 0 0 / 79%);
+      
+      background: rgb(87,53,3);
+      background: radial-gradient(circle, rgb(158, 99, 10) 0%, rgba(77, 50, 10, 0.73) 80%, rgba(148, 90, 9, 0.806) 100%);
+
+      border-radius: 50px;
+    }
+
+
+    // background: url('../../assets/images/poker-background-2.jpg');
+    // background-size: cover;
+
+    // box-shadow: 0px 15px 30px 5px rgba(0, 0, 0, 0.4705882353);
+    // outline: 7px solid #51381f6b;
+    border-radius: 40px;
+
+    transition: all var(--transition-duration) ease-in-out;
+    
+    
+    @media (min-width: $xs)  {
+      // box-shadow: 0px 30px 40px 12px #00000078;
+    }
 
     @media (min-width: $m)  {
       border-radius: 70px;
       min-width: 31rem;
+
+      &::before {
+        border-radius: 85px;
+        height: calc(100% + 2.5rem);
+      width: calc(100% + 2.5rem);
+      }
     }
     
     @media (min-width: $l)  {

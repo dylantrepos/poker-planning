@@ -5,7 +5,7 @@
     class="container"
   >
     <h1 class="server-error__title">
-      Ho, I'm so sorry !
+      Server offline
     </h1>
     <p class="server-error__text">
       This awesome poker planning application is not avaible for the moment.

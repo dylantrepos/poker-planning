@@ -4,8 +4,6 @@ body {
   background: linear-gradient(113deg, var(--background-color-one), var(--background-color-two));
   background-attachment: fixed;
   background-repeat: no-repeat;
-  // height: 100dvh;
-  // min-height: 100dvh;
   min-width: 360px;
   width: 100dvw;
 }
@@ -43,8 +41,7 @@ main {
   height: fit-content;
   padding: .5rem 3rem;
   transition: 
-    background var(--transition-duration) ease-in-out,
-    color var(--transition-duration) ease-in-out;
+    all var(--transition-duration) ease-in-out;
   width: fit-content;
   
   svg {
@@ -68,9 +65,8 @@ main {
   color: black;
   font-size: 1rem;
   height: 3rem;
-  max-width: 70%;
   padding: 0 .8rem;
-  width: 100%;
+  width: 70vw;
 
   &::placeholder {
     font-size: 1rem;

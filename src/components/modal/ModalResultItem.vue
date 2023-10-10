@@ -1,8 +1,14 @@
 <template>
   <div 
     class="modal-result__container -pie"
+    :class="{
+      '-sm': counter > 0
+    }"
   >
-    <ModalCloseButton />
+    <ModalCloseButton 
+      v-if="counter === 0" 
+      @click="handleCloseResultModal" 
+    />
     <h2 class="modal-result__title">
       Vote result
     </h2>
@@ -29,7 +35,7 @@
     <ModalConfirmButton 
       v-if="counter === 0"
       text="Close"
-      @click="store.closeModal()" 
+      @click="handleCloseResultModal" 
       class="modal-result__close-button"
     />
   </div>
@@ -48,8 +54,9 @@
 
    import type { ChartOptions, ChartData } from "chart.js";
    import { onMounted, ref } from 'vue';
+   import { setMessageDefault } from '@/utils/bannerMessages';
 
-   const store = useModalStore();
+   const modalStore = useModalStore();
    const roomStore = useRoomStore();
    const counter = ref(3);
 
@@ -59,10 +66,20 @@
             counter.value = counter.value - 1;
             startCounter();
          }, 1000);
+      } 
+      else {
+         document.body.style.pointerEvents = 'all';
       }
    };
 
+   const handleCloseResultModal = () => {
+      modalStore.closeModal();
+      setMessageDefault();
+      roomStore.setShowCard(true);
+   };
+
    onMounted(() => {
+      document.body.style.pointerEvents = 'none';
       startCounter();
    });
 
@@ -124,8 +141,20 @@
       padding: 2rem;
     }
 
+    @media (min-width: $xs) {
+      max-width: 35rem;
+      
+      &.-sm {
+        max-width: 25rem;
+      }
+    }
+
     @media (min-width: $m) {
       max-width: 35rem;
+      
+      &.-sm {
+        max-width: 20rem;
+      }
     }
 
     @media (min-width: $l) {
@@ -186,6 +215,7 @@
 
   .modal-result__close-button {
     opacity: 0;
+    margin-top: 3rem;
     animation: closeButtonEnter .5s ease-in forwards .5s;
   }
 

@@ -4,8 +4,10 @@
     :class="{
       '-three': additionnalClasses?.three,
       '-large': additionnalClasses?.large,
-      '-current': user.userId === userStore.userId
+      '-current': user.userId === userStore.userId,
+      '-offline': !user.connected
     }"
+    ref="tablePlayer"
   >
     <CardItem
       :user="user"
@@ -25,8 +27,11 @@
    import type { User } from '@/types/UserType';
    import CardItem from '@/components/game/CardItem.vue';
    import useUserStore from '@/store/useUserStore';
+   import { onBeforeUnmount, onMounted, onUpdated, ref } from 'vue';
+   import { setMessageDisconnected, setMessageDefault } from '../../utils/bannerMessages';
 
    const userStore = useUserStore();
+   const tablePlayer = ref<HTMLDivElement>();
 
    type Props = {
       user: User;
@@ -37,7 +42,36 @@
       place: '-top' | '-left' | '-right' | '-bottom';
    }
 
-   defineProps<Props>();
+   const props = defineProps<Props>();
+
+   const updateMessageUser = () => {
+      setMessageDisconnected(props.user.userName);
+   };
+
+   onMounted(() => {
+      if (!props.user.connected) {
+         tablePlayer.value?.addEventListener('mouseover', updateMessageUser);
+         tablePlayer.value?.addEventListener('mouseout', setMessageDefault);
+      }
+   });
+
+   onBeforeUnmount(() => {
+      tablePlayer.value?.removeEventListener('mouseover', updateMessageUser);
+      tablePlayer.value?.removeEventListener('mouseout', setMessageDefault);
+   });
+    
+   onUpdated(() => {
+      if (!props.user.connected) {
+         tablePlayer.value?.addEventListener('mouseover', updateMessageUser);
+         tablePlayer.value?.addEventListener('mouseout', setMessageDefault);
+      }
+      else {
+         tablePlayer.value?.removeEventListener('mouseover', updateMessageUser);
+         tablePlayer.value?.removeEventListener('mouseout', setMessageDefault);
+
+      }
+   });
+
 </script>
 
 <style lang="scss">
@@ -46,8 +80,8 @@
 
   .table__player {
     width: 100%;
-    max-width: 6rem;
-    background-color: green;
+    // max-width: 6rem;
+    // background-color: green;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -55,13 +89,19 @@
     overflow: hidden;
     padding: 1rem .2rem;
 
+    &.-offline {
+      .table__user-name {
+        color: rgb(162, 162, 162);
+      }
+    }
+
     &.-current {
       .table__user-name {
         font-weight: 500;
       }
 
-      box-shadow: 0px -15px 27px -8px white;
-      animation: current-smoke 5s ease-in-out infinite reverse;
+      // box-shadow: 0px -15px 27px -8px white;
+      // animation: current-smoke 5s ease-in-out infinite reverse;
     }
 
     &.-large {
@@ -103,64 +143,11 @@
     text-align: center;
     max-height: 6rem;
     overflow: hidden;
+    pointer-events: none;
 
-    @media (min-width: $m) {
+    @media (min-width: $xxs) {
       font-size: 1rem;
       max-height: 3rem;
     }
-  }
-
-  .table__player-card {
-    height: 3rem;
-    width: 2rem;
-    background: grey;
-
-    &.-top, &.-left, &.-right, &.-bottom {
-      position: absolute;
-    }
-
-    &.-top {
-      bottom: -4rem;
-
-      @media (min-width: $m) {
-        bottom: -4.5rem;
-        right: unset;
-      }
-    }
-
-    &.-left {
-      right: -3rem;
-
-      @media (min-width: $m) {
-        right: -4.5rem;
-        bottom: unset;
-      }
-    }
-
-    &.-right {
-      left: -3rem;
-
-      @media (min-width: $m) {
-        left: -4.5rem;
-        top: unset;
-      }
-    }
-
-    &.-bottom {
-      top: -4rem;
-
-      @media (min-width: $m) {
-        top: -4.5rem;
-        left: unset;
-      }
-    }
-  }
-
-  .table__user-card-light {
-    // position: absolute;
-    // top: -.5rem;
-    // width: 5rem;
-    // height: .5rem;
-    // background-color: white;
   }
 </style>  

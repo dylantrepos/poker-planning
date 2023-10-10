@@ -1,27 +1,36 @@
 <template>
   <main class="join-room__container">
-    <h1 class="join-room_title">
+    <HeaderItem :light="true" />
+    <h1 class="home-view__title">
       Join a room
     </h1>
-    <p class="home-view_text">
+    <p class="home-view__text">
       To join this game, <br>
       you must choose a name.
     </p>
     <form 
-      class="join-room_form"
+      class="home-view__form"
       @submit.prevent="handleJoinRoom"
     >
-      <input 
-        type="text"
-        placeholder="Your name"
-        class="text-input"
-        v-model.trim="usernameInput"
-        required
-      />
+      <div class="home-view__form-input">
+        <input 
+          v-model.trim="usernameInput"
+          class="text-input"
+          type="text"
+          placeholder="Your name"
+          :maxlength="maxLength" 
+          required
+        />
+        <p>
+          {{ maxLength - usernameInput.length }}
+        </p>
+      </div>
       <button class="button">
         Join the room
       </button>
     </form>
+
+    <GitItemVue />
   </main>
 </template>
 
@@ -36,10 +45,13 @@
 
    import useUserStore from '@/store/useUserStore';
    import useRoomStore from '@/store/useRoomStore';
+   import GitItemVue from '@/components/general/GitItem.vue';
+   import HeaderItem from "@/components/general/HeaderItem.vue";
 
    const usernameInput = ref('');
    const userStore = useUserStore();
    const roomStore = useRoomStore();
+   const maxLength = 25;
    
 
    // Methods 
@@ -48,15 +60,13 @@
 
       const userId = uuidv4();
     
-      const userInfo: User = {
+      const userInfo: Omit<User, 'connected'> = {
          roomId: roomStore.roomId,
          userId,
          userName: usernameInput.value,
-         connected: true,
       };
     
       addCookie('poker-planning', JSON.stringify(userInfo));
-      addCookie('poker-planning2', userId);
     
       await emitJoinRoom(userInfo);
       userStore.setUserConnectionStatus(true);

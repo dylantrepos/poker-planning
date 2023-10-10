@@ -71,6 +71,15 @@ export const setMessageCopySuccess = () => {
   if (generalStore.screenWidth < 768) clearMessage();
 };
 
+export const setMessageDisconnected = (username: string) => {
+  const generalStore = useGeneralStore();
+
+  generalStore.setBannerMessage(
+    `${username} is not in room anymore`
+  );
+  if (generalStore.screenWidth < 768) clearMessage();
+};
+
 export const setMessageDefault = () => {
   useGeneralStore().setBannerMessage(
     useRoomStore().isVoteClosed 

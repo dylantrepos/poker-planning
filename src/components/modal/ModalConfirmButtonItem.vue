@@ -1,7 +1,6 @@
 <template>
   <button
     class="button modal__confirm-button"
-    
   >
     {{ text }}
   </button>
@@ -19,7 +18,7 @@
   @import '../../assets/variables.scss'; 
 
   .modal__confirm-button {
-    width: auto;
+    width: fit-content;
     font-size: 1rem;
     padding: .5rem 1.5rem;
     display: flex; 
@@ -37,7 +36,7 @@
     &:disabled {
       border-color: grey;
       color: grey;
-      cursor: no-drop;
+      cursor: not-allowed;
       &:hover {
         background: transparent;
       }

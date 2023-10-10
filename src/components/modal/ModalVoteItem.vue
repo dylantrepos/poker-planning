@@ -8,25 +8,36 @@
       Pick a card and wait for the result
     </p>
     <div class="modal-vote__cards-container">
-      <button 
+      <div
         v-for="vote in voteAvailable" 
         v-bind:key="vote"
-        :disabled="roomStore.isVoteClosed"
-        @click="handleChangeVote(vote as Vote)"
-        class="modal-vote__cards-button"
+        class="modal-vote__card"
         :class="{
+          '-reveal': returnCard,
           '-chosen': vote === currVote,
         }"
       >
-        <!-- <Infinity v-if="vote === 'infinity'" />
-        <Coffee  v-else-if="vote === 'coffee'" /> -->
-        <span
-          :class="{
-            '-infinity': vote === '∞',
-            '-coffee': vote === '☕️'
+        <div 
+          class="modal-vote__cards-button -back"
+          :style="{
+            background: `var(--card-background-${generalStore.settings.cardBackground})`
           }"
-        >{{ vote }}</span>
-      </button>
+        >
+        </div>
+        <button 
+          :disabled="roomStore.isVoteClosed"
+          @click="handleChangeVote(vote as Vote)"
+          class="modal-vote__cards-button -front"
+        >
+          <span
+            :class="{
+              '-infinity': vote === '∞',
+              '-coffee': vote === '☕️'
+            }"
+            :card="vote"
+          >{{ vote }}</span>
+        </button>
+      </div>
     </div>
     <ModalConfirmButton 
       text="Confirm vote"
@@ -47,15 +58,19 @@
    
    import useUserStore from '@/store/useUserStore';
    import useRoomStore from '@/store/useRoomStore';
+   import useGeneralStore from '@/store/useGeneralStore';
    import type { Vote } from '@/types/GenericType';
+
    import { ref } from 'vue';
    
    const userStore = useUserStore();
+   const generalStore = useGeneralStore();
    const roomStore = useRoomStore();
    const store = useModalStore();
 
    const currVote = ref<Vote>(roomStore.votes[userStore.userId] as Vote ?? '');
    const initialVote = ref<Vote>(roomStore.votes[userStore.userId] as Vote ?? '');
+   const returnCard = ref(false);
 
    const voteAvailable = getPokerPossibilities();
 
@@ -69,7 +84,19 @@
 
       addCookie('poker-planning', JSON.stringify({...cookieData, vote: currVote.value}));
 
-      store.closeModal();
+      
+      if (initialVote.value === '') {
+         returnCard.value = true;
+
+         setTimeout(() => {
+            returnCard.value = false;
+            store.closeModal();
+         }, 750);
+      }  else {
+         store.closeModal();
+      }
+      
+
    };
 </script>
 
@@ -154,48 +181,127 @@
     }
   }
 
-  .modal-vote__cards-button {
-    background: linear-gradient(180deg, #FFF 0%, #D4D4D4 100%);
-    border: 1px solid #FFF;
+  .modal-vote__card {
+    position: relative;
     height: 5rem;
     width: 3rem;
-    border-radius: .4rem;
-    font-size: 1rem;
-    font-weight: 500;
-    pointer-events: all;
-    cursor: pointer;
-    transition: all .2s ease-in-out;
 
-    * {
-      color: black;
-      font-weight: 500;
-      stroke: black;
+    &.-reveal.-chosen {
+      .-front {
+        transition: all .2s ease-in-out;
+        transform: rotate3d(0, 1, 0, 90deg);
+      }
+      
+      .-back {
+        transition: all .2s linear .2s;
+        transform: rotate3d(0, 1, 0, 0deg);
+      }
     }
 
     @media (min-width: $xxs) {
-      font-size: 1.3rem;
       height: 6rem;
       width: 4rem;
-    }
-    
-    &:hover {
-      @media (min-width: $m) {
-        border: 2px solid #1dca02;
-        
-        * {
-          color: #1dca02;
+      border-radius: .4rem;
+
+      &.-chosen {
+        button {
+          background: linear-gradient(180deg, #1dca02 0%, #1f5e12 100%);
         }
-  
-        &.-chosen { 
-          border-color: red;
+        
+        span {
+          color: white;
+        }
+      }
+
+      &:hover {
+        @media (min-width: $m) {
+
+          &:not(.-chosen) button {
+            outline: 2px solid #1dca02;
+            transform: translateY(-3px);
+            
+            * {
+              color: #1dca02;
+            }
+      
+          }
+
+          &.-chosen button {
+            outline-color: red;
+          }
+        }
+      }
+    }
+  }
+
+  .modal-vote__cards-button {
+    background: linear-gradient(45deg, #d2d2d2 0%, #FFF 30%, #FFF 70%, #d2d2d2 100%);
+    // border: 1px solid #e0e0e0;
+    // outline: 1px solid #FFF;
+    border-radius: .4rem;
+    pointer-events: all;
+    cursor: pointer;
+    transition: all .2s ease-in-out;
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    
+    span {
+      font-size: 1rem;
+      color: black;
+      font-weight: 500;
+      
+      &::before, &::after {
+        content: attr(card);
+        position: absolute;
+        top: .4rem;
+        left: .4rem;
+        font-weight: 200;
+        font-size: .5rem;
+      }
+
+      &::after {
+        top: unset;
+        left: unset;
+        bottom: .4rem;
+        right: .4rem;
+      }
+      @media (min-width: $xxs) {
+        font-size: 1.5rem;
+        
+        &::before, &::after {
+          font-size: .6rem;
         }
       }
     }
 
+    &.-front {
+      outline: 2px solid #FFF;
+
+      @media (min-width: $m) {
+        outline-width: 1px;
+      }
+    }
+    
+    &.-back {
+      background: repeating-linear-gradient(45deg, #402da4, #007bff 10px, #5f1fc2 10px, #07109f 20px);
+      background-size: contain !important;
+      background-position: center !important;
+      transform: rotate3d(0, 1, 0, 90deg);
+      // border: 2px solid #00000040;
+
+      @media (min-width: $m) {
+        border-width: 1px;
+      }
+    }
 
     &.-chosen {
       background: linear-gradient(180deg, #1dca02 0%, #1f5e12 100%);
       
+      
+
       * {
         color: white;
       }

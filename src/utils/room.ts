@@ -76,7 +76,7 @@ export const getAllVotesFromServer = async (): Promise<void> => {
  */
 export const checkRoomExists = async (id: RoomId): Promise<boolean> => {
   const { setRoomExists } = useRoomStore();
-  let roomExists: boolean = false;
+  let roomExists = false;
 
   try {
     const roomExistsRequest = await fetch(`${import.meta.env.VITE_SERVER_ADDRESS}/check-room/${id}`);
@@ -99,7 +99,7 @@ export const checkVoteIsOpen = async (): Promise<void> => {
 
   try {
     const stateVoteRequest = await fetch(`${import.meta.env.VITE_SERVER_ADDRESS}/vote-state/${roomId}`);
-    let voteClose: VoteState = (await stateVoteRequest.json()).close;
+    const voteClose: VoteState = (await stateVoteRequest.json()).close;
 
     if (voteClose) {
       updateVoteResults();

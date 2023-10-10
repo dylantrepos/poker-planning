@@ -30,16 +30,15 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 3rem;
-    max-height: 3rem;
+    height: var(--banner-height);
+    max-height: var(--banner-height);
+    margin-top: var(--header-height);
     margin-bottom: 1rem;
     width: 100%;
     text-align: center;
-    
+
     @media (min-width: $m) {
-      height: 4rem;
-      max-height: 4rem;
-      padding: 1rem;
+      margin-bottom: 0;
     }
   }
   

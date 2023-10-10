@@ -2,14 +2,15 @@
   <div 
     class="room-view__actions"
   >
-    <div 
+    <button 
       class="room-view__actions-reveal" 
       ref="revealBtn"
       @click="!roomStore.isVoteClosed ? handleOpenModalConfirmResult() : handleRestartGame()"
     >
-      {{ roomStore.isVoteClosed ? 'Restart' : 'Reveal' }}
-    </div>
-    <div 
+      <RefreshCw v-if="roomStore.isVoteClosed" />
+      <PieChart v-else />
+    </button>
+    <button 
       class="room-view__actions-vote"
       ref="voteBtn"
       @click="handleOpenModalVote"
@@ -22,14 +23,25 @@
         <div class="room-view__actions-vote-card -left"></div>
         <div class="room-view__actions-vote-card -right"></div>
       </div>
-    </div>
-    <div 
+    </button>
+
+    <!-- <div 
       class="room-view__actions-settings"
       ref="settingsBtn"
       @click="handleOpenModalSettings"
     >
-      Settings
-    </div>
+      <div class="room-view__actions-setting-icon">
+        <div class="room-view__actions-setting-icon-circle -left"></div>
+        <div class="room-view__actions-setting-icon-circle -right"></div>
+      </div>
+    </div> -->
+    <button 
+      class="room-view__actions-settings"
+      ref="settingsBtn"
+      @click="handleOpenModalSettings"
+    >
+      <Settings2 />
+    </button>
   </div>
 </template>
 
@@ -41,6 +53,8 @@
    import { setMessageReveal, setMessageVote, setMessageSettings, setMessageDefault } from '../../utils/bannerMessages';
    import { emitOpenVote } from '@/sockets/emitsFunctions';
    import useGeneralStore from '@/store/useGeneralStore';
+
+   import { PieChart, RefreshCw, Settings2 } from 'lucide-vue-next' ;
    
    const modalStore = useModalStore();
    const roomStore = useRoomStore();
@@ -60,6 +74,7 @@
 
    const handleRestartGame = () => {
       useRoomStore().setIsVoteClosed(false);
+      useRoomStore().setShowCard(false);
       emitOpenVote();
    };
 
@@ -98,7 +113,7 @@
   
   .room-view__actions {
     min-width: 23rem;
-    
+    z-index: 5;
     position: fixed;
     left: 0;
     bottom: 0;
@@ -112,6 +127,17 @@
     z-index: 1;
     background: linear-gradient(0deg, black, transparent);
     backdrop-filter: blur(1px);
+    z-index: 11;
+
+    svg {
+      height: 32px;
+      width: 32px;
+      stroke-width: 1px;
+    }
+
+    button {
+      background: transparent;
+    }
     
     @media (min-width: $xxs) {
       padding: .5rem 5dvw;
@@ -135,6 +161,10 @@
       left: 50%;
       transform: translateX(-50%);
       gap: 1rem;
+
+      svg {
+        stroke-width: 1.5px;
+      }
     }
 
     @media (min-width: $l) {
@@ -158,8 +188,8 @@
     }
 
     @media (min-width: $xxs) {
-      height: 5rem;
-      width: 5rem;
+      height: 4.5rem;
+      width: 4.5rem;
       margin-top: 0;
     }
 
@@ -199,12 +229,6 @@
             //   0 0 151px #0fa;
       }
     }
-
-    @media (min-width: $l) {
-      height: 6rem;
-      width: 6rem;
-      margin-top: 0;
-    }
   }
 
   .room-view__actions-vote{
@@ -228,7 +252,7 @@
     }
 
     &.-closed {
-      cursor: no-drop;
+      cursor: not-allowed;
 
       .room-view__actions-vote-card {
         background: linear-gradient(163deg, #3b3b3b 0%, #5c5c5c 97.35%);
@@ -423,6 +447,89 @@
     100% {
        top: calc(50% - 21px);
         right: calc(50% - 40px);
+    }
+  }
+
+  .room-view__actions-settings {
+    @media (min-width: $m) {
+      &:hover {
+        
+        .room-view__actions-setting-icon-circle {
+          animation: setting-hover-left 3s ease-in-out infinite;
+
+          &:last-of-type {
+            animation: setting-hover-right 3s ease-in-out infinite 1s;
+          }
+        }
+        
+      }
+    }
+  }
+
+  .room-view__actions-setting-icon{
+    height: 1.8rem;
+    width: 1.6rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+
+    overflow: hidden;
+  }
+
+  .room-view__actions-setting-icon-circle {
+    height: .6rem;
+    width: .6rem;
+    border: 2px solid white;
+    border-radius: 100px;
+    position: relative;
+
+    &:last-of-type {
+      align-self: flex-end;
+    }
+
+    &::after {
+      content: '';
+      width: 1.2rem;
+      height: .11rem;
+      background-color: white;
+      position: absolute;
+      left: .5rem;
+      top: 50%;
+      transform: translateY(-50%), translateX(0);
+    }
+    &::before {
+      content: '';
+      width: 1.2rem;
+      height: .11rem;
+      background-color: white;
+      position: absolute;
+      right: .5rem;
+      top: 50%;
+      transform: translateY(-50%), translateX(0);
+    }
+  }
+
+  @keyframes setting-hover-left {
+    0%, 15% {
+      transform: translateX(0);
+    }
+    5%, 10% {
+      transform: translateX(16px);
+    }
+    100% {
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes setting-hover-right {
+    0%, 15% {
+      transform: translateX(0);
+    }
+    5%, 10% {
+      transform: translateX(-16px);
+    }
+    100% {
+      transform: translateX(0);
     }
   }
 </style>  

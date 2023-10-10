@@ -23,6 +23,7 @@ interface IRoomState {
   userListOrdered: UserListOrdered;
   userListNoVote: User[];
   isVoteClosed: boolean; 
+  showCard: boolean;
   voteResults: VoteResults;
   votes: Votes;
   messages: Message[],
@@ -42,6 +43,7 @@ export default defineStore("room-store", {
     userListOrdered: defaultUserListOrdered,
     userListNoVote: [],
     isVoteClosed: false,
+    showCard: false,
     voteResults: {},
     votes: {},
     messages: [],
@@ -50,8 +52,11 @@ export default defineStore("room-store", {
     setRoomExists() { this.roomExists = true; },
     setRoomId(roomId: string) { this.roomId = roomId; },
     setUserListOrdered(userList: UserListOrdered) { this.userListOrdered = userList; },
-    setIsVoteClosed(isClosed: boolean = true) { 
-      if (!isClosed) this.resetVotes();
+    setIsVoteClosed(isClosed = true) { 
+      if (!isClosed) {
+        this.resetVotes();
+        this.setShowCard(false);
+      }
       else {
         useModalStore().openResultModal();
       }
@@ -65,6 +70,7 @@ export default defineStore("room-store", {
       this.updateUserListNoVote();
       this.updateVoteResults();
     },
+    setShowCard(showCard: boolean) { this.showCard = showCard; },
     setMessages(messages: Message[]) { this.messages = messages; },
     async setUserList(userList: UserList) { 
 
@@ -102,7 +108,6 @@ export default defineStore("room-store", {
     
       for (const user of Object.values(this.userList)) {
         const vote = this.votes[user.userId];
-
         if (vote) {
           if (results[vote]) {
             results[vote].vote++;
@@ -115,7 +120,6 @@ export default defineStore("room-store", {
             };
           }
         }
-        
       }
       
       this.setVoteResults(results);
@@ -123,9 +127,9 @@ export default defineStore("room-store", {
     updateUserPosition() {
       const userList = [
         ...this.getUserListSorted, 
-        // ...fakeData.slice(0, 3)
+        ...fakeData.slice(0, 0)
       ];
-      console.log('fake : ', fakeData);
+
       const userListPositionned = getUserListPositionned(userList);
 
     
