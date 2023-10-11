@@ -66,8 +66,6 @@
       }
 
       modalStore.closeModal();
-
-      // document.addEventListener('acti')
    });
 
    // Methods

@@ -81,7 +81,7 @@ export default defineStore("room-store", {
 
     resetVotes() {
       const cookieData = getCookie();
-      addCookie('poker-planning', JSON.stringify({...cookieData, vote: ''}));
+      addCookie('poker-planning', JSON.stringify({...cookieData, vote: '\'\''}));
 
       this.votes = {};
       this.updateUserListNoVote();

@@ -62,6 +62,7 @@ export const getAllVotesFromServer = async (): Promise<void> => {
 
   try {
     const getAllvotesRequest = await fetch(`${import.meta.env.VITE_SERVER_ADDRESS}/votes/${roomId}`);
+
     votes = await getAllvotesRequest.json();
   } catch (e) {
     console.warn(`Warning : Fail to get votes from server.`);
@@ -100,6 +101,8 @@ export const checkVoteIsOpen = async (): Promise<void> => {
   try {
     const stateVoteRequest = await fetch(`${import.meta.env.VITE_SERVER_ADDRESS}/vote-state/${roomId}`);
     const voteClose: VoteState = (await stateVoteRequest.json()).close;
+
+    console.log('votes : ', voteClose);
 
     if (voteClose) {
       updateVoteResults();
