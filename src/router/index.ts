@@ -10,7 +10,7 @@ import useGeneralStore from '@/store/useGeneralStore';
 import useRoomStore from '@/store/useRoomStore';
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.VITE_CLIENT_ADDRESS),
+  history: createWebHistory(),
   routes: [
     {
       path: '/',
