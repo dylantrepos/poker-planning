@@ -102,8 +102,6 @@ export const checkVoteIsOpen = async (): Promise<void> => {
     const stateVoteRequest = await fetch(`${import.meta.env.VITE_SERVER_ADDRESS}/vote-state/${roomId}`);
     const voteClose: VoteState = (await stateVoteRequest.json()).close;
 
-    console.log('votes : ', voteClose);
-
     if (voteClose) {
       updateVoteResults();
       setIsVoteClosed();
