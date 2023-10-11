@@ -15,12 +15,14 @@ const router = createRouter({
     {
       path: '/',
       name: 'Home',
-      component: HomeView
+      component: HomeView,
+      meta: { title: 'Texas Hold\'em Planning' }
     },
     {
       path: '/room/:id',
       name: 'GameRoom',
       component: RoomView,
+      meta: { title: 'Texas Hold\'em Planning - room' },
       beforeEnter: async (from) => {
         try {
           await checkRoomExists(from.params.id as RoomId);
@@ -28,12 +30,13 @@ const router = createRouter({
           const roomStore = useRoomStore();
           roomStore.roomExists = false;
         }
-      }
+      },
     },
     {
       path: '/404',
       name: 'PageNotFound',
-      component: NotFoundView
+      component: NotFoundView,
+      meta: { title: 'Texas Hold\'em Planning - 404' },
     },
     {
       path: '/:catchAll(.*)*',
