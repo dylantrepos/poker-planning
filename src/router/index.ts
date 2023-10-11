@@ -36,8 +36,8 @@ const router = createRouter({
       component: NotFoundView
     },
     {
-      path: '/*',
-      component: NotFoundView
+      path: '/:catchAll(.*)*',
+      redirect: '/404'
     }
   ]
 });
