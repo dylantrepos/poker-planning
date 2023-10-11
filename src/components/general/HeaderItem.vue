@@ -4,7 +4,7 @@
       class="header__title"
       @click="router.push('/')"
     >
-      Poker planning
+      Texas Hold'em <span>Planning</span>
     </div>
     <button
       v-if="!light"
@@ -115,9 +115,13 @@
 }
 
 .header__title {
-  color: red;
-  font-weight: 500;
+  color: rgb(255, 255, 255);
+  font-weight: 300;
   cursor: pointer;
+
+  span {
+    font-weight: 500;
+  }
 }
 
 .header__button {
