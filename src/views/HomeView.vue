@@ -51,6 +51,7 @@
    import type { User } from '@/types/UserType';
    import useModalStore from '@/store/useModalStore';
    import GitItemVue from '@/components/general/GitItem.vue';
+   import useRoomStore from '@/store/useRoomStore';
   
    Chart.register(DoughnutController, ArcElement, Tooltip);
 
@@ -60,10 +61,15 @@
    const modalStore = useModalStore();
    const maxLength = 25;
 
+   const roomStore = useRoomStore();
+
    onMounted(() => {
       if (socket.connected) {
          disconnectFromSocket();
       }
+
+      console.log('1 : ', roomStore.userList);
+      console.log('1 or : ', roomStore.userListOrdered);
 
       modalStore.closeModal();
    });
