@@ -86,6 +86,7 @@
             userName: usernameInput.value,
          };
   
+         console.log('home');
          emitJoinRoom(userInfo);
       
          addCookie('poker-planning', JSON.stringify(userInfo));

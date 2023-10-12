@@ -67,6 +67,8 @@
       };
     
       addCookie('poker-planning', JSON.stringify(userInfo));
+
+      console.log('room join item');
     
       await emitJoinRoom(userInfo);
       userStore.setUserConnectionStatus(true);
