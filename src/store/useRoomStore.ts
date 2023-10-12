@@ -98,6 +98,7 @@ export default defineStore("room-store", {
       this.userList = {};
       this.votes = {};
       this.messages = [];
+      this.updateUserPosition();
 
       console.log('user list : ', this.userList);
       
