@@ -31,8 +31,10 @@ socket.on("connect", () =>
 socket.on("disconnect", () => 
   useGeneralStore().setConnectionToSocket(false));
 
-socket.on(`userList:update`, ( userList ) => 
-  useRoomStore().setUserList(userList));
+socket.on(`userList:update`, ( userList ) => {
+  console.log('update : ', userList);
+  useRoomStore().setUserList(userList);
+});
 
 socket.on('vote:received', ( voteInfo ) => 
   useRoomStore().setVotes(voteInfo));
