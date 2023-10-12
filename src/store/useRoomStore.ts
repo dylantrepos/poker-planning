@@ -74,12 +74,10 @@ export default defineStore("room-store", {
     setMessages(messages: Message[]) { this.messages = messages; },
     async setUserList(userList: UserList) { 
 
-      console.log('5 : ', userList);
       this.userList = userList; 
+
       this.updateUserListNoVote();
-      console.log('6 : ');
       this.updateUserPosition();
-      console.log('7 : ');
     },
 
     resetVotes() {
@@ -95,9 +93,6 @@ export default defineStore("room-store", {
     },
     initRoom(roomId: string, userId: string, userName: string) {
       const userStore = useUserStore();
-
-      console.log('2 : ', this.userList);
-      console.log('2 or : ', this.userListOrdered);
       
       this.messages = [];
       this.roomId = roomId;
@@ -108,22 +103,13 @@ export default defineStore("room-store", {
       this.messages = [];
       this.isVoteClosed = false;
       this.showCard = false;
-
-      console.log('2.1 : ', this.userList);
-      console.log('2.1 or : ', this.userListOrdered);
       
       this.updateUserPosition();
-      
-      console.log('3 : ', this.userList);
-      console.log('3 or : ', this.userListOrdered);
 
       userStore.setUserId(userId);
       userStore.setUserName(userName);
       
-      if (!userStore.isUserConnected) {
-        console.log('check if');
-        connectToSocket();
-      }
+      if (!userStore.isUserConnected) connectToSocket();
     },
     resetRoom() {
       this.messages = [];
@@ -177,9 +163,6 @@ export default defineStore("room-store", {
       const userStore = useUserStore();
   
       const userListSorted = Object.values(this.userList).sort();
-
-      console.log('4 : ', userListSorted);
-      console.log('4 or : ', userListSorted);
           
       const userIndex = userListSorted.findIndex(user => user.userId === userStore.userId);
       const userElt = userListSorted.find(user => user.userId === userStore.userId);
