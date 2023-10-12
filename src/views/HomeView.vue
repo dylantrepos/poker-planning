@@ -68,6 +68,7 @@
    onMounted(() => {
       if (socket.connected) {
          disconnectFromSocket();
+         socket.removeListener('connect');
       }
 
       roomStore.resetRoom();
