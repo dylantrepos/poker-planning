@@ -103,7 +103,7 @@ export default defineStore("room-store", {
       this.isVoteClosed = false;
       this.showCard = false;
 
-      console.log('user list : ', this.userList);
+      this.updateUserPosition();
       
       userStore.setUserId(userId);
       userStore.setUserName(userName);

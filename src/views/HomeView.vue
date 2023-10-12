@@ -51,7 +51,6 @@
    import type { User } from '@/types/UserType';
    import useModalStore from '@/store/useModalStore';
    import GitItemVue from '@/components/general/GitItem.vue';
-   import useRoomStore from '@/store/useRoomStore';
   
    Chart.register(DoughnutController, ArcElement, Tooltip);
 
@@ -59,7 +58,6 @@
    const usernameInput = ref('');
    const userId = uuidv4();
    const modalStore = useModalStore();
-   const roomStore = useRoomStore();
    const maxLength = 25;
 
    onMounted(() => {
@@ -67,7 +65,6 @@
          disconnectFromSocket();
       }
 
-      console.log('test : ', roomStore.userList);
       modalStore.closeModal();
    });
 
