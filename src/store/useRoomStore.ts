@@ -74,9 +74,12 @@ export default defineStore("room-store", {
     setMessages(messages: Message[]) { this.messages = messages; },
     async setUserList(userList: UserList) { 
 
+      console.log('5 : ', userList);
       this.userList = userList; 
       this.updateUserListNoVote();
+      console.log('6 : ');
       this.updateUserPosition();
+      console.log('7 : ');
     },
 
     resetVotes() {
