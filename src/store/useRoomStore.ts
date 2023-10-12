@@ -98,6 +98,8 @@ export default defineStore("room-store", {
       this.userList = {};
       this.votes = {};
       this.messages = [];
+
+      console.log('user list : ', this.userList);
       
       userStore.setUserId(userId);
       userStore.setUserName(userName);
