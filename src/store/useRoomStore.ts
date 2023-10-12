@@ -96,9 +96,12 @@ export default defineStore("room-store", {
       this.messages = [];
       this.roomId = roomId;
       this.userList = {};
+      this.userListOrdered = defaultUserListOrdered;
+      this.userListNoVote = [];
       this.votes = {};
       this.messages = [];
-      this.updateUserPosition();
+      this.isVoteClosed = false;
+      this.showCard = false;
 
       console.log('user list : ', this.userList);
       
