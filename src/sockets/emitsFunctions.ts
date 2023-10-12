@@ -22,6 +22,8 @@ export const emitJoinRoom = async (userInfo: Omit<User, 'connected'>): Promise<v
   generalStore.setTableBackground(params?.tableBackground);
   generalStore.setCardBackground(params?.cardBackground);
 
+  console.log('user Info : ', userInfo);
+
   socket.emit('room:join', userInfo);
 };
 

@@ -47,6 +47,7 @@
    // Methods
    const handleJoinRoom = async () => {
       connectToSocket();
+      console.log('before mount ');
 
       const cookieData = getCookie();
       
