@@ -32,7 +32,10 @@ export const getUserListFromServer = async (): Promise<void> => {
   const listUserRequest = await fetch(`${import.meta.env.VITE_SERVER_ADDRESS}/user-list/${roomId}`);
   const listUserResponse: Awaited<UserList> = (await listUserRequest.json()).list;
 
-  setUserList(listUserResponse);
+  console.log('room id : ', roomId);
+  console.log('rep : ', listUserResponse);
+
+  await setUserList(listUserResponse);
 };
 
 /**
