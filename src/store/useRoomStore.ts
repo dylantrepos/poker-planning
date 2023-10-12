@@ -40,7 +40,7 @@ export default defineStore("room-store", {
     roomExists: false,
     roomId: '',
     userList: {},
-    userListOrdered: defaultUserListOrdered,
+    userListOrdered: { ...defaultUserListOrdered },
     userListNoVote: [],
     isVoteClosed: false,
     showCard: false,
@@ -99,7 +99,7 @@ export default defineStore("room-store", {
       this.messages = [];
       this.roomId = roomId;
       this.userList = {};
-      this.userListOrdered = defaultUserListOrdered;
+      this.userListOrdered = { ...defaultUserListOrdered };
       this.userListNoVote = [];
       this.votes = {};
       this.messages = [];
@@ -117,6 +117,17 @@ export default defineStore("room-store", {
       userStore.setUserId(userId);
       userStore.setUserName(userName);
       if (!userStore.isUserConnected) connectToSocket();
+    },
+    resetRoom() {
+      this.messages = [];
+      this.roomId = '';
+      this.userList = {};
+      this.userListOrdered = { ...defaultUserListOrdered };
+      this.userListNoVote = [];
+      this.votes = {};
+      this.messages = [];
+      this.isVoteClosed = false;
+      this.showCard = false;
     },
     updateVoteResults() {
       const results: VoteResults = {};

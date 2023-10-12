@@ -68,6 +68,7 @@
          disconnectFromSocket();
       }
 
+      roomStore.resetRoom();
       console.log('1 : ', roomStore.userList);
       console.log('1 or : ', roomStore.userListOrdered);
 
