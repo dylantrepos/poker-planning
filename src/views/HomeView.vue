@@ -52,6 +52,7 @@
    import useModalStore from '@/store/useModalStore';
    import GitItemVue from '@/components/general/GitItem.vue';
    import useRoomStore from '@/store/useRoomStore';
+   import useUserStore from '@/store/useUserStore';
   
    Chart.register(DoughnutController, ArcElement, Tooltip);
 
@@ -62,6 +63,7 @@
    const maxLength = 25;
 
    const roomStore = useRoomStore();
+   const userStore = useUserStore();
 
    onMounted(() => {
       if (socket.connected) {
@@ -86,7 +88,8 @@
             userName: usernameInput.value,
          };
   
-         console.log('home');
+         console.log('home : ', userInfo);
+         console.log('home name : ', userStore.userName);
          emitJoinRoom(userInfo);
       
          addCookie('poker-planning', JSON.stringify(userInfo));
