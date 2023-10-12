@@ -79,7 +79,9 @@
 
    // Methods
    const redirectToGame = (): void => {
+      console.log('redir b');
       connectToSocket();
+      console.log('redir a');
 
       socket.on('connect', async () => {
          const userInfo: Omit<User, 'connected'> = {

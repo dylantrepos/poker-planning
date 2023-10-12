@@ -119,7 +119,11 @@ export default defineStore("room-store", {
 
       userStore.setUserId(userId);
       userStore.setUserName(userName);
-      if (!userStore.isUserConnected) connectToSocket();
+      
+      if (!userStore.isUserConnected) {
+        console.log('check if');
+        connectToSocket();
+      }
     },
     resetRoom() {
       this.messages = [];
