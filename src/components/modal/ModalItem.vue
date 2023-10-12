@@ -57,6 +57,7 @@
 
   .modal__container {
     position: fixed;
+    overflow: scroll;
     left: 0;
     top: 0;
     z-index: 500;
